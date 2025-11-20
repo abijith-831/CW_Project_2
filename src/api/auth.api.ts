@@ -59,5 +59,55 @@ export const getCurrentSession = async () => {
 export const authStateListener = (callback: any) => {
 
   return supabase.auth.onAuthStateChange(callback);
-  
+
+};
+
+
+
+export const fetchUserFromDB = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  return { userDetails: data, error };
+};
+
+
+
+export const createUserInDB = async (payload: {
+  id: string;
+  email: string;
+  full_name: string;
+  profile_picture: string;
+}) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .insert({
+      id: payload.id,
+      email: payload.email,
+      full_name: payload.full_name,
+      profile_picture: payload.profile_picture,
+      language_preference: "en",
+      theme_preference: "light",
+      capital_view: "graph",
+      created_at: new Date(),
+      is_Verified: true,
+    })
+    .select()
+    .single();
+
+  return { newUser: data, error };
+};
+
+
+
+export const updateUserInDB = async (userId: string, updateData: any) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .update(updateData)
+    .eq("id", userId);
+
+  return { data, error };
 };

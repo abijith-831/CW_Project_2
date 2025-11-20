@@ -5,7 +5,7 @@ import { loginSuccess, setError } from "../../redux/slices/authSlice";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { loginRequest , googleLoginRequest  } from "../../api/auth.api";
+import { loginRequest , googleLoginRequest , fetchUserFromDB , createUserInDB , updateUserInDB} from "../../api/auth.api";
 
 interface LoginFormValues {
   email : string ; 
@@ -60,128 +60,106 @@ export default function Login() {
   }, []);
 
 
-  const processUserLogin = async (session: any , redirectToDashboard = true) => {
+  const processUserLogin = async (session: any, redirectToDashboard = true) => {
     try {
       setIsLoading(true);
+
       const userId = session?.user?.id;
-      
       if (!userId) {
-        enqueueSnackbar("Login failed. User ID not found.", { variant: "error" });
+        enqueueSnackbar("Login failed: User ID not found.", { variant: "error" });
         dispatch(setError());
-        setIsLoading(false);
         return;
       }
 
-      const userMetadata = session.user.user_metadata;
-      const profilePicture = userMetadata?.avatar_url || userMetadata?.picture || "";
-      const fullName = userMetadata?.full_name || userMetadata?.name || "";
+      const metadata = session.user.user_metadata;
+      const profilePicture =
+        metadata?.avatar_url || metadata?.picture || "";
+      const fullName = metadata?.full_name || metadata?.name || "";
 
-      const { data: userDetails, error: userTableError } = await supabase
-        .from("usersTable")
-        .select("id, email, language_preference, theme_preference, profile_picture, full_name , capital_view")
-        .eq("id", userId)
-        .single();
+      // Check user in DB
+      const { userDetails, error: userError } = await fetchUserFromDB(userId);
 
-      if (userTableError || !userDetails) {
-        const { data: newUser, error: insertError } = await supabase
-          .from("usersTable")
-          .insert({
-            id: userId,
-            email: session.user.email,
-            full_name: fullName,
-            profile_picture: profilePicture,
-            language_preference: "en",
-            theme_preference: "light",
-            created_at: new Date(),
-            is_Verified: true, 
-            capital_view:'graph'
-          })
-          .select()
-          .single();
+      if (userError || !userDetails) {
+        // Create new user
+        const { newUser, error: createErr } = await createUserInDB({
+          id: userId,
+          email: session.user.email,
+          full_name: fullName,
+          profile_picture: profilePicture,
+        });
 
-        if (insertError) {
+        if (createErr) {
           dispatch(setError());
-          setIsLoading(false);
           return;
         }
 
         dispatch(
           loginSuccess({
             user: newUser,
-            accessToken: session?.access_token || null,
-            refreshToken: session?.refresh_token || null,
+            accessToken: session?.access_token,
+            refreshToken: session?.refresh_token,
           })
         );
+
         enqueueSnackbar("Login successful!", { variant: "success" });
         if (redirectToDashboard) navigate("/", { replace: true });
-        else navigate("/login", { replace: true });
-      } else {
-        if (profilePicture || fullName) {
-          const updateData: any = {};
-          
-          if (profilePicture && profilePicture !== userDetails.profile_picture) {
-            updateData.profile_picture = profilePicture;
-          }
-          if (fullName && fullName !== userDetails.full_name) {
-            updateData.full_name = fullName;
-          }
 
-          if (Object.keys(updateData).length > 0) {
-            const { error: updateError } = await supabase
-              .from("usersTable")
-              .update(updateData)
-              .eq("id", userId);
-
-            if (updateError) {
-              console.error("Failed to update user profile:", updateError);
-            } else {
-              Object.assign(userDetails, updateData);
-            }
-          }
-        }
-
-        dispatch(
-          loginSuccess({
-            user: userDetails,
-            accessToken: session?.access_token || null,
-            refreshToken: session?.refresh_token || null,
-          })
-        );
-        enqueueSnackbar("Login successful!", { variant: "success" });
-        if (redirectToDashboard) navigate("/", { replace: true });
-        else navigate("/login", { replace: true });
-      }
-    } catch (error) {
-      console.error("Process login error:", error);
-      enqueueSnackbar("Failed to process login!", { variant: "error" });
-      dispatch(setError());
-      setIsLoading(false);
-    }
-  };
-
-  const handleLogin = async (data: LoginFormValues) => {
-    setIsLoading(true);
-
-    try {
-      const { data : loginData, error } = await supabase.auth.signInWithPassword(data);
-
-      if (error) {
-        enqueueSnackbar(error.message, { variant: "error" });
-        dispatch(setError());
         return;
       }
 
-      await processUserLogin(loginData.session);
+      // Update user profile if changed
+      const updatePayload: any = {};
+      if (profilePicture && profilePicture !== userDetails.profile_picture)
+        updatePayload.profile_picture = profilePicture;
+
+      if (fullName && fullName !== userDetails.full_name)
+        updatePayload.full_name = fullName;
+
+      if (Object.keys(updatePayload).length > 0) {
+        await updateUserInDB(userId, updatePayload);
+      }
+
+      dispatch(
+        loginSuccess({
+          user: { ...userDetails, ...updatePayload },
+          accessToken: session?.access_token,
+          refreshToken: session?.refresh_token,
+        })
+      );
+
+      enqueueSnackbar("Login successful!", { variant: "success" });
+      if (redirectToDashboard) navigate("/", { replace: true });
+
     } catch (error) {
-      console.error(error);
-      enqueueSnackbar("Something went wrong! Try again later.", {
-        variant: "error",
-      });
+      console.error("Process login error:", error);
+      enqueueSnackbar("Failed to process login!", { variant: "error" });
       dispatch(setError());
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleLogin = async (data: LoginFormValues)=>{
+    try {
+      setIsLoading(true)
+
+      const { data:loginData , error } = await loginRequest(data.email , data.password)
+
+      if(error){
+        enqueueSnackbar(error.message , {variant : 'error'})
+        dispatch(setError())
+        return
+      }
+
+      await processUserLogin(loginData.session)
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+      dispatch(setError());
+    }finally{
+      setIsLoading(false)
+    }
+  }
 
   const handleGoogleLogin = async () => {
     try {

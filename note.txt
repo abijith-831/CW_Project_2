@@ -407,6 +407,84 @@ export const authStateListener = (callback: any) => {
 
 
 
+export const googleLoginRequest = async () => {
+  return supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/login`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  });
+};
+
+// ===============================
+// Fetch user from DB
+// ===============================
+export const fetchUserFromDB = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  return { userDetails: data, error };
+};
+
+// ===============================
+// Create new user in DB
+// ===============================
+export const createUserInDB = async (payload: {
+  id: string;
+  email: string;
+  full_name: string;
+  profile_picture: string;
+}) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .insert({
+      id: payload.id,
+      email: payload.email,
+      full_name: payload.full_name,
+      profile_picture: payload.profile_picture,
+      language_preference: "en",
+      theme_preference: "light",
+      capital_view: "graph",
+      created_at: new Date(),
+      is_Verified: true,
+    })
+    .select()
+    .single();
+
+  return { newUser: data, error };
+};
+
+// ===============================
+// Update user if metadata changes
+// ===============================
+export const updateUserInDB = async (userId: string, updateData: any) => {
+  const { data, error } = await supabase
+    .from("usersTable")
+    .update(updateData)
+    .eq("id", userId);
+
+  return { data, error };
+};
+✅ You Can Now Import Them in Login.tsx
+ts
+Copy code
+import {
+  loginRequest,
+  googleLoginRequest,
+  getSessionRequest,
+  fetchUserFromDB,
+  createUserInDB,
+  updateUserInDB,
+} from "../../api/authApi";
+
+
 
 
 
