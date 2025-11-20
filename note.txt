@@ -304,3 +304,384 @@ If you want, I can also:
 ✅ Set up RTK Query for authentication
 ✅ Create a clean architecture folder structure (services → usecases → controllers → UI)
 Just tell me!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// src/api/authApi.ts
+import { supabase } from "./supabase";
+
+export const signUpRequest = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+  return { data, error };
+};
+
+export const loginRequest = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  return { data, error };
+};
+
+export const googleLoginRequest = async () => {
+  return await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/login`,
+      queryParams: { access_type: "offline", prompt: "consent" },
+    },
+  });
+};
+
+// =========================
+// USER TABLE OPERATIONS
+// =========================
+
+// Get or create user in usersTable
+export const getUserFromTable = async (userId: string) => {
+  return await supabase
+    .from("usersTable")
+    .select(
+      "id, email, language_preference, theme_preference, profile_picture, full_name, capital_view"
+    )
+    .eq("id", userId)
+    .single();
+};
+
+export const insertUserToTable = async (user: any) => {
+  return await supabase
+    .from("usersTable")
+    .insert(user)
+    .select()
+    .single();
+};
+
+export const updateUserProfileInTable = async (userId: string, updateData: any) => {
+  return await supabase
+    .from("usersTable")
+    .update(updateData)
+    .eq("id", userId);
+};
+
+// Get active session (OAuth callback)
+export const getCurrentSession = async () => {
+  return await supabase.auth.getSession();
+};
+
+// Listen to auth state change
+export const authStateListener = (callback: any) => {
+  return supabase.auth.onAuthStateChange(callback);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { loginSuccess, setError } from "../../redux/slices/authSlice";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
+import {
+  loginRequest,
+  googleLoginRequest,
+  getSessionRequest,
+  fetchUserFromDB,
+  createUserInDB,
+  updateUserInDB,
+} from "../../api/authApi";
+
+interface LoginFormValues {
+  email: string;
+  password: string;
+}
+
+const EyeIcon = () => <img src="./logos/eye-on.svg" className="h-4 w-4" />;
+const EyeOffIcon = () => <img src="./logos/eye-off.svg" className="h-4 w-4" />;
+
+export default function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<LoginFormValues>();
+
+  const password = watch("password");
+
+  // =============================
+  // OAuth Callback Listener
+  // =============================
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      try {
+        const { session, error } = await getSessionRequest();
+
+        if (error) return;
+
+        if (session?.user) await processUserLogin(session);
+      } catch (err) {
+        console.error("OAuth callback error:", err);
+      }
+    };
+
+    handleOAuthCallback();
+  }, []);
+
+  // =============================
+  // @Process Login (Common)
+  // =============================
+  const processUserLogin = async (session: any, redirectToDashboard = true) => {
+    try {
+      setIsLoading(true);
+
+      const userId = session?.user?.id;
+      if (!userId) {
+        enqueueSnackbar("Login failed: User ID not found.", { variant: "error" });
+        dispatch(setError());
+        return;
+      }
+
+      const metadata = session.user.user_metadata;
+      const profilePicture =
+        metadata?.avatar_url || metadata?.picture || "";
+      const fullName = metadata?.full_name || metadata?.name || "";
+
+      // Check user in DB
+      const { userDetails, error: userError } = await fetchUserFromDB(userId);
+
+      if (userError || !userDetails) {
+        // Create new user
+        const { newUser, error: createErr } = await createUserInDB({
+          id: userId,
+          email: session.user.email,
+          full_name: fullName,
+          profile_picture: profilePicture,
+        });
+
+        if (createErr) {
+          dispatch(setError());
+          return;
+        }
+
+        dispatch(
+          loginSuccess({
+            user: newUser,
+            accessToken: session?.access_token,
+            refreshToken: session?.refresh_token,
+          })
+        );
+
+        enqueueSnackbar("Login successful!", { variant: "success" });
+        if (redirectToDashboard) navigate("/", { replace: true });
+
+        return;
+      }
+
+      // Update user profile if changed
+      const updatePayload: any = {};
+      if (profilePicture && profilePicture !== userDetails.profile_picture)
+        updatePayload.profile_picture = profilePicture;
+
+      if (fullName && fullName !== userDetails.full_name)
+        updatePayload.full_name = fullName;
+
+      if (Object.keys(updatePayload).length > 0) {
+        await updateUserInDB(userId, updatePayload);
+      }
+
+      dispatch(
+        loginSuccess({
+          user: { ...userDetails, ...updatePayload },
+          accessToken: session?.access_token,
+          refreshToken: session?.refresh_token,
+        })
+      );
+
+      enqueueSnackbar("Login successful!", { variant: "success" });
+      if (redirectToDashboard) navigate("/", { replace: true });
+
+    } catch (error) {
+      console.error("Process login error:", error);
+      enqueueSnackbar("Failed to process login!", { variant: "error" });
+      dispatch(setError());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // =============================
+  // Email/Password Login Handler
+  // =============================
+  const handleLogin = async (data: LoginFormValues) => {
+    try {
+      setIsLoading(true);
+
+      const { loginData, error } = await loginRequest(data.email, data.password);
+
+      if (error) {
+        enqueueSnackbar(error.message, { variant: "error" });
+        dispatch(setError());
+        return;
+      }
+
+      await processUserLogin(loginData.session);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+      dispatch(setError());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // =============================
+  // Google Login Handler
+  // =============================
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true);
+
+      const { error } = await googleLoginRequest();
+
+      if (error) {
+        enqueueSnackbar(error.message, { variant: "error" });
+        dispatch(setError());
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      enqueueSnackbar("Google login failed!", { variant: "error" });
+      dispatch(setError());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // =============================
+  // Render UI
+  // =============================
+  return (
+    <div className="min-h-screen flex justify-center items-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit(handleLogin)}
+        className="bg-white p-6 rounded-md shadow-md w-96 space-y-4"
+      >
+        <h2 className="text-xl font-semibold">Login</h2>
+
+        <div>
+          <label>Email</label>
+          <input
+            {...register("email", { required: "Email is required" })}
+            className="w-full p-2 border rounded"
+          />
+          {errors.email && (
+            <p className="text-red-600 text-sm">{errors.email.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label>Password</label>
+          <div className="relative">
+            <input
+              {...register("password", { required: "Password is required" })}
+              type={showPassword ? "text" : "password"}
+              className="w-full p-2 border rounded"
+            />
+
+            <span
+              className="absolute right-3 top-3 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+            </span>
+          </div>
+        </div>
+
+        <button
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white p-2 rounded-md"
+        >
+          {isLoading ? "Loading..." : "Login"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full flex justify-center items-center gap-2 p-2 border rounded-md"
+        >
+          <img src="./logos/google.png" className="h-4" />
+          <span>Continue with Google</span>
+        </button>
+      </form>
+    </div>
+  );
+}

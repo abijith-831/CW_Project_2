@@ -5,6 +5,7 @@ import { loginSuccess, setError } from "../../redux/slices/authSlice";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { loginRequest , googleLoginRequest  } from "../../api/auth.api";
 
 interface LoginFormValues {
   email : string ; 
@@ -185,23 +186,18 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/login`,
-          queryParams: { access_type: "offline", prompt: "consent",},
-        },
-      });
+
+      const { error } = await googleLoginRequest();
 
       if (error) {
         enqueueSnackbar(error.message, { variant: "error" });
         dispatch(setError());
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Google login error:", error);
-      enqueueSnackbar("Failed to initiate Google login!", { variant: "error" });
+      enqueueSnackbar("Google login failed!", { variant: "error" });
       dispatch(setError());
+    } finally {
       setIsLoading(false);
     }
   };
