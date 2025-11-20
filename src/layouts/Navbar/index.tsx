@@ -36,7 +36,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative flex items-center w-full py-8 bg-bg-primary px-8 dark:bg-gray-500">
+    <nav className="relative flex items-center w-full py-6 bg-bg-primary px-8 dark:bg-gray-500">
   {/* left */}
   <div className="flex items-center gap-4">
     <img src="./logos/Vector.svg" alt="Logo" className="h-8 w-8" />
