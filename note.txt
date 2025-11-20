@@ -1,0 +1,306 @@
+import { useEffect, useState } from "react";
+
+interface RecordType {
+  state_name: string;
+  s_no: string;
+  // add all fields you need...
+}
+
+const ApiData = () => {
+  const [data, setData] = useState<RecordType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const response = await fetch(
+          "https://api.data.gov.in/resource/4dbe5667-7b6b-41d7-82af-211562424d9a?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json"
+        );
+
+        const json = await response.json();
+        console.log("API response:", json);
+
+        setData(json.records); // API returns { records: [...] }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching API:", error);
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+
+  return (
+    <div className="p-4">
+      <h2 className="text-xl font-bold mb-3">API Data</h2>
+
+      <ul className="space-y-2">
+        {data.map((item, index) => (
+          <li key={index} className="p-2 bg-gray-200 rounded">
+            {item.state_name} — {item.s_no}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ApiData;
+Got it — you want to move all API-related logic (Supabase calls + login processing) out of your <Login /> component and into a separate clean service file, while keeping your UI clean.
+Below is the perfect clean architecture for your use case.
+
+✅ Final Folder Structure (Recommended)
+src/
+ ├── api/
+ │    ├── supabase.ts
+ │    └── authService.ts   <-- create this (all API calls here)
+ ├── pages/
+ │    └── auth/
+ │         └── Login.tsx   <-- UI only
+
+
+✅ Create authService.ts (all API calls here)
+📌 This file contains:
+
+
+email/password login
+
+
+Google OAuth login
+
+
+user table fetch/insert/update
+
+
+processUserLogin logic
+
+
+auth state listener
+
+
+👉 Just import and call these functions from your component.
+
+src/api/authService.ts
+import { supabase } from "./supabase";
+
+/* ------------------ EMAIL + PASSWORD LOGIN ------------------ */
+export const loginWithEmail = async (email: string, password: string) => {
+  return await supabase.auth.signInWithPassword({ email, password });
+};
+
+/* ------------------ GOOGLE LOGIN ------------------ */
+export const loginWithGoogle = async () => {
+  return await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/login`,
+      queryParams: { access_type: "offline", prompt: "consent" },
+    },
+  });
+};
+
+/* ------------------ GET SESSION ------------------ */
+export const getCurrentSession = async () => {
+  return await supabase.auth.getSession();
+};
+
+/* ------------------ LISTEN AUTH CHANGES ------------------ */
+export const handleAuthListener = (callback: Function) => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    async (event, session) => {
+      callback(event, session);
+    }
+  );
+
+  return () => subscription.unsubscribe();
+};
+
+/* ------------------ FETCH USER FROM TABLE ------------------ */
+export const getUserFromDB = async (userId: string) => {
+  return await supabase
+    .from("usersTable")
+    .select("id, email, language_preference, theme_preference, profile_picture, full_name , capital_view")
+    .eq("id", userId)
+    .single();
+};
+
+/* ------------------ INSERT NEW USER ------------------ */
+export const insertUserIntoDB = async (payload: any) => {
+  return await supabase.from("usersTable").insert(payload).select().single();
+};
+
+/* ------------------ UPDATE USER ------------------ */
+export const updateUserInDB = async (userId: string, updateData: any) => {
+  return await supabase
+    .from("usersTable")
+    .update(updateData)
+    .eq("id", userId);
+};
+
+
+✅ Move processUserLogin into the service
+Add this inside authService.ts:
+
+processUserLogin (clean & reusable)
+import { getUserFromDB, insertUserIntoDB, updateUserInDB } from "./authService";
+
+export const processUserLoginService = async (session: any) => {
+  const userId = session?.user?.id;
+  if (!userId) return { error: "User ID missing" };
+
+  // Extract metadata
+  const userMetadata = session.user.user_metadata;
+  const profilePicture = userMetadata?.avatar_url || userMetadata?.picture || "";
+  const fullName = userMetadata?.full_name || userMetadata?.name || "";
+
+  // Check if user exists
+  const { data: userDetails, error: userTableError } = await getUserFromDB(userId);
+
+  // User does NOT exist → create new one
+  if (userTableError || !userDetails) {
+    const payload = {
+      id: userId,
+      email: session.user.email,
+      full_name: fullName,
+      profile_picture: profilePicture,
+      language_preference: "en",
+      theme_preference: "light",
+      created_at: new Date(),
+      is_Verified: true,
+      capital_view: "graph",
+    };
+
+    const { data: newUser, error: insertError } = await insertUserIntoDB(payload);
+
+    if (insertError) return { error: insertError.message };
+
+    return { user: newUser };
+  }
+
+  // User exists → update basic info if needed
+  const updatedData: any = {};
+  if (profilePicture && profilePicture !== userDetails.profile_picture)
+    updatedData.profile_picture = profilePicture;
+  if (fullName && fullName !== userDetails.full_name)
+    updatedData.full_name = fullName;
+
+  if (Object.keys(updatedData).length > 0)
+    await updateUserInDB(userId, updatedData);
+
+  return { user: { ...userDetails, ...updatedData } };
+};
+
+
+✅ Now your <Login /> component becomes super clean
+All API calls go through your new authService.
+
+Login.tsx (clean UI + service usage)
+import {
+  loginWithEmail,
+  loginWithGoogle,
+  getCurrentSession,
+  handleAuthListener,
+  processUserLoginService,
+} from "../../api/authService";
+
+Then update the functions:
+
+Handle Email Login (clean)
+const handleLogin = async (data: LoginFormValues) => {
+  setIsLoading(true);
+
+  const { data: loginData, error } = await loginWithEmail(data.email, data.password);
+
+  if (error) {
+    enqueueSnackbar(error.message, { variant: "error" });
+    dispatch(setError());
+    setIsLoading(false);
+    return;
+  }
+
+  const result = await processUserLoginService(loginData.session);
+
+  if (result.error) {
+    enqueueSnackbar(result.error, { variant: "error" });
+    setIsLoading(false);
+    return;
+  }
+
+  dispatch(loginSuccess({
+    user: result.user,
+    accessToken: loginData.session.access_token,
+    refreshToken: loginData.session.refresh_token
+  }));
+
+  enqueueSnackbar("Login successful!", { variant: "success" });
+  navigate("/", { replace: true });
+  setIsLoading(false);
+};
+
+
+Handle Google Login
+const handleGoogleLogin = async () => {
+  setIsLoading(true);
+  const { error } = await loginWithGoogle();
+
+  if (error) {
+    enqueueSnackbar(error.message, { variant: "error" });
+    dispatch(setError());
+  }
+
+  setIsLoading(false);
+};
+
+
+OAuth Listener + Session Handling
+useEffect(() => {
+  const checkSession = async () => {
+    const { data: { session } } = await getCurrentSession();
+
+    if (session) {
+      const result = await processUserLoginService(session);
+
+      if (!result.error) {
+        dispatch(loginSuccess({
+          user: result.user,
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token
+        }));
+        navigate("/", { replace: true });
+      }
+    }
+  };
+
+  checkSession();
+  const unsub = handleAuthListener(async (event: string, session: any) => {
+    if (event === "SIGNED_IN" && session) {
+      const result = await processUserLoginService(session);
+
+      if (!result.error) {
+        dispatch(loginSuccess({
+          user: result.user,
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token
+        }));
+        navigate("/", { replace: true });
+      }
+    }
+  });
+
+  return () => unsub();
+}, []);
+
+
+🎉 Output:
+Your Login component now contains ONLY UI + simple service calls.
+All Supabase logic is extracted into authService.ts.
+Clean, scalable, easy to maintain.
+
+If you want, I can also:
+✅ Move API calls to Redux Thunks
+✅ Set up RTK Query for authentication
+✅ Create a clean architecture folder structure (services → usecases → controllers → UI)
+Just tell me!

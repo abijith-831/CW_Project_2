@@ -1,0 +1,61 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+interface User {
+  id: string;
+  email: string;
+  language_preference?: string;
+  theme_preference?: string;
+  capital_view?:string;
+}
+
+interface UserState {
+  currentUser: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  error: boolean;
+}
+
+const initialState: UserState = {
+  currentUser: null,
+  accessToken: null,
+  refreshToken: null,
+  error: false,
+};
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    loginSuccess(
+    state,
+    action: PayloadAction<{
+        user: User;
+        accessToken: string | null;
+        refreshToken: string | null;
+    }>
+    ) {
+    state.currentUser = action.payload.user;
+    state.accessToken = action.payload.accessToken;
+    state.refreshToken = action.payload.refreshToken;
+    state.error = false;
+    },
+    logout(state) {
+      state.currentUser = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.error = false;
+    },
+    updateCapitalView:(state , action: PayloadAction<string>) =>{
+      if(state.currentUser){
+        state.currentUser.capital_view = action.payload;
+      }
+    },
+
+    setError(state) {
+      state.error = true;
+    }
+  },
+});
+
+export const { loginSuccess, logout, setError , updateCapitalView} = authSlice.actions;
+export default authSlice.reducer;

@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-primary: #2E2E2E;
+  --color-secondary: #595959;
+  --color-third:#DADADA;
+  --spacing-big: 4rem;
+
+  --color-border-primary: #A7A7A7;
+  --color-border-secondary:#B9B9B9;
+  --radius-primary: 0.8rem;  
+  --radius-secondary: 0.6rem;
+
+  --color-bg-primary:#0A4E4E;
+  --color-bg-secondary:#3CB5B3;
+}
+
