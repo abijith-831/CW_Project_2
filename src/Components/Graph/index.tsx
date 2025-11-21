@@ -43,12 +43,8 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
     <div className='border border-border-primary rounded-lg py-2 shadow-md'>
       <div className='flex justify-between px-4'>
         <h1 className='text-primary'>{company.CompanyName.length > 30    ? company.CompanyName.slice(0, 30) + "…"  : company.CompanyName}</h1>
-        <h3 className={`border border-border-secondary px-4 text-sm rounded-md text-secondary ${
-          isListed ? 'bg-[#D0EFDF]' : 'bg-[#DDEFD0]'
-        }`}>
-          {isListed ? 'listed' : 'unlisted'}
-        </h3>
-      </div>
+        <h3 className={`border border-border-secondary pt-0.5 px-4 text-sm rounded-sm text-badge ${company.CompanyStatus==='Active' ? 'bg-[#DDEFD0]' : company.CompanyStatus==='Strike Off'?'bg-[#EFCBC6]':'bg-blue-200'}`}>{company.CompanyStatus.length > 12    ? company.CompanyStatus.slice(0, 12) + "…"  : company.CompanyStatus}</h3>
+      </div> 
       
       <div className="w-full max-w-[550px] md:max-w-full px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
         <ChartContainer

@@ -14,10 +14,21 @@ const index = () => {
   const [companyData , setCompanyData] = useState<any[]>([])
   const [loading , setLoading] = useState(true)
 
+  const [currentPage , setCurrentPage ] = useState(1)
+  const [itemsPerPage ] = useState(6)
+
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = companyData.slice(indexOfFirstItem,indexOfLastItem)
+
+  const totalPages = Math.ceil(companyData.length / itemsPerPage)
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   const handleChangeView = (value : 'graph' | 'table')=>{
     dispatch(updateCapitalView(value))
   }
 
+//   fetching company datas from api 
   useEffect(()=>{
     const fetchData = async ()=>{
         try {
@@ -33,9 +44,9 @@ const index = () => {
   },[])
     
   return (
-        <div>
-            <Navbar/>
-        <div>
+    <div className=' h-screen flex flex-col overflow-hidden'>
+        <Navbar/>   
+        <div className="flex-1 flex flex-col overflow-hidden">
             <div className='px-10 md:px-14 lg:px-20  py-4 flex justify-between'>
                 <div>
                     <h1 className='text-xl font-medium text-primary'>Registrars of Companies - {capitalView === 'graph'? 'Graph View' : 'Table View'} </h1>
@@ -64,11 +75,31 @@ const index = () => {
             <div className='text-secondary px-10  md:px-14  lg:px-20 text-sm'>
                 <h6 >Visualize key insights from company registration data, including capital distribution, company status, and registration trends over time. The graphs help you quickly understand overall patterns across construction-related businesses.The graphs help you quickly understand overall patterns across construction-related businesses.</h6>
             </div>
-
+            {/* conditionally rendering graphs and table */}
            <div>
-                {capitalView === 'graph' ? <GraphView companyData={companyData} loading={loading}/> : <TableView/>}
+            {capitalView === 'graph' ? (
+                <GraphView companyData={currentItems} loading={loading} />
+                ) : (
+                <TableView companyData={currentItems} loading={loading} />
+            )}
+
            </div>
+           {/* pagination block */}
+           <div className="flex justify-center gap-2 ">
+            {pageNumbers.map((number) => (
+                <button
+                key={number}
+                onClick={() => setCurrentPage(number)}
+                className={`px-3 py-1 rounded ${
+                    currentPage === number ? 'bg-bg-primary text-white' : 'bg-gray-200 text-gray-700'
+                }`}
+                >
+                {number}
+                </button>
+            ))}
+            </div>
         </div>
+   
     </div>
   )
 }
