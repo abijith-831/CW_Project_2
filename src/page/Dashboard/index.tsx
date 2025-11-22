@@ -15,7 +15,7 @@ const index = () => {
   const [loading , setLoading] = useState(true)
 
   const [currentPage , setCurrentPage ] = useState(1)
-  const [itemsPerPage ] = useState(6)
+  const [itemsPerPage , setItemsPerPage] = useState(capitalView === 'table' ? 10 : 6)
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
@@ -26,6 +26,7 @@ const index = () => {
 
   const handleChangeView = (value : 'graph' | 'table')=>{
     dispatch(updateCapitalView(value))
+    setItemsPerPage(value === 'table' ? 10 : 6)
   }
 
 //   fetching company datas from api 
@@ -44,7 +45,7 @@ const index = () => {
   },[])
     
   return (
-    <div className=' h-screen flex flex-col overflow-hidden'>
+    <div className=' flex flex-col overflow-hidden'>
         <Navbar/>   
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className='px-10 md:px-14 lg:px-20  py-4 flex justify-between'>
