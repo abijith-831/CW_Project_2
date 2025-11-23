@@ -100,6 +100,7 @@ const TableView:React.FC<{ companyData:CompanyDataProps[] ; loading:boolean}> = 
     {
       accessorKey : 'CompanyIndustrialClassification',
       header : 'Industry',
+      enableSorting: false,
       size:150,
       enableResizing: true,
       cell:(props:any)=> <p>{props.getValue()}</p>
@@ -185,10 +186,13 @@ const TableView:React.FC<{ companyData:CompanyDataProps[] ; loading:boolean}> = 
                   onClick={header.column.getToggleSortingHandler()}  >
                     <div className="flex items-center justify-between gap-2">
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    
-                    {header.column.getIsSorted() === "asc" && ( <ArrowUp size={16} className="text-table-header" />)}
-                    {header.column.getIsSorted() === "desc" && ( <ArrowDown size={16} className="text-table-header" />)}
-                    {!header.column.getIsSorted() && ( <ArrowUpDown size={16} className="text-border-table-header" />)}
+                    {header.column.getCanSort() && (
+                      <>
+                        {header.column.getIsSorted() === "asc" && ( <ArrowUp size={16} className="text-table-header" />)}
+                        {header.column.getIsSorted() === "desc" && ( <ArrowDown size={16} className="text-table-header" />)}
+                        {!header.column.getIsSorted() && ( <ArrowUpDown size={16} className="text-border-table-header" />)}
+                      </>
+                    )}
                   </div>
 
 
