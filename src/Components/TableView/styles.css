@@ -1,0 +1,13 @@
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  cursor: col-resize;
+  background-color: transparent;
+}
+
+.resizer.isResizing {
+  background-color: #0a4e4e; /* visible while dragging */
+}

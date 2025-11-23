@@ -12,13 +12,12 @@ const SkeletonLoaderGraph = () => {
       </Box>
 
       <Box sx={{position:'absolute' ,display:'flex',top:0,left:30,right:30,justifyContent:"center" , px:2}}>
-            <Skeleton animation="wave" width="70%" height={300} sx={{ bgcolor: "#0A4E4E" , opacity:0.2 }}  />
+            <Skeleton animation="wave" width="70%" height={300} sx={{ bgcolor: "#0A4E4E" , opacity:0.1 }}  />
       </Box>
       <Box sx={{ position: "absolute", bottom: 20, left: 50,right: 50, display: "flex", flexDirection: "column", alignItems: "center",  }}>
             <Skeleton animation="wave" width="50%" height={30} sx={{ bgcolor: "#0A4E4E", opacity: 0.2 }}/>
             <Skeleton animation="wave" width="50%" height={30} sx={{ bgcolor: "#0A4E4E", opacity: 0.2 }}/>
       </Box>
-
     </Box>
   );
 };
