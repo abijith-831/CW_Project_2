@@ -16,10 +16,12 @@ const index = () => {
 
   const [currentPage , setCurrentPage ] = useState(1)
   const [itemsPerPage , setItemsPerPage] = useState(capitalView === 'table' ? 10 : 6)
+  const [selectedState , setSelectedState] = useState('')
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = companyData.slice(indexOfFirstItem,indexOfLastItem)
+
 
   const totalPages = Math.ceil(companyData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -29,21 +31,67 @@ const index = () => {
     setItemsPerPage(value === 'table' ? 10 : 6)
   }
 
+  const indianStates = [
+    "andhra pradesh",
+    "arunachal pradesh",
+    "andaman and nicobar islands",
+    "assam",
+    "bihar",
+    "chandigarh",
+    "goa",
+    "delhi",
+    "dadra & nagar haveli",
+    "haryana",
+    "jharkhand",
+    "karnataka",
+    "kerala",
+    "daman and diu",
+    "madhya Pradesh",
+    "maharashtra",
+    "manipur",
+    "meghalaya",
+    "mizoram",
+    "nagaland",
+    "punjab",
+    "rajasthan",
+    "sikkim",
+    "tamil nadu",
+    "telangana",
+    "tripura",
+   ];
+
+
   //   fetching company datas from api 
-  useEffect(()=>{
-    const fetchData = async ()=>{
-        try {
-            const response = await getCompanyData()
-            setCompanyData(response.records)   
-        } catch (error) {
-            console.log(error); 
-        }finally{
-            setLoading(false)
-        }
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const baseUrl = import.meta.env.VITE_API_URL;
+      let url = `${baseUrl}&limit=50`;
+
+      if (selectedState) {
+        url = `${baseUrl}&limit=50&filters%5BCompanyStateCode%5D=${selectedState}`;
+      }
+      
+      const response = await fetch(url);
+      const result = await response.json();
+      setCompanyData(result.records || []);
+      setCurrentPage(1); 
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-    fetchData()
-  },[])
-    
+  };
+
+  fetchData();
+}, [selectedState]);
+
+
+  console.log('ccc',[...new Set(companyData.map(c=>c.CompanyStateCode))]);
+   
   return (
     <div className=' flex flex-col overflow-hidden'>
         <Navbar/>   
@@ -52,25 +100,42 @@ const index = () => {
                 <div>
                     <h1 className='text-xl font-medium text-primary'>Registrars of Companies - {capitalView === 'graph'? 'Graph View' : 'Table View'} </h1>
                 </div>
-                <div className='flex gap-6'>
-                    <div>
-                        <h1>filter</h1>
+                <div className='flex items-center gap-10'>
+                    <div className='flex items-center gap-4'>
+                        <h1 className='text-secondary'>Filter by:</h1>
+                        <select
+                            onChange={(e)=> setSelectedState(e.target.value)}
+                            className='border  py-1.5 text-center  text-secondary rounded-lg border-border-primary' >
+                            <option value="">State</option>
+                            {indianStates.map((state, index) => (
+                                <option key={index} value={state}>{state}</option>
+                            ))}
+                        </select>
                     </div>
-                    <div className='flex rounded-lg items-center overflow-hidden cursor-pointer'>
-                        <button onClick={()=> handleChangeView('graph')} className={`flex items-center cursor-pointer justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
-                            ${capitalView === 'graph' ?
-                                'bg-bg-primary text-third '
-                                :
-                                'bg-gray-200 text-secondary'
-                            }`}>Graph</button>
-                        <button onClick={()=> handleChangeView('table')} className={`flex items-center cursor-pointer justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
-                            ${capitalView === 'table' ?
-                                'bg-bg-primary text-white '
-                                :
-                                'bg-gray-200 text-secondary '
-                            }`}>Table</button>         
+
+                    {/* Toggle */}
+                    <div className='flex rounded-lg items-center overflow-hidden border border-gray-300'>
+                        <button
+                            onClick={() => handleChangeView('graph')}
+                            className={`px-8 py-1.5 text-sm ${
+                                capitalView === 'graph'
+                                    ? 'bg-bg-primary text-white'
+                                    : 'bg-gray-100 text-secondary'
+                            }`}  >
+                            Graph
+                        </button>
+                        <button
+                            onClick={() => handleChangeView('table')}
+                            className={`px-8 py-1.5 text-sm ${
+                                capitalView === 'table'
+                                    ? 'bg-bg-primary text-white'
+                                    : 'bg-gray-100 text-secondary'
+                            }`}  >
+                            Table
+                        </button>
                     </div>
                 </div>
+
                 
             </div>
             <div className='text-secondary px-10  md:px-14  lg:px-20 text-sm'>
