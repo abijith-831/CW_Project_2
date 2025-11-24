@@ -139,14 +139,17 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
 
   return (
     <div className='px-20 py-4 w-full'>
-      <div className='flex items-center justify-between py-4'>
-        <h1 className='text-secondary text-xl'>Registrars of Companies (RoC)-wise Company Master Data</h1>
-        
+      <div className="flex flex-wrap items-center justify-between gap-4 py-4">
+        <h1 className="text-secondary text-lg sm:text-xl font-semibold flex-1 min-w-[250px]">
+          Registrars of Companies (RoC)-wise Company Master Data
+        </h1>
+
         {/* Column Visibility Dropdown */}
-        <div className="relative max-w-lg">
-            <TagMultiSelectPage table={table}/>
+        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg">
+          <TagMultiSelectPage table={table} />
         </div>
       </div>
+
 
       {/* table div */}
       <div className="table w-full text-center border border-border-primary rounded-xl overflow-hidden">

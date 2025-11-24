@@ -6,7 +6,7 @@ import { useSelector , useDispatch } from 'react-redux'
 import { updateCapitalView } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
 
-const index = () => {
+const Dashboard = () => {
 
   const dispatch = useDispatch()
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
@@ -89,58 +89,64 @@ const index = () => {
   fetchData();
 }, [selectedState]);
 
-
-  console.log('ccc',[...new Set(companyData.map(c=>c.CompanyStateCode))]);
    
   return (
     <div className=' flex flex-col overflow-hidden'>
         <Navbar/>   
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className='px-10 md:px-14 lg:px-20  py-4 flex justify-between'>
-                <div>
-                    <h1 className='text-xl font-medium text-primary'>Registrars of Companies - {capitalView === 'graph'? 'Graph View' : 'Table View'} </h1>
-                </div>
-                <div className='flex items-center gap-10'>
-                    <div className='flex items-center gap-4'>
-                        <h1 className='text-secondary'>Filter by:</h1>
-                        <select
-                            onChange={(e)=> setSelectedState(e.target.value)}
-                            className='border  py-1.5 text-center  text-secondary rounded-lg border-border-primary' >
-                            <option value="">State</option>
-                            {indianStates.map((state, index) => (
-                                <option key={index} value={state}>{state}</option>
-                            ))}
-                        </select>
+            <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
+                {/* Heading */}
+                <h1 className="text-lg md:text-xl font-medium text-primary flex-1">
+                    Registrars of Companies - {capitalView === 'graph' ? 'Graph View' : 'Table View'}
+                </h1>
+
+                {/* Filter + Toggle Wrapper */}
+                <div className="flex flex-wrap items-center gap-6">
+                    {/* Filter */}
+                    <div className="flex items-center gap-3">
+                    <h1 className="text-secondary text-sm md:text-base">Filter by:</h1>
+                    <select
+                        onChange={(e) => setSelectedState(e.target.value)}
+                        className="border py-1.5 px-3 text-secondary rounded-lg border-border-primary text-sm"
+                    >
+                        <option value="">State</option>
+                        {indianStates.map((state, index) => (
+                        <option key={index} value={state}>{state}</option>
+                        ))}
+                    </select>
                     </div>
 
-                    {/* Toggle */}
-                    <div className='flex rounded-lg items-center overflow-hidden border border-gray-300'>
-                        <button
-                            onClick={() => handleChangeView('graph')}
-                            className={`px-8 py-1.5 text-sm ${
-                                capitalView === 'graph'
-                                    ? 'bg-bg-primary text-white'
-                                    : 'bg-gray-100 text-secondary'
-                            }`}  >
-                            Graph
-                        </button>
-                        <button
-                            onClick={() => handleChangeView('table')}
-                            className={`px-8 py-1.5 text-sm ${
-                                capitalView === 'table'
-                                    ? 'bg-bg-primary text-white'
-                                    : 'bg-gray-100 text-secondary'
-                            }`}  >
-                            Table
-                        </button>
+                    {/* Toggle Buttons */}
+                    <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
+                    <button
+                        onClick={() => handleChangeView("graph")}
+                        className={`px-6 py-1.5 text-sm ${
+                        capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"
+                        }`}
+                    >
+                        Graph
+                    </button>
+                    <button
+                        onClick={() => handleChangeView("table")}
+                        className={`px-6 py-1.5 text-sm ${
+                        capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"
+                        }`}
+                    >
+                        Table
+                    </button>
                     </div>
                 </div>
+                </div>
 
-                
-            </div>
-            <div className='text-secondary px-10  md:px-14  lg:px-20 text-sm'>
-                <h6 >Visualize key insights from company registration data, including capital distribution, company status, and registration trends over time. The graphs help you quickly understand overall patterns across construction-related businesses.The graphs help you quickly understand overall patterns across construction-related businesses.</h6>
-            </div>
+                {/* Description */}
+                <div className="text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed">
+                <h6>
+                    Visualize key insights from company registration data, including capital distribution,
+                    company status, and registration trends over time. The graphs help you quickly understand
+                    patterns across construction-related businesses.
+                </h6>
+                </div>
+
             {/* conditionally rendering graphs and table */}
            <div>
             {capitalView === 'graph' ? (
@@ -151,19 +157,39 @@ const index = () => {
 
            </div>
            {/* pagination block */}
-           <div className="flex justify-center gap-2 ">
-            {pageNumbers.map((number) => (
-                <button key={number} onClick={() => setCurrentPage(number)} className={`px-3 py-1 rounded ${
-                    currentPage === number ? 'bg-bg-primary text-white' : 'bg-gray-200 text-gray-700'
-                }`}
+           <div className="flex items-center justify-center gap-8 py-3">
+                {/* Prev Button */}
+                <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-10 shadow-sm py-1 rounded-lg ${
+                    currentPage === 1
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-gray-300 text-secondary cursor-pointer"
+                    }`}
                 >
-                {number}
+                    Prev
                 </button>
-            ))}
-            </div>
+
+                {/* Middle text */}
+                <span className="text-secondary font-medium text-sm sm:text-base">
+                    Page {currentPage} of {totalPages}
+                </span>
+
+                {/* Next Button */}
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`px-10 py-1 rounded-lg shadow-sm ${
+                    currentPage === totalPages
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-gray-300 text-secondary cursor-pointer"
+                    }`}
+                >
+                    Next
+                </button>
+                </div>
+
         </div>
     </div>
   )
 }
 
-export default index
+export default Dashboard
