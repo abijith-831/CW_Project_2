@@ -131,20 +131,23 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   };
 
   const removeTag = (tag: Tag) => {
-    if(selectedTags.length <= 1){
-      enqueueSnackbar("Keep atleast one column in table", { variant: "error" });
-      return
-    }
-    const col = table.getAllColumns().find(
-      (c: any) =>
-        (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
-    );
-    col?.toggleVisibility();
-    
-    
-
-    setSelectedTags(selectedTags.filter(t => t.topic !== tag.topic));
-  };
+  if(selectedTags.length <= 1){
+    enqueueSnackbar("Keep atleast one column in table", { variant: "error" });
+    return
+  }
+  const col = table.getAllColumns().find(
+    (c: any) =>
+      (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
+  );
+  col?.toggleVisibility();
+  
+  // Update local state and dispatch to Redux
+  const updatedTags = selectedTags.filter(t => t.topic !== tag.topic);
+  setSelectedTags(updatedTags);
+  
+  // Dispatch to Redux
+  dispatch(updateSelectedColumns(updatedTags.map(t => t.topic)));
+};
   
 
   const filteredTags = allTags.filter(tag =>
