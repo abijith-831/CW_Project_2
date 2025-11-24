@@ -38,8 +38,6 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
     PaidupCapital: true,
     CompanyStatus:true,
 
-
-    // remaining hidden initially
     CIN: false,
     CompanyROCcode: false,
     CompanyRegistrationdate_date: false,
@@ -145,7 +143,7 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
         <h1 className='text-secondary text-xl'>Registrars of Companies (RoC)-wise Company Master Data</h1>
         
         {/* Column Visibility Dropdown */}
-        <div className="relative ">
+        <div className="relative max-w-lg">
             <TagMultiSelectPage table={table}/>
         </div>
       </div>
@@ -178,7 +176,7 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
             </div>
           ))}
         </div>
-
+ 
         {/* body */}
         <div className="table-row-group text-sm">
           {table.getRowModel().rows.map(row => (

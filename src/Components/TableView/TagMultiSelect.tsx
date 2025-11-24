@@ -57,7 +57,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   }, []);
 
   
-  
+
   useEffect(() => {
     const columns = table
       ?.getAllColumns()
@@ -155,7 +155,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 
 
   return (
-    <div className="w-full max-w-2xl" ref={wrapperRef}>
+    <div className="w-full max-w-xl" ref={wrapperRef}>
       <div className="relative">
         <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 bg-white rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
             {/* Show only first 3 selected tags */}
@@ -178,15 +178,16 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
               <span className="text-xs ml-1 text-slate-600"> +{selectedTags.length - 3} more</span>
             )}
 
-            <input
-              ref={inputRef}
-              type="text"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              onFocus={() => setIsOpen(true)}
-              placeholder={selectedTags.length === 0 ? "Select columns..." : ""}
-              className="flex-grow bg-transparent outline-none text-sm"
-            />
+            {selectedTags.length <= 3 && (
+              <input
+                ref={inputRef}
+                type="text"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                onFocus={() => setIsOpen(true)}
+                placeholder={selectedTags.length === 0 ? "Select columns..." : ""}
+                className="flex-1 bg-transparent outline-none text-sm min-w-[60px]" />
+            )}
           </div>
 
 
