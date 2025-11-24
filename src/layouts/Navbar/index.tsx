@@ -5,6 +5,7 @@ import { logout , updateSearchQuery} from "../../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { supabase } from "../../api/supabase";
 import { useSnackbar } from "notistack";
+import { useSelector } from "react-redux";
 
 
 const ProfileIcon = () => <img src="./logos/user.svg" alt="profile" className="h-8 w-8 rounded-full" />;
@@ -13,6 +14,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar();
+  const searchQuery = useSelector((state:any) => state.auth.currentUser?.search_query);
+
 
   const handleLogout = async () => {
     try {
@@ -53,6 +56,7 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Start search here..."
+            value={searchQuery}
             onChange={(e)=>dispatch(updateSearchQuery(e.target.value))}
             className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
