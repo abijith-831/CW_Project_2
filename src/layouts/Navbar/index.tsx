@@ -36,40 +36,39 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative flex items-center w-full py-6 bg-bg-primary px-8 dark:bg-gray-500">
-  {/* left */}
-  <div className="flex items-center gap-4">
-    <img src="./logos/Vector.svg" alt="Logo" className="h-8 w-8" />
-    <span className="text-xl font-bold text-white ">Amorphic</span>
-  </div>
+    <nav className="relative flex items-center w-full py-6 bg-bg-primary px-4 sm:px-6 lg:px-8 dark:bg-gray-500">
+      {/* left */}
+      <div className="flex items-center gap-2 sm:gap-4">
+        <img src="./logos/Vector.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+        <span className="text-lg sm:text-xl font-bold text-white">Amorphic</span>
+      </div>
 
-  {/* center: search bar */}
-  <div className="absolute left-1/2 transform -translate-x-1/2 w-1/3">
-    <div className="relative w-[80%]">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2">
-        <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
-      </span>
-      <input
-        type="text"
-        placeholder="Start search here..."
-        className="w-full pl-20 pr-4 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-  </div>
+      {/* center: search bar - hidden on mobile, shown on md+ */}
+      <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1/3">
+        <div className="relative w-[80%]">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2">
+            <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
+          </span>
+          <input
+            type="text"
+            placeholder="Start search here..."
+            className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
 
-  {/* right */}
-  <div className="flex items-center gap-4 ml-auto">
-    <ThemeToggle/>
-    <ProfileIcon />
-    <button
-      onClick={handleLogout}
-      className="px-3 py-1 rounded-lg border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 transition"
-    >
-      Logout
-    </button>
-  </div>
-</nav>
-
+      {/* right */}
+      <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+        <ThemeToggle/>
+        <ProfileIcon />
+        <button
+          onClick={handleLogout}
+          className="px-2 sm:px-3 py-1 text-sm sm:text-base rounded-lg border border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-700 transition"
+        >
+          Logout
+        </button>
+      </div>
+    </nav>
   );
 };
 

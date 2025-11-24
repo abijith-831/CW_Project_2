@@ -169,7 +169,7 @@ const Dashboard = () => {
                 </button>
 
                 {/* Middle text */}
-                <span className="text-secondary font-medium text-sm sm:text-base">
+                <span className="text-secondary font-medium text-md sm:text-base">
                     Page {currentPage} of {totalPages}
                 </span>
 

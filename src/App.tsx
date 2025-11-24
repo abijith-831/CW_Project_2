@@ -56,6 +56,7 @@ import { SnackbarProvider } from 'notistack'
 import ProtectedRoute from './utils/ProtectedRoute';
 import PublicRoute from './utils/PublicRoute';
 import SettingsPage from './page/SettingsPage';
+import NotFound from './page/404';
 // import { useTheme } from './hooks/useTheme';
 
 
@@ -71,6 +72,7 @@ const App = () => {
           <Route path='/login' element={<PublicRoute><Login /></PublicRoute>}/>
           <Route path='/signup' element={<PublicRoute><SignUp /></PublicRoute>}/>
 
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </SnackbarProvider>
     </div>

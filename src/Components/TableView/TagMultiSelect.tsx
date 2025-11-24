@@ -175,7 +175,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 
             {/* If more than 3 → show text */}
             {selectedTags.length > 3 && (
-              <span className="text-xs ml-1 text-slate-600"> +{selectedTags.length - 3} more</span>
+              <span className="text-xs ml-1 text-secondary"> +{selectedTags.length - 3} more</span>
             )}
 
             {selectedTags.length <= 3 && (
