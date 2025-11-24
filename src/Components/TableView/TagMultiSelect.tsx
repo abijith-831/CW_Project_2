@@ -56,10 +56,24 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // load column list as tags
+  
+  
+  useEffect(() => {
+    const columns = table
+      ?.getAllColumns()
+      ?.filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
+      
+    setAllTags(columns || []);
+  }, [table]);
+
+  // Load column list as tags
   useEffect(() => {
   if (selectedColumnNames && selectedColumnNames.length > 0) {
-    // get all available columns
+    // Get all available columns
     const columns = table
       ?.getAllColumns()
       ?.filter((col: any) => col.getCanHide())
@@ -68,15 +82,15 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
         count: 0,
       }));
 
-    // filter columns that matches the redux selected columns
+    // Filter columns that match the Redux selected columns
     const columnsToShow = columns?.filter((col: Tag) => 
       selectedColumnNames.includes(col.topic)
     ) || [];
 
-    // update local state
+    // Update local state
     setSelectedTags(columnsToShow);
 
-    // update table column visibility
+    // Update table column visibility
     table?.getAllColumns()?.forEach((col: any) => {
       const colName = typeof col.columnDef.header === "string" 
         ? col.columnDef.header 
