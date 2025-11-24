@@ -10,6 +10,7 @@ const Dashboard = () => {
 
   const dispatch = useDispatch()
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
+  const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
 
   const [companyData , setCompanyData] = useState<any[]>([])
   const [loading , setLoading] = useState(true)
@@ -20,10 +21,20 @@ const Dashboard = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = companyData.slice(indexOfFirstItem,indexOfLastItem)
+
+  const filteredData = companyData.filter((item) => {
+    const matchesState = selectedState ? item.CompanyStateCode?.toLowerCase() === selectedState.toLowerCase() : true;
+    const matchesSearch = searchQuery
+        ? item.CompanyName?.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+
+    return matchesState && matchesSearch;
+   });
+
+  const currentItems = filteredData.slice(indexOfFirstItem,indexOfLastItem)
 
 
-  const totalPages = Math.ceil(companyData.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const handleChangeView = (value : 'graph' | 'table')=>{
@@ -105,10 +116,7 @@ const Dashboard = () => {
                     {/* Filter */}
                     <div className="flex items-center gap-3">
                     <h1 className="text-secondary text-sm md:text-base">Filter by:</h1>
-                    <select
-                        onChange={(e) => setSelectedState(e.target.value)}
-                        className="border py-1.5 px-3 text-secondary rounded-lg border-border-primary text-sm"
-                    >
+                    <select  onChange={(e) => setSelectedState(e.target.value)} className="border py-1.5 px-3 text-secondary rounded-lg border-border-primary text-sm" >
                         <option value="">State</option>
                         {indianStates.map((state, index) => (
                         <option key={index} value={state}>{state}</option>
@@ -118,20 +126,10 @@ const Dashboard = () => {
 
                     {/* Toggle Buttons */}
                     <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
-                    <button
-                        onClick={() => handleChangeView("graph")}
-                        className={`px-6 py-1.5 text-sm ${
-                        capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"
-                        }`}
-                    >
+                    <button onClick={() => handleChangeView("graph")} className={`px-6 py-1.5 text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
                         Graph
                     </button>
-                    <button
-                        onClick={() => handleChangeView("table")}
-                        className={`px-6 py-1.5 text-sm ${
-                        capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"
-                        }`}
-                    >
+                    <button onClick={() => handleChangeView("table")} className={`px-6 py-1.5 text-sm ${ capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"  }`} >
                         Table
                     </button>
                     </div>
@@ -163,8 +161,7 @@ const Dashboard = () => {
                     currentPage === 1
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-gray-300 text-secondary cursor-pointer"
-                    }`}
-                >
+                    }`}>
                     Prev
                 </button>
 
@@ -181,8 +178,7 @@ const Dashboard = () => {
                     currentPage === totalPages
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-gray-300 text-secondary cursor-pointer"
-                    }`}
-                >
+                    }`}>
                     Next
                 </button>
                 </div>

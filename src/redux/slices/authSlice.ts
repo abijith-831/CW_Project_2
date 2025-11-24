@@ -7,6 +7,7 @@ interface User {
   theme_preference?: string;
   capital_view?:string;
   selected_columns?:string[];
+  search_query?: string;
 }
 
 interface UserState {
@@ -56,11 +57,16 @@ const authSlice = createSlice({
         state.currentUser.selected_columns = action.payload;
       }
     },
+    updateSearchQuery(state, action: PayloadAction<string>) {
+      if (state.currentUser) {
+        state.currentUser.search_query = action.payload;
+      }
+    },
     setError(state) {
       state.error = true;
     }
   },
 });
 
-export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns} = authSlice.actions;
+export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns , updateSearchQuery} = authSlice.actions;
 export default authSlice.reducer;
