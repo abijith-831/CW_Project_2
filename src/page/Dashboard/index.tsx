@@ -88,10 +88,7 @@ const index = () => {
            {/* pagination block */}
            <div className="flex justify-center gap-2 ">
             {pageNumbers.map((number) => (
-                <button
-                key={number}
-                onClick={() => setCurrentPage(number)}
-                className={`px-3 py-1 rounded ${
+                <button key={number} onClick={() => setCurrentPage(number)} className={`px-3 py-1 rounded ${
                     currentPage === number ? 'bg-bg-primary text-white' : 'bg-gray-200 text-gray-700'
                 }`}
                 >
@@ -100,7 +97,6 @@ const index = () => {
             ))}
             </div>
         </div>
-   
     </div>
   )
 }

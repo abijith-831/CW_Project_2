@@ -25,8 +25,28 @@ interface CompanyDataProps {
 
 const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }> = ({ companyData, loading }) => {
   const [sorting, setSorting] = useState([])
-  const [columnVisibility, setColumnVisibility] = useState({})
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [columnVisibility, setColumnVisibility] = useState({
+    CompanyName: true,
+    CompanyIndustrialClassification: true,
+    Registered_Office_Address: true,
+    AuthorizedCapital: true,
+    PaidupCapital: true,
+    CompanyStatus:true,
+
+
+    // remaining hidden initially
+    CIN: false,
+    CompanyROCcode: false,
+    CompanyRegistrationdate_date: false,
+    CompanyCategory: false,
+    Listingstatus: false,
+    CompanyClass: false,
+    CompanyStateCode: false,
+    "CompanyIndian/Foreign Company": false,
+    nic_code: false,
+  })
 
   const columns = [
     {
@@ -90,9 +110,18 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
           {props.getValue()}
         </span>
       ),
-    }
+    },
+    { accessorKey: 'CIN', header: 'CIN' },
+    { accessorKey: 'CompanyROCcode', header: 'ROC Code' },
+    { accessorKey: 'CompanyRegistrationdate_date', header: 'Registration Date' },
+    { accessorKey: 'CompanyCategory', header: 'Category' },
+    { accessorKey: 'Listingstatus', header: 'Listing Status' },
+    { accessorKey: 'CompanyClass', header: 'Class' },
+    { accessorKey: 'CompanyStateCode', header: 'State Code' },
+    { accessorKey: 'CompanyIndianOrForeignCompany', header: 'Indian/Foreign' },
+    { accessorKey: 'nic_code', header: 'NIC Code' },
   ]
-
+  
   const table = useReactTable({
     data: companyData,
     columns,
