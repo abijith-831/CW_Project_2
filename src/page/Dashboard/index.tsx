@@ -29,7 +29,7 @@ const index = () => {
     setItemsPerPage(value === 'table' ? 10 : 6)
   }
 
-//   fetching company datas from api 
+  //   fetching company datas from api 
   useEffect(()=>{
     const fetchData = async ()=>{
         try {
@@ -56,14 +56,14 @@ const index = () => {
                     <div>
                         <h1>filter</h1>
                     </div>
-                    <div className='flex rounded-lg items-center overflow-hidden '>
-                        <button onClick={()=> handleChangeView('graph')} className={`flex items-center justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
+                    <div className='flex rounded-lg items-center overflow-hidden cursor-pointer'>
+                        <button onClick={()=> handleChangeView('graph')} className={`flex items-center cursor-pointer justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
                             ${capitalView === 'graph' ?
                                 'bg-bg-primary text-third '
                                 :
                                 'bg-gray-200 text-secondary'
                             }`}>Graph</button>
-                        <button onClick={()=> handleChangeView('table')} className={`flex items-center justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
+                        <button onClick={()=> handleChangeView('table')} className={`flex items-center cursor-pointer justify-center gap-2 px-3 md:px-5 lg:px-7 xl:px-10 py-1 md:py-1.5 lg:py-2 text-xs sm:text-sm lg:text-md 
                             ${capitalView === 'table' ?
                                 'bg-bg-primary text-white '
                                 :

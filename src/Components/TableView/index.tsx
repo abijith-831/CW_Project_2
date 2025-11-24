@@ -3,6 +3,7 @@ import { getCoreRowModel, useReactTable, flexRender, getSortedRowModel } from '@
 import React, { useState } from 'react'
 import './styles.css'
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import TagMultiSelectPage from './TagMultiSelect';
 
 interface CompanyDataProps {
   AuthorizedCapital: string;
@@ -22,6 +23,8 @@ interface CompanyDataProps {
   Registered_Office_Address: string;
   nic_code: string;
 }
+
+
 
 const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }> = ({ companyData, loading }) => {
   const [sorting, setSorting] = useState([])
@@ -44,9 +47,10 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
     Listingstatus: false,
     CompanyClass: false,
     CompanyStateCode: false,
-    "CompanyIndian/Foreign Company": false,
     nic_code: false,
   })
+
+  
 
   const columns = [
     {
@@ -101,9 +105,9 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
         <span
           className={`px-3 py-1 rounded-md text-xs font-semibold
             ${props.getValue() === "Active"
-              ? "bg-green-200 text-badge"
+              ? "bg-[#DDEFD0] text-badge"
               : props.getValue() === "Strike Off"
-                ? "bg-red-200 text-badge"
+                ? "bg-[#EFCBC6] text-badge"
                 : "bg-blue-200 text-badge"
             }`}
         >
@@ -118,7 +122,6 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
     { accessorKey: 'Listingstatus', header: 'Listing Status' },
     { accessorKey: 'CompanyClass', header: 'Class' },
     { accessorKey: 'CompanyStateCode', header: 'State Code' },
-    { accessorKey: 'CompanyIndianOrForeignCompany', header: 'Indian/Foreign' },
     { accessorKey: 'nic_code', header: 'NIC Code' },
   ]
   
@@ -137,32 +140,13 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
   })
 
   return (
-    <div className='px-20 py-4'>
+    <div className='px-20 py-4 w-full'>
       <div className='flex items-center justify-between py-4'>
         <h1 className='text-secondary text-xl'>Registrars of Companies (RoC)-wise Company Master Data</h1>
         
         {/* Column Visibility Dropdown */}
-        <div className="relative">
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className='border px-12 py-2 border-border-secondary rounded-md text-secondary bg-white'>
-            Select Columns...
-          </button>
-          
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-border-secondary rounded-md shadow-lg z-10">
-              <div className="p-2">
-                {table.getAllColumns()
-                  .filter(column => column.getCanHide())
-                  .map((column) => (
-                    <label  key={column.id}  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded cursor-pointer">
-                      <input type="checkbox" checked={column.getIsVisible()} onChange={column.getToggleVisibilityHandler()} className="cursor-pointer"/>
-                      <span className="text-sm text-secondary">
-                        {typeof column.columnDef.header === 'string'  ? column.columnDef.header  : column.id}
-                      </span>
-                    </label>
-                  ))}
-              </div>
-            </div>
-          )}
+        <div className="relative ">
+            <TagMultiSelectPage table={table}/>
         </div>
       </div>
 

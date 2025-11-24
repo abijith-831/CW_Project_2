@@ -18,8 +18,7 @@ const GraphView: React.FC<GraphViewProps> = ({ companyData, loading }) => {
             <div key={index} className="w-[450px]  md:w-full mx-auto">
               <SkeletonLoaderGraph />
             </div>
-          ))}
-
+        ))}
         
         {!loading &&
           companyData?.map((company, index) => (

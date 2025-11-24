@@ -6,6 +6,7 @@ interface User {
   language_preference?: string;
   theme_preference?: string;
   capital_view?:string;
+  selected_columns?:string[];
 }
 
 interface UserState {
@@ -50,12 +51,16 @@ const authSlice = createSlice({
         state.currentUser.capital_view = action.payload;
       }
     },
-
+    updateSelectedColumns(state,action){
+      if(state.currentUser){
+        state.currentUser.selected_columns = action.payload;
+      }
+    },
     setError(state) {
       state.error = true;
     }
   },
 });
 
-export const { loginSuccess, logout, setError , updateCapitalView} = authSlice.actions;
+export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns} = authSlice.actions;
 export default authSlice.reducer;

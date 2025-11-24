@@ -1,42 +1,107 @@
-const [columnVisibility, setColumnVisibility] = useState({
-  CIN: true,
-  CompanyName: true,
-  CompanyROCcode: true,
-  CompanyCategory: true,
-  CompanyClass: true,
+To reload the selected columns from Redux and show them in the TagMultiSelect component, you need to sync the Redux state with the component's local state and table visibility. Here's how to modify your code:
+javascript// Add this useEffect to sync Redux state with component state
+useEffect(() => {
+  if (selectedColumnNames && selectedColumnNames.length > 0) {
+    // Get all available columns
+    const columns = table
+      ?.getAllColumns()
+      ?.filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
 
-  // remaining hidden initially
-  AuthorizedCapital: false,
-  PaidupCapital: false,
-  CompanyRegistrationdate_date: false,
-  Registered_Office_Address: false,
-  Listingstatus: false,
-  CompanyStatus: false,
-  CompanyStateCode: false,
-  "CompanyIndian/Foreign Company": false,
-  nic_code: false,
-  CompanyIndustrialClassification: false
-})
+    // Filter columns that match the Redux selected columns
+    const columnsToShow = columns?.filter((col: Tag) => 
+      selectedColumnNames.includes(col.topic)
+    ) || [];
 
-const table = useReactTable({
-  data,
-  columns,
-  state: { columnVisibility },
-  onColumnVisibilityChange: setColumnVisibility,
-  getCoreRowModel: getCoreRowModel(),
-})
+    // Update local state
+    setSelectedTags(columnsToShow);
 
+    // Update table column visibility
+    table?.getAllColumns()?.forEach((col: any) => {
+      const colName = typeof col.columnDef.header === "string" 
+        ? col.columnDef.header 
+        : col.id;
+      
+      if (col.getCanHide()) {
+        const shouldBeVisible = selectedColumnNames.includes(colName);
+        if (col.getIsVisible() !== shouldBeVisible) {
+          col.toggleVisibility();
+        }
+      }
+    });
+  }
+}, [selectedColumnNames, table]);
+Add this useEffect in your TagMultiSelect component, after the existing useEffect hooks. This will:
 
-{table.getAllColumns()
-  .filter(column => column.getCanHide())
-  .map(column => (
-    <label key={column.id} className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 rounded cursor-pointer">
-      <input
-        type="checkbox"
-        checked={column.getIsVisible()}
-        onChange={column.getToggleVisibilityHandler()}
-      />
-      <span>{typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}</span>
-    </label>
-  ))
-}
+Listen to Redux changes: Watches selectedColumnNames from Redux
+Update local state: Sets selectedTags based on Redux values
+Sync table visibility: Makes sure the table columns match the Redux state
+
+Full updated component section:
+javascriptconst TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch()
+  const selectedColumnNames = useSelector((state:any)=> state.auth.currentUser?.selected_columns)
+
+  // Existing useEffect for click outside...
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Load column list as tags
+  useEffect(() => {
+    const columns = table
+      ?.getAllColumns()
+      ?.filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
+      
+    setAllTags(columns || []);
+  }, [table]);
+
+  // NEW: Sync Redux selected columns with component state and table visibility
+  useEffect(() => {
+    if (selectedColumnNames && selectedColumnNames.length > 0 && allTags.length > 0) {
+      // Filter columns that match the Redux selected columns
+      const columnsToShow = allTags.filter((col: Tag) => 
+        selectedColumnNames.includes(col.topic)
+      );
+
+      // Update local state
+      setSelectedTags(columnsToShow);
+
+      // Update table column visibility
+      table?.getAllColumns()?.forEach((col: any) => {
+        const colName = typeof col.columnDef.header === "string" 
+          ? col.columnDef.header 
+          : col.id;
+        
+        if (col.getCanHide()) {
+          const shouldBeVisible = selectedColumnNames.includes(colName);
+          if (col.getIsVisible() !== shouldBeVisible) {
+            col.toggleVisibility();
+          }
+        }
+      });
+    }
+  }, [selectedColumnNames, allTags, table]);
+
+  // Rest of your component code...

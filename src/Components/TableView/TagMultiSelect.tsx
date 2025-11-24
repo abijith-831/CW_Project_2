@@ -1,0 +1,221 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useSnackbar } from "notistack";
+import { useDispatch , useSelector } from 'react-redux';
+import { updateSelectedColumns } from '../../redux/slices/authSlice';
+
+
+interface Tag {
+  topic: string;
+  count: number;
+  color?: string;
+}
+
+const XIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+    <path d="M20 6 9 17l-5-5"/>
+  </svg>
+);
+
+const TagIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+    <path d="M7 7h.01"/>
+  </svg>
+);
+
+interface TagMultiSelectProps {
+  table: any;
+}
+
+const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch()
+  const selectedColumnNames = useSelector((state:any)=> state.auth.currentUser?.selected_columns)
+
+  // when clicking outside modal closes
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // load column list as tags
+  useEffect(() => {
+  if (selectedColumnNames && selectedColumnNames.length > 0) {
+    // get all available columns
+    const columns = table
+      ?.getAllColumns()
+      ?.filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
+
+    // filter columns that matches the redux selected columns
+    const columnsToShow = columns?.filter((col: Tag) => 
+      selectedColumnNames.includes(col.topic)
+    ) || [];
+
+    // update local state
+    setSelectedTags(columnsToShow);
+
+    // update table column visibility
+    table?.getAllColumns()?.forEach((col: any) => {
+      const colName = typeof col.columnDef.header === "string" 
+        ? col.columnDef.header 
+        : col.id;
+      
+      if (col.getCanHide()) {
+        const shouldBeVisible = selectedColumnNames.includes(colName);
+        if (col.getIsVisible() !== shouldBeVisible) {
+          col.toggleVisibility();
+        }
+      }
+    });
+  }
+}, [selectedColumnNames, table]);
+
+  // Toggle visibility handler
+  const toggleTag = (tag: Tag) => {
+    const col = table.getAllColumns().find(
+      (c: any) =>
+        (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
+    );
+    col?.toggleVisibility();
+
+    setSelectedTags(prev => {
+      const updated = prev.some(t => t.topic === tag.topic)
+        ? prev.filter(t => t.topic !== tag.topic)
+        : [...prev, tag]
+
+        console.log('working');
+        
+        dispatch(updateSelectedColumns(updated.map(t=>t.topic)))
+
+        return updated
+    });
+
+    setSearchTerm('');
+    inputRef.current?.focus();
+  };
+
+  const removeTag = (tag: Tag) => {
+    if(selectedTags.length <= 1){
+      enqueueSnackbar("Keep atleast one column in table", { variant: "error" });
+      return
+    }
+    const col = table.getAllColumns().find(
+      (c: any) =>
+        (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
+    );
+    col?.toggleVisibility();
+    
+    
+
+    setSelectedTags(selectedTags.filter(t => t.topic !== tag.topic));
+  };
+  
+
+  const filteredTags = allTags.filter(tag =>
+    !selectedTags.some(t => t.topic === tag.topic) &&
+    tag.topic.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  
+
+
+  return (
+    <div className="w-full max-w-2xl" ref={wrapperRef}>
+      <div className="relative">
+        <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 bg-white rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
+            {/* Show only first 3 selected tags */}
+            {selectedTags.slice(0, 3).map(tag => (
+              <div key={tag.topic} className="flex items-center gap-1.5 bg-[#97bdbd] cursor-pointer font-medium px-2 py-1 rounded-full text-xs">
+                <TagIcon />
+                {tag.topic}
+                <button  type="button"  disabled={selectedTags.length <= 1} className={`cursor-pointer hover:bg-green-700 rounded-full ${
+                    selectedTags.length <= 1 ? "opacity-40 cursor-not-allowed" : ""
+                  }`}
+                  onClick={e => { e.stopPropagation();
+                    if (selectedTags.length > 1) removeTag(tag);  }} >
+                  <XIcon />
+                </button>
+              </div>
+            ))}
+
+            {/* If more than 3 → show text */}
+            {selectedTags.length > 3 && (
+              <span className="text-xs ml-1 text-slate-600"> +{selectedTags.length - 3} more</span>
+            )}
+
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              onFocus={() => setIsOpen(true)}
+              placeholder={selectedTags.length === 0 ? "Select columns..." : ""}
+              className="flex-grow bg-transparent outline-none text-sm"
+            />
+          </div>
+
+
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-2 max-h-60 overflow-y-auto bg-white border rounded-md shadow-lg">
+            <ul className="p-1 space-y-1">
+              {allTags.length > 0 ? (
+                allTags .filter(tag =>
+                    tag.topic.toLowerCase().includes(searchTerm.toLowerCase())
+                  ) .map((tag) => {
+                    const checked = selectedTags.some(t => t.topic === tag.topic);
+                    return (
+                      <li key={tag.topic} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50" >
+                        <input  type="checkbox"  checked={checked}  onChange={() => {    if (checked) {
+                              removeTag(tag);
+                            } else {
+                              toggleTag(tag);
+                            }
+                          }}  className="cursor-pointer" />
+                        <label className="flex-1 cursor-pointer" onClick={() => {   if (checked) removeTag(tag);  else toggleTag(tag);  }}>
+                          {tag.topic}
+                        </label>
+                      </li>
+                    );
+                  })
+              ) : (
+                <li className="p-2 text-center text-gray-500">No columns found.</li>
+              )}
+            </ul>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+};
+
+export default function TagMultiSelectPage({ table }: { table: any }) {
+  return (
+    <div className=" text-sm">
+      <div className="w-full max-w-2xl">
+        <TagMultiSelect table={table} />
+      </div>
+    </div>
+  );
+}
