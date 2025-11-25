@@ -1,57 +1,463 @@
-const [isEdit, setIsEdit] = useState(false);
-👉 Step 2: Load userInfo into form (react-hook-form setValue)
-ts
-Copy code
-const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+ou a clean way to add cropping in your SettingsPage.
 
-useEffect(() => {
-  if (userInfo) {
-    setValue("fullName", userInfo.full_name);
-    setValue("nickName", userInfo.nick_name);
-    setValue("gender", userInfo.gender);
-    setValue("country", userInfo.country);
-    setValue("language", userInfo.language_preference);
-    setValue("theme", userInfo.theme_preference);
+1️⃣ Add cropper state
+const [cropper, setCropper] = useState<CropperRef | null>(null)
+const [croppedImage, setCroppedImage] = useState<File | null>(null)
+const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+
+cropper – reference to the cropper instance.
+
+croppedImage – final file to upload.
+
+previewUrl – shows live preview in the <img>.
+
+2️⃣ Update handleFileChange to load cropper
+const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (file.size > 2 * 1024 * 1024) {
+    enqueueSnackbar('Image should be less than 2 MB', { variant: 'error' })
+    return
   }
-}, [userInfo, setValue]);
-👉 Step 3: Disable inputs when not editing
-Add disabled={!isEdit} to every input & select:
 
-jsx
-Copy code
-<input
-  {...register("fullName", { required: true })}
-  disabled={!isEdit}
-  className={`w-full px-4 py-2 text-secondary bg-bg-input rounded-md 
-    ${!isEdit && "opacity-50 cursor-not-allowed"}`}
+  setSelectedFile(file)
+  setPreviewUrl(URL.createObjectURL(file))
+}
+
+3️⃣ Show the cropper when a file is selected
+
+Inside your JSX:
+
+{selectedFile && isEdit ? (
+  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 rounded-full">
+    <Cropper
+      src={previewUrl!}
+      ref={setCropper}
+      className="w-20 h-20 rounded-full"
+      stencilProps={{ aspectRatio: 1, movable: true, resizable: true }}
+    />
+
+    <button
+      type="button"
+      onClick={() => {
+        if (!cropper) return
+        const canvas = cropper.getCanvas() // get cropped canvas
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], selectedFile.name, { type: selectedFile.type })
+            setCroppedImage(file)
+            setPreviewUrl(URL.createObjectURL(file)) // update preview
+            setSelectedFile(null) // close cropper
+          }
+        })
+      }}
+      className="mt-2 px-3 py-1 text-xs bg-blue-600 text-white rounded"
+    >
+      Crop
+    </button>
+  </div>
+) : null}
+
+
+This will show the cropper on top of the profile image.
+
+The user can adjust the crop area and click Crop to get the final image.
+
+The croppedImage state now contains the file you can upload.
+
+4️⃣ Update onSubmit to upload cropped image
+
+Replace selectedFile with croppedImage:
+
+let profilePictureUrl = userInfo?.profile_picture || null
+
+if (croppedImage) {
+  const fileName = `${userInfo.id}_${Date.now()}_${croppedImage.name}`
+  const { error: uploadError } = await supabase.storage
+    .from('profile-pictures')
+    .upload(fileName, croppedImage, { cacheControl: '3600', upsert: true })
+
+  if (uploadError) throw uploadError
+
+  const { data: urlData } = supabase.storage
+    .from('profile-pictures')
+    .getPublicUrl(fileName)
+
+  profilePictureUrl = urlData.publicUrl
+}
+
+5️⃣ Update <img> to show live preview
+<img
+  src={previewUrl || userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+  alt="profile"
+  className="w-20 h-20 rounded-full object-cover border"
 />
-Same for select.
 
-👉 Step 4: Toggle Edit
-Replace your Edit button with:
 
-jsx
-Copy code
-<button
-  onClick={() => setIsEdit(!isEdit)}
-  className='px-12 py-1.5 rounded-md bg-border-secondary font-medium text-[#343333] hover:bg-secondary transition'>
-  {isEdit ? "Cancel" : "Edit"}
-</button>
-👉 Optional: Show Save button only when editing
-After the form fields:
+✅ Now you have:
 
-jsx
-Copy code
-{isEdit && (
-  <button
-    type="submit"
-    className="w-full py-2 rounded-md bg-primary text-white font-semibold"
-  >
-    Save Changes
-  </button>
-)}
-🧠 Resulting UX
-State	Fields	Buttons
-Initial	Disabled (readonly)	Edit
-After clicking Edit	Enabled	Save + Cancel
+Click-to-upload overlay.
 
+Cropper modal over the profile image.
+
+Cropped image saved to croppedImage state.
+
+Upload the cropped image along with other profile fields.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { CropperRef, Cropper } from 'react-advanced-cropper'
+import 'react-advanced-cropper/dist/style.css'
+
+const SettingsPage = () => {
+
+  const [isEdit, setIsEdit] = useState(false)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
+  const [cropperRef, setCropperRef] = useState<CropperRef | null>(null)
+  const [croppedImage, setCroppedImage] = useState<File | null>(null)
+
+  const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
+
+  // populate form
+  useEffect(() => {
+    if (userInfo) {
+      setValue("fullName", userInfo.full_name)
+      setValue("nickName", userInfo.nick_name)
+      setValue("gender", userInfo.gender)
+      setValue("country", userInfo.country)
+      setValue("language", userInfo.language_preference)
+      setValue("theme", userInfo.theme_preference)
+    }
+  }, [userInfo, setValue])
+
+  // handle file selection
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      alert("Something went wrong while selecting image")
+      return
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image should be less than 2 MB")
+      return
+    }
+
+    setSelectedFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+    setCroppedImage(null)
+    setShowCropper(true)
+  }
+
+  // handle cropping
+  const handleCrop = () => {
+    if (!cropperRef || !selectedFile) return
+    const canvas = cropperRef.getCanvas()
+    if (!canvas) return
+    
+    canvas.toBlob((blob) => {
+      if (!blob) return
+      const file = new File([blob], selectedFile.name, { type: selectedFile.type })
+      setCroppedImage(file)
+      setPreviewUrl(URL.createObjectURL(file))
+      setShowCropper(false)
+    })
+  }
+
+  // cancel cropping
+  const handleCancelCrop = () => {
+    setShowCropper(false)
+    setSelectedFile(null)
+    setPreviewUrl(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  // submit form
+  const onSubmit = async (data: any) => {
+    try {
+      let profilePictureUrl = userInfo?.profile_picture || null
+      const fileToUpload = croppedImage || selectedFile
+
+      if (fileToUpload) {
+        // Simulate upload
+        profilePictureUrl = URL.createObjectURL(fileToUpload)
+      }
+
+      const updatedUser = {
+        ...userInfo,
+        full_name: data.fullName,
+        nick_name: data.nickName,
+        gender: data.gender,
+        country: data.country,
+        language_preference: data.language,
+        theme_preference: data.theme,
+        profile_picture: profilePictureUrl
+      }
+
+      setUserInfo(updatedUser)
+      setIsEdit(false)
+      setSelectedFile(null)
+      setCroppedImage(null)
+      setPreviewUrl(null)
+      alert("User Profile Updated Successfully!")
+    } catch (error) {
+      console.error(error)
+      alert("Something went wrong!")
+    }
+  }
+
+  // Get display image
+  const getDisplayImage = () => {
+    if (croppedImage) return URL.createObjectURL(croppedImage)
+    if (selectedFile) return URL.createObjectURL(selectedFile)
+    if (userInfo?.profile_picture) return userInfo.profile_picture
+    return "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+  }
+
+  return (
+    <div className='min-h-screen flex flex-col bg-gray-50'>
+      {/* Navbar */}
+      <div className='bg-white shadow-sm px-4 sm:px-8 py-4 border-b'>
+        <h1 className='text-xl font-bold text-gray-800'>My App</h1>
+      </div>
+
+      <div className='flex flex-col lg:flex-row flex-1 gap-4 px-4 sm:px-8 lg:px-16 py-6 lg:py-8 overflow-auto'>
+        
+        {/* Left Image Section */}
+        <div className='w-full lg:w-1/2 h-64 lg:h-auto rounded-lg border bg-white shadow-md border-gray-200 flex items-center justify-center overflow-hidden'>
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800" alt="" className='w-full h-full object-cover'/>
+        </div>
+        
+        {/* Right Form Section */}
+        <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-6 lg:py-10 border bg-white shadow-md border-gray-200 overflow-auto'>
+          <h1 className='font-bold text-2xl text-center lg:text-left mb-8'>Profile & Settings</h1>
+
+          {/* Profile Banner */}
+          <div className='flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 p-6 sm:p-8 border border-gray-200 rounded-lg mb-8'>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full">
+              <div className="relative w-20 h-20">
+                <img
+                  src={getDisplayImage()}
+                  alt="profile"
+                  className="w-20 h-20 rounded-full object-cover border" />
+
+                {isEdit && (
+                  <div className="flex-col absolute inset-0 flex items-center justify-center rounded-full
+                                  bg-black/40 backdrop-blur-sm text-white text-sm font-medium cursor-pointer hover:bg-black/50 transition"
+                                  onClick={()=> fileInputRef.current?.click()}>
+                    <input type="file" className='hidden' accept='image/*' ref={fileInputRef} onChange={handleFileChange}/>
+                    <h1>Upload</h1>
+                    <p className='text-[10px]'>2 MB max</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="text-center sm:text-left flex-1">
+                <h2 className="text-xl font-semibold text-gray-800">{userInfo?.full_name || 'User'}</h2>
+                <p className="text-gray-500 text-sm">{userInfo?.email}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                if (!isEdit) {
+                  setIsEdit(true)
+                  setTimeout(() => setFocus("fullName"), 0)
+                } else {
+                  handleSubmit(onSubmit)()
+                }
+              }}
+              className='mt-4 cursor-pointer sm:mt-0 px-12 py-2 rounded-md bg-gray-200 font-medium text-gray-800 hover:bg-gray-300 transition' >
+              {isEdit ? 'Update' : 'Edit'}
+            </button>
+          </div>
+
+          {/* Form Fields */}
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm mb-1">Full Name</label>
+                <input
+                  {...register("fullName", {
+                    pattern: {
+                      value: /^[A-Za-z ]+$/,
+                      message: "Only alphabets and spaces are allowed"
+                    }
+                  })}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60"
+                  placeholder="Enter full name"  />
+                {errors.fullName && (
+                  <p className="text-red-500 text-xs mt-1">{String(errors.fullName.message)}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1">Nick Name</label>
+                <input
+                  {...register("nickName", {
+                    pattern: {
+                      value: /^[A-Za-z ]+$/,
+                      message: "Only alphabets and spaces are allowed"
+                    }
+                  })}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60"
+                  placeholder="Enter nick name"  />
+                {errors.nickName && (
+                  <p className="text-red-500 text-xs mt-1">{String(errors.nickName.message)}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm mb-1">Gender</label>
+                <select
+                  {...register("gender")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60" >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1">Country</label>
+                <select
+                  {...register("country")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60"  >
+                  <option value="">Select country</option>
+                  <option value="india">India</option>
+                  <option value="uae">UAE</option>
+                  <option value="usa">USA</option>
+                  <option value="uk">United Kingdom</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm mb-1">Language</label>
+                <select
+                  {...register("language")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60" >
+                  <option value="">Select language</option>
+                  <option value="en">English</option>
+                  <option value="ar">Arabic</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1">Theme</label>
+                <select
+                  {...register("theme")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:ring focus:ring-blue-200 disabled:opacity-60"  >
+                  <option value="">Select theme</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cropper Modal */}
+      {showCropper && previewUrl && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-800">Crop Image</h2>
+              <button 
+                onClick={handleCancelCrop}
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="flex-1 p-4 overflow-hidden">
+              <Cropper
+                ref={setCropperRef}
+                src={previewUrl}
+                className="w-full h-full"
+                stencilProps={{
+                  aspectRatio: 1,
+                  grid: true
+                }}
+                imageRestriction="stencil"
+              />
+            </div>
+            
+            <div className="p-4 border-t flex justify-end gap-3">
+              <button
+                onClick={handleCancelCrop}
+                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCrop}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium"
+              >
+                Apply Crop
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default SettingsPage

@@ -4,11 +4,19 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
 import { useSnackbar } from 'notistack'
+import { CropperRef, Cropper } from 'react-advanced-cropper';
+import 'react-advanced-cropper/dist/style.css'
 
 const SettingsPage = () => {
   const [userInfo, setUserInfo] = useState<any>(null)
   const [isEdit, setIsEdit] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  const [cropper , setCropper] = useState<CropperRef| null>(null)
+  const [croppedImage , setCroppedImage] = useState<File | null>(null)
+  const [previewUrl , setPreviewUrl] = useState<string | null>(null)
 
   const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
 
@@ -40,6 +48,35 @@ const SettingsPage = () => {
 
   const onSubmit = async (data: any) => {
     try {
+
+      let profilePictureUrl = userInfo?.profile_picture || null
+
+      console.log('seee',selectedFile);
+      
+
+      if (selectedFile) {
+        const fileName = `${userInfo.id}_${Date.now()}.jpg`;
+        const { error: uploadError } = await supabase.storage
+          .from('profile_pictures')
+          .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true })
+
+          console.log('eer',uploadError);
+          
+        if (uploadError) throw uploadError
+
+        const { data: urlData } = supabase.storage
+          .from('profile_pictures')
+          .getPublicUrl(fileName)
+
+          console.log('url',urlData);
+          
+
+        profilePictureUrl = urlData.publicUrl
+      }
+
+      console.log('profile',profilePictureUrl);
+      
+
       const res = await updateUserProfile({
         full_name: data.fullName,
         nick_name: data.nickName,
@@ -47,14 +84,35 @@ const SettingsPage = () => {
         country: data.country,
         language_preference: data.language,
         theme_preference: data.theme,
+        profile_picture: profilePictureUrl
       })
+
+      console.log('ressss',res);
+      
       setUserInfo(res)
       setIsEdit(false)
+      setSelectedFile(null)
       enqueueSnackbar("User Profile Updated Successfully!", { variant: "success" })
     } catch (error) {
       console.error(error)
       enqueueSnackbar("Something went wrong!", { variant: "error" })
     }
+  }
+
+  const handleFileChange = async (event : React.ChangeEvent<HTMLInputElement>) =>{
+    const file = event.target.files?.[0]
+
+    if (!file){
+      enqueueSnackbar("Something wrong while selecting image",{variant:'error'})
+      return
+    }
+
+    if(file.size > 2 * 1024 * 1024) {
+      enqueueSnackbar('Image should be less than 2 MB',{variant:'error'})
+      return
+    }
+
+    setSelectedFile(file)
   }
 
   return (
@@ -75,10 +133,23 @@ const SettingsPage = () => {
           {/* Profile Banner */}
           <div className='flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 p-6 sm:p-8 border border-border-secondary rounded-lg mb-8'>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full">
-              <img
-                src={userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
-                alt="profile"
-                className="w-20 h-20 rounded-full object-cover border"  />
+              <div className="relative w-20 h-20">
+                <img
+                  src={  selectedFile    ? URL.createObjectURL(selectedFile)   : userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"  }
+                  alt="profile"
+                  className="w-20 h-20 rounded-full object-cover border" />
+
+                {isEdit && (
+                  <div className=" flex-col absolute inset-0 flex items-center justify-center rounded-full
+                                  bg-white/10 backdrop-blur-xs border border-white/20 text-white text-sm font-medium cursor-pointer"
+                                  onClick={()=> fileInputRef.current?.click()}>
+                    <input type="file" className='hidden' accept='image/*' ref={fileInputRef} onChange={handleFileChange}/>
+                    <h1>Upload</h1>
+                    <p className='text-[10px] text-primary'>2 MB maximum</p>
+                  </div>
+                )}
+              </div>
+
               <div className="text-center sm:text-left flex-1">
                 <h2 className="text-xl font-semibold text-primary">{userInfo?.full_name || 'User'}</h2>
                 <p className="text-gray-500 text-sm">{userInfo?.email}</p>
@@ -94,7 +165,7 @@ const SettingsPage = () => {
                   handleSubmit(onSubmit)()
                 }
               }}
-              className='mt-4  sm:mt-0 px-12 py-2 rounded-md bg-border-secondary font-medium text-[#343333] hover:bg-secondary transition' >
+              className='mt-4 cursor-pointer  sm:mt-0 px-12 py-2 rounded-md bg-border-secondary font-medium text-[#343333] hover:bg-secondary transition' >
               {isEdit ? 'Update' : 'Edit'}
             </button>
           </div>
