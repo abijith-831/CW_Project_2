@@ -1,134 +1,201 @@
+import { supabase } from '../../api/supabase'
 import Navbar from '../../layouts/Navbar'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
+import { useSnackbar } from 'notistack'
 
 const SettingsPage = () => {
+  const [userInfo, setUserInfo] = useState<any>(null)
+  const [isEdit, setIsEdit] = useState(false)
+  const { enqueueSnackbar } = useSnackbar()
 
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
 
-  const onSubmit = (data: any) => {
-    console.log(data)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const data = await getUserProfile()
+
+        console.log('data',data);
+        
+        setUserInfo(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    if (userInfo) {
+      setValue("fullName", userInfo.full_name)
+      setValue("nickName", userInfo.nick_name)
+      setValue("gender", userInfo.gender)
+      setValue("country", userInfo.country)
+      setValue("language", userInfo.language_preference)
+      setValue("theme", userInfo.theme_preference)
+    }
+  }, [userInfo, setValue])
+
+  const onSubmit = async (data: any) => {
+    try {
+      const res = await updateUserProfile({
+        full_name: data.fullName,
+        nick_name: data.nickName,
+        gender: data.gender,
+        country: data.country,
+        language_preference: data.language,
+        theme_preference: data.theme,
+      })
+      setUserInfo(res)
+      setIsEdit(false)
+      enqueueSnackbar("User Profile Updated Successfully!", { variant: "success" })
+    } catch (error) {
+      console.error(error)
+      enqueueSnackbar("Something went wrong!", { variant: "error" })
+    }
   }
 
   return (
-    <div className='h-screen flex flex-col'>
+    <div className='min-h-screen flex flex-col bg-gray-50'>
       <Navbar />
 
-      <div className='flex flex-1 gap-4 px-16 py-8 overflow-hidden'>
+      <div className='flex flex-col lg:flex-row flex-1 gap-4 px-4 sm:px-8 lg:px-16 py-6 lg:py-8 overflow-auto'>
         
-        <div className='h-full w-1/2 rounded-lg border bg-white shadow-md border-border-secondary flex items-center justify-center'>
-          img
+        {/* Left Image Section */}
+        <div className='w-full lg:w-1/2 h-64 lg:h-auto rounded-lg border bg-white shadow-md border-border-secondary flex items-center justify-center overflow-hidden'>
+          <img src="/bg/today-bg.jpg" alt="" className='w-full h-full object-cover'/>
         </div>
         
-        {/* right box */}
-        <div className='h-full w-1/2 rounded-lg px-8 py-10 border bg-white shadow-md border-border-secondary overflow-auto'>
-            <h1 className='font-bold text-2xl text-center mb-10'>Profile & Settings</h1>
-          {/* profile banner */}
-          <div className='flex items-center justify-between p-8 rounded-lg  border-border-secondary  border mb-8'>
-            <div className='flex items-center gap-4'>
+        {/* Right Form Section */}
+        <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-6 lg:py-10 border bg-white shadow-md border-border-secondary overflow-auto'>
+          <h1 className='font-bold text-2xl text-center lg:text-left mb-8'>Profile & Settings</h1>
+
+          {/* Profile Banner */}
+          <div className='flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 p-6 sm:p-8 border border-border-secondary rounded-lg mb-8'>
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full">
               <img
-                src="https://cdn-icons-png.flaticon.com/512/3135/3135715.pn"
+                src={userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
                 alt="profile"
-                className='w-20 h-20 rounded-full object-cover border'
-              />
-              <div>
-                <h2 className='text-xl font-semibold text-primary'>Abhijith P</h2>
-                <p className='text-gray-500 text-sm'>abhijith@example.com</p>
+                className="w-20 h-20 rounded-full object-cover border"  />
+              <div className="text-center sm:text-left flex-1">
+                <h2 className="text-xl font-semibold text-primary">{userInfo?.full_name || 'User'}</h2>
+                <p className="text-gray-500 text-sm">{userInfo?.email}</p>
               </div>
             </div>
 
-            <button className='px-12 py-1.5 rounded-md bg-border-secondary font-bold text-[#343333] hover:bg-secondary transition'>
-              Edit
+            <button
+              onClick={() => {
+                if (!isEdit) {
+                  setIsEdit(true)
+                  setTimeout(() => setFocus("fullName"), 0)
+                } else {
+                  handleSubmit(onSubmit)()
+                }
+              }}
+              className='mt-4  sm:mt-0 px-12 py-2 rounded-md bg-border-secondary font-medium text-[#343333] hover:bg-secondary transition' >
+              {isEdit ? 'Update' : 'Edit'}
             </button>
           </div>
 
-          {/* form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 mt-10">
-
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Full Name</label>
                 <input
-                    {...register("fullName", { required: true })}
-                    className="w-full px-4 py-2 text-secondary  placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
-                    placeholder="Enter full name"
-                />
-                {errors.fullName && <p className="text-red-500 text-xs">Full Name is required</p>}
-                </div>
+                  {...register("fullName", {
+                    pattern: {
+                      value: /^[A-Za-z ]+$/,
+                      message: "Only alphabets and spaces are allowed"
+                    }
+                  })}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
+                  placeholder="Enter full name"  />
+                {errors.fullName && (
+                  <p className="text-red-500 text-xs">{String(errors.fullName.message)}</p>
+                )}
+              </div>
 
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Nick Name</label>
                 <input
-                    {...register("nickName")}
-                    className="w-full px-4 py-2 text-secondary  placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
-                    placeholder="Enter nick name"
-                />
-                </div>
+                  {...register("nickName", {
+                    pattern: {
+                      value: /^[A-Za-z ]+$/,
+                      message: "Only alphabets and spaces are allowed"
+                    }
+                  })}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
+                  placeholder="Enter nick name"  />
+                {errors.nickName && (
+                  <p className="text-red-500 text-xs">{String(errors.nickName.message)}</p>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Gender</label>
                 <select
-                    {...register("gender", { required: true })}
-                    className="w-full px-4 text-secondary  placeholder:text-secondary py-2 bg-bg-input  rounded-md focus:ring focus:ring-blue-200"
-                >
-                    <option value="" className='text-secondary'>Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
+                  {...register("gender")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
                 {errors.gender && <p className="text-red-500 text-xs">Gender is required</p>}
-                </div>
+              </div>
 
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Country</label>
                 <select
-                    {...register("country", { required: true })}
-                    className="w-full px-4 py-2 bg-bg-input text-secondary  placeholder:text-secondary rounded-md focus:ring focus:ring-blue-200"
-                >
-                    <option value="">Select country</option>
-                    <option value="india">India</option>
-                    <option value="uae">UAE</option>
-                    <option value="usa">USA</option>
-                    <option value="uk">United Kingdom</option>
+                  {...register("country")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"  >
+                  <option value="">Select country</option>
+                  <option value="india">India</option>
+                  <option value="uae">UAE</option>
+                  <option value="usa">USA</option>
+                  <option value="uk">United Kingdom</option>
                 </select>
                 {errors.country && <p className="text-red-500 text-xs">Country is required</p>}
-                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Language</label>
                 <select
-                    {...register("language", { required: true })}
-                    className="w-full px-4 py-2 text-secondary  placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
-                >
-                    <option value="" >Select language</option>
-                    <option value="english">English</option>
-                    <option value="arabic">Arabic</option>
-                    
+                  {...register("language")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
+                  <option value="">Select language</option>
+                  <option value="en">English</option>
+                  <option value="ar">Arabic</option>
                 </select>
                 {errors.language && <p className="text-red-500 text-xs">Language is required</p>}
-                </div>
+              </div>
 
-                <div>
+              <div>
                 <label className="block text-sm mb-1">Theme</label>
                 <select
-                    {...register("theme", { required: true })}
-                    className="w-full px-4 py-2 text-secondary  placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
-                >
-                    <option value="">Select theme</option>
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
+                  {...register("theme")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"  >
+                  <option value="">Select theme</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
                 </select>
                 {errors.theme && <p className="text-red-500 text-xs">Theme is required</p>}
-                </div>
+              </div>
             </div>
-
-            </form>
-
-
+          </form>
         </div>
       </div>
     </div>
