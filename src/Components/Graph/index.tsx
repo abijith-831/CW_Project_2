@@ -30,13 +30,10 @@ interface LabelsAboveBarsProps {
 }
 
 export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
-  console.log('company data:', company);
   
-  // Parse capital values from strings to numbers
   const authorizedCapital = parseFloat(company.AuthorizedCapital) || 0;
   const paidupCapital = parseFloat(company.PaidupCapital) || 0;
   
-  // Determine listing status
   const isListed = company.Listingstatus?.toLowerCase() === 'listed';
   
   return (

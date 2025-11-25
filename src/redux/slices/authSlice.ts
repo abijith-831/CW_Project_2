@@ -28,19 +28,30 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginSuccess(
-    state,
-    action: PayloadAction<{
-        user: User;
-        accessToken: string | null;
-        refreshToken: string | null;
-    }>
-    ) {
-    state.currentUser = action.payload.user;
-    state.accessToken = action.payload.accessToken;
-    state.refreshToken = action.payload.refreshToken;
-    state.error = false;
-    },
+   loginSuccess(
+        state,
+        action: PayloadAction<{
+          user: User;
+          accessToken: string | null;
+          refreshToken: string | null;
+        }>
+      ) {
+        state.currentUser = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+        state.error = false;
+
+        if (!state.currentUser.selected_columns || state.currentUser.selected_columns.length === 0) {
+          state.currentUser.selected_columns = [
+            "CompanyName",
+            "CIN",
+            "CompanyCategory",
+            "CompanySubcategory",
+            "CompanyStatus",
+            "Registered_Office_Address",
+          ];
+        }
+      },
     logout(state) {
       state.currentUser = null;
       state.accessToken = null;

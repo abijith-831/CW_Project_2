@@ -6,7 +6,12 @@ import { useSelector , useDispatch } from 'react-redux'
 import { updateCapitalView } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
 
-const Dashboard = () => {
+interface DashboardProps {
+  goToDetails: () => void;
+  onSelectCompany: (company: any) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) => {
 
   const dispatch = useDispatch()
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
@@ -71,8 +76,6 @@ const Dashboard = () => {
     "tripura",
    ];
 
-
-  //   fetching company datas from api 
   useEffect(() => {
   const fetchData = async () => {
     try {
@@ -104,6 +107,7 @@ const Dashboard = () => {
   return (
     <div className=' flex flex-col overflow-hidden'>
         <Navbar/>   
+        {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
                 {/* Heading */}
@@ -119,7 +123,7 @@ const Dashboard = () => {
                     <select  onChange={(e) => setSelectedState(e.target.value)} className="border py-1.5 px-3 text-secondary rounded-lg border-border-primary text-sm" >
                         <option value="">State</option>
                         {indianStates.map((state, index) => (
-                        <option key={index} value={state}>{state}</option>
+                        <option key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
                         ))}
                     </select>
                     </div>
@@ -148,9 +152,9 @@ const Dashboard = () => {
             {/* conditionally rendering graphs and table */}
            <div>
             {capitalView === 'graph' ? (
-                <GraphView companyData={currentItems} loading={loading} />
+                <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
                 ) : (
-                <TableView companyData={currentItems} loading={loading} />
+                <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
             )}
 
            </div>
@@ -182,7 +186,6 @@ const Dashboard = () => {
                     Next
                 </button>
                 </div>
-
         </div>
     </div>
   )

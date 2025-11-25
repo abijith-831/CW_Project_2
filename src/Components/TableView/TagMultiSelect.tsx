@@ -16,12 +16,6 @@ const XIcon = () => (
   </svg>
 );
 
-const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-    <path d="M20 6 9 17l-5-5"/>
-  </svg>
-);
-
 const TagIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
     <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
@@ -70,7 +64,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
     setAllTags(columns || []);
   }, [table]);
 
-  // Load column list as tags
+  // looad column list as tags
   useEffect(() => {
   if (selectedColumnNames && selectedColumnNames.length > 0) {
     // Get all available columns
@@ -82,12 +76,12 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
         count: 0,
       }));
 
-    // Filter columns that match the Redux selected columns
+    // filter columns that match the Redux selected columns
     const columnsToShow = columns?.filter((col: Tag) => 
       selectedColumnNames.includes(col.topic)
     ) || [];
 
-    // Update local state
+
     setSelectedTags(columnsToShow);
 
     // Update table column visibility
@@ -108,6 +102,13 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 
   // Toggle visibility handler
   const toggleTag = (tag: Tag) => {
+    const isSelected = selectedTags.some(t => t.topic === tag.topic);
+
+    if (isSelected && selectedTags.length <= 1) {
+      enqueueSnackbar("Keep atleast one column in table", { variant: "error" });
+      return;
+    }
+
     const col = table.getAllColumns().find(
       (c: any) =>
         (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
@@ -131,6 +132,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   };
 
   const removeTag = (tag: Tag) => {
+    
   if(selectedTags.length <= 1){
     enqueueSnackbar("Keep atleast one column in table", { variant: "error" });
     return
@@ -141,11 +143,10 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   );
   col?.toggleVisibility();
   
-  // Update local state and dispatch to Redux
   const updatedTags = selectedTags.filter(t => t.topic !== tag.topic);
-  setSelectedTags(updatedTags);
   
-  // Dispatch to Redux
+  setSelectedTags(updatedTags);
+
   dispatch(updateSelectedColumns(updatedTags.map(t => t.topic)));
 };
   
@@ -155,7 +156,6 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
     tag.topic.toLowerCase().includes(searchTerm.toLowerCase())
   )
   
-
 
   return (
     <div className="w-full max-w-xl" ref={wrapperRef}>

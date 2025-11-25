@@ -5,6 +5,7 @@ import { logout, updateSearchQuery } from "../../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../../api/supabase";
 import { useSnackbar } from "notistack";
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -12,9 +13,6 @@ const Navbar = () => {
   const { enqueueSnackbar } = useSnackbar();
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
   const user = useSelector((state: any) => state.auth.currentUser);
-
-  console.log("uer",user);
-  
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -38,10 +36,12 @@ const Navbar = () => {
   return (
     <nav className="relative flex items-center w-full py-6 bg-bg-primary px-4 sm:px-6 lg:px-8 dark:bg-gray-500">
       {/* left */}
-      <div className="flex items-center gap-2 sm:gap-4">
-        <img src="./logos/Vector.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
-        <span className="text-lg sm:text-xl font-bold text-white">Amorphic</span>
-      </div>
+      <Link to="/">
+        <div  className="flex items-center gap-2  sm:gap-4">
+          <img src="./logos/Vector.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+          <span className="text-lg sm:text-xl font-bold text-white">Amorphic</span>
+        </div>
+      </Link> 
 
       {/* center: search bar */}
       <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1/3">

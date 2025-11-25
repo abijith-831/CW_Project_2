@@ -24,12 +24,16 @@ interface CompanyDataProps {
   nic_code: string;
 }
 
+interface TableViewProps{
+  companyData:CompanyDataProps[]
+  loading:boolean;
+  onCompanyClick?:(company:CompanyDataProps)=>void
+}
 
 
-const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }> = ({ companyData, loading }) => {
+const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
   const [sorting, setSorting] = useState([])
   
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState({
     CompanyName: true,
     CompanyIndustrialClassification: true,
@@ -137,6 +141,7 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
     onSortingChange: setSorting
   })
 
+
   return (
     <div className='px-20 py-4 w-full'>
       <div className="flex flex-wrap items-center justify-between gap-4 py-4">
@@ -183,7 +188,7 @@ const TableView: React.FC<{ companyData: CompanyDataProps[]; loading: boolean }>
         {/* body */}
         <div className="table-row-group text-sm">
           {table.getRowModel().rows.map(row => (
-            <div className="table-row hover:bg-gray-50" key={row.id}>
+            <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 cursor-pointer" key={row.id}>
               {row.getVisibleCells().map(cell => (
                 <div   className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary relative"   key={cell.id} style={{ width: cell.column.getSize() }} >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
