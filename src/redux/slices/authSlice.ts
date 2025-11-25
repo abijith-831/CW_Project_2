@@ -62,11 +62,14 @@ const authSlice = createSlice({
         state.currentUser.search_query = action.payload;
       }
     },
+    setUser: (state, action) => {
+      state.currentUser = action.payload;
+    },
     setError(state) {
       state.error = true;
     }
   },
 });
 
-export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns , updateSearchQuery} = authSlice.actions;
+export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns , updateSearchQuery , setUser} = authSlice.actions;
 export default authSlice.reducer;

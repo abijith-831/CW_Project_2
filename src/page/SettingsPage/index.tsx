@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
 import { useSnackbar } from 'notistack'
-import { CropperRef, Cropper } from 'react-advanced-cropper';
-import 'react-advanced-cropper/dist/style.css'
+import { useDispatch } from 'react-redux'
+
+import { setUser } from "../../redux/slices/authSlice";
+
 
 const SettingsPage = () => {
   const [userInfo, setUserInfo] = useState<any>(null)
@@ -14,19 +16,14 @@ const SettingsPage = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
-  const [cropper , setCropper] = useState<CropperRef| null>(null)
-  const [croppedImage , setCroppedImage] = useState<File | null>(null)
-  const [previewUrl , setPreviewUrl] = useState<string | null>(null)
 
+  const dispatch = useDispatch();
   const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const data = await getUserProfile()
-
-        console.log('data',data);
-        
         setUserInfo(data)
       } catch (error) {
         console.error(error)
@@ -51,31 +48,20 @@ const SettingsPage = () => {
 
       let profilePictureUrl = userInfo?.profile_picture || null
 
-      console.log('seee',selectedFile);
-      
-
       if (selectedFile) {
         const fileName = `${userInfo.id}_${Date.now()}.jpg`;
         const { error: uploadError } = await supabase.storage
           .from('profile_pictures')
           .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true })
 
-          console.log('eer',uploadError);
-          
         if (uploadError) throw uploadError
 
         const { data: urlData } = supabase.storage
           .from('profile_pictures')
           .getPublicUrl(fileName)
 
-          console.log('url',urlData);
-          
-
         profilePictureUrl = urlData.publicUrl
       }
-
-      console.log('profile',profilePictureUrl);
-      
 
       const res = await updateUserProfile({
         full_name: data.fullName,
@@ -86,9 +72,8 @@ const SettingsPage = () => {
         theme_preference: data.theme,
         profile_picture: profilePictureUrl
       })
+      dispatch(setUser(res));
 
-      console.log('ressss',res);
-      
       setUserInfo(res)
       setIsEdit(false)
       setSelectedFile(null)

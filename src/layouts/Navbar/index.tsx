@@ -13,6 +13,9 @@ const Navbar = () => {
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
   const user = useSelector((state: any) => state.auth.currentUser);
 
+  console.log("uer",user);
+  
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
