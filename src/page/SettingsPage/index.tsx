@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
 import { useSnackbar } from 'notistack'
-import { useDispatch } from 'react-redux'
+import { useDispatch , useSelector} from 'react-redux'
 
 import { setUser } from "../../redux/slices/authSlice";
 
@@ -15,7 +15,7 @@ const SettingsPage = () => {
   const { enqueueSnackbar } = useSnackbar()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-
+  const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light'
 
   const dispatch = useDispatch();
   const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
@@ -39,9 +39,9 @@ const SettingsPage = () => {
       setValue("gender", userInfo.gender)
       setValue("country", userInfo.country)
       setValue("language", userInfo.language_preference)
-      setValue("theme", userInfo.theme_preference)
+      setValue("theme", theme)
     }
-  }, [userInfo, setValue])
+  }, [userInfo, setValue,theme])
 
   const onSubmit = async (data: any) => {
     try {
@@ -113,7 +113,7 @@ const SettingsPage = () => {
         
         {/* Right Form Section */}
         <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-2 md:py-4 lg:py-10 border bg-white dark:bg-neutral-800 dark:border-neutral-600 shadow-md border-border-secondary overflow-auto'>
-          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center lg:text-left mb-2 md:mb-4 md:mb-8 dark:text-table-header'>Profile & Settings</h1>
+          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>Profile & Settings</h1>
 
           {/* Profile Banner */}
           <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
@@ -153,8 +153,7 @@ const SettingsPage = () => {
                   className='mt-4 text-sm md:text-md lg:text-base cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
                   {isEdit ? 'Update' : 'Edit'}
               </button>
-              </div>
-            
+              </div>           
           </div>
 
           {/* Form */}

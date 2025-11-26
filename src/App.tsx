@@ -56,11 +56,11 @@ import PublicRoute from './utils/PublicRoute';
 import SettingsPage from './page/SettingsPage';
 import NotFound from './page/404';
 import MainPage from './page/MainPage';
-// import { useTheme } from './hooks/useTheme';
+import { useTheme } from './hooks/useTheme';
 
 
 const App = () => {
-  // const { theme , toggleTheme } = useTheme()
+  useTheme()
 
   return (
     <div >

@@ -4,7 +4,7 @@ interface User {
   id: string;
   email: string;
   language_preference?: string;
-  theme_preference?: string;
+  theme_preference?: 'light'|'dark';
   capital_view?:string;
   selected_columns?:string[];
   search_query?: string;
@@ -73,6 +73,11 @@ const authSlice = createSlice({
         state.currentUser.search_query = action.payload;
       }
     },
+    updateThemePreference(state , action:PayloadAction<'light'|'dark'>){
+      if(state.currentUser){
+        state.currentUser.theme_preference = action.payload
+      }
+    },
     setUser: (state, action) => {
       state.currentUser = action.payload;
     },
@@ -82,5 +87,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout, setError , updateCapitalView , updateSelectedColumns , updateSearchQuery , setUser} = authSlice.actions;
+export const { loginSuccess,
+               logout,
+               setError, 
+               updateCapitalView,
+               updateSelectedColumns,
+               updateSearchQuery,
+               updateThemePreference,
+               setUser
+              } = authSlice.actions;
 export default authSlice.reducer;

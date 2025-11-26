@@ -1,60 +1,10 @@
-// import { useEffect, useState } from "react";
-
-// export function useTheme() {
-//   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
-//   useEffect(() => {
-//     const root = window.document.documentElement;
-
-//     if (theme === "dark") {
-//       root.classList.add("dark");
-//     } else {
-//       root.classList.remove("dark");
-//     }
-
-//     localStorage.setItem("theme", theme);
-//   }, [theme]);
-
-//   const toggleTheme = () => {
-//     setTheme((prev) => (prev === "light" ? "dark" : "light"));
-//   };
-
-//   return { theme, toggleTheme };
-// }
-
-
-// import { useEffect, useState } from "react";
-
-// export function useTheme() {
-//   const [theme, setTheme] = useState(
-//     localStorage.getItem("theme") || "light"
-//   );
-
-//   useEffect(() => {
-//     const root = window.document.documentElement;
-    
-//     // Remove existing theme class
-//     root.classList.remove("light", "dark");
-    
-//     // Add current theme class
-//     root.classList.add(theme);
-    
-//     // Set theme in localStorage
-//     localStorage.setItem("theme", theme);
-//   }, [theme]);
-
-//   const toggleTheme = () => {
-//     setTheme(prev => prev === "light" ? "dark" : "light");
-//   };
-
-//   return { theme, toggleTheme };
-// }
-
-
 import { useEffect, useState } from "react";
+import { updateThemePreference } from "../redux/slices/authSlice";
+import { useDispatch , useSelector } from "react-redux";
 
 export const useTheme = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const dispatch = useDispatch()
+  const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light';
 
   useEffect(() => {
     const html = document.documentElement;
@@ -69,8 +19,9 @@ export const useTheme = () => {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    dispatch(updateThemePreference(newTheme))
   };
 
   return { theme, toggleTheme };
-};
+}
