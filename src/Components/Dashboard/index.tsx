@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useSelector , useDispatch } from 'react-redux'
 import { updateCapitalView } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
+import { useTranslation } from 'react-i18next'
 
 interface DashboardProps {
   goToDetails: () => void;
@@ -14,6 +15,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) => {
 
   const dispatch = useDispatch()
+  const { t } = useTranslation();
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
 
@@ -109,7 +111,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
             <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
                 {/* Heading */}
                 <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header flex-1">
-                    Registrars of Companies - {capitalView === 'graph' ? 'Graph View' : 'Table View'}
+                    {t("registrar_heading")} - {capitalView === "graph" ? t("graph_view") : t("table_view")}
                 </h1>
 
                 {/* Filter + Toggle Wrapper */}
@@ -140,9 +142,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 {/* Description */}
                 <div className="text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed">
                 <h6 className='text-sm md:text-md dark:text-table-header'>
-                    Visualize key insights from company registration data, including capital distribution,
-                    company status, and registration trends over time. The graphs help you quickly understand
-                    patterns across construction-related businesses.
+                    {t("description")}
                 </h6>
                 </div>
 

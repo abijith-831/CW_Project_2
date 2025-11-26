@@ -1,0 +1,9 @@
+{
+  "registrar_heading": "Registrars of Companies",
+  "graph_view": "Graph View",
+  "table_view": "Table View",
+  "table":"Table",
+  "graph":"Graph",
+  "description":"Visualize key insights from company registration data, including capital distribution, company status, and registration trends over time. The graphs help you quickly understand patterns across construction-related businesses",
+  "filter_by":"Filter By"
+}

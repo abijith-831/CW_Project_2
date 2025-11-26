@@ -16,6 +16,11 @@ const SettingsPage = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light'
+  const language = useSelector((state:any)=>state.auth.currentUser?.language_preference) || 'eng'
+  const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(true);
+
+
 
   const dispatch = useDispatch();
   const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
@@ -23,10 +28,13 @@ const SettingsPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        setLoading(true)
         const data = await getUserProfile()
         setUserInfo(data)
       } catch (error) {
         console.error(error)
+      }finally{
+        setLoading(false)
       }
     }
     fetchUser()
@@ -38,7 +46,7 @@ const SettingsPage = () => {
       setValue("nickName", userInfo.nick_name)
       setValue("gender", userInfo.gender)
       setValue("country", userInfo.country)
-      setValue("language", userInfo.language_preference)
+      setValue("language", language)
       setValue("theme", theme)
     }
   }, [userInfo, setValue,theme])
@@ -100,6 +108,7 @@ const SettingsPage = () => {
     setSelectedFile(file)
   }
 
+
   return (
     <div className='min-h-screen flex flex-col dark:bg-dark-primary'>
       <Navbar />
@@ -113,27 +122,44 @@ const SettingsPage = () => {
         
         {/* Right Form Section */}
         <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-2 md:py-4 lg:py-10 border bg-white dark:bg-neutral-800 dark:border-neutral-600 shadow-md border-border-secondary overflow-auto'>
+        
           <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>Profile & Settings</h1>
 
           {/* Profile Banner */}
           <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
             <div className="flex flex-col lg:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
-                <img
-                  src={  selectedFile    ? URL.createObjectURL(selectedFile)   : userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"  }
-                  alt="profile"
-                  className="w-20 h-20 rounded-full object-cover border" />
 
-                {isEdit && (
-                  <div className=" flex-col absolute inset-0 flex items-center justify-center rounded-full
-                                  bg-white/10 backdrop-blur-xs border border-white/20 text-white text-sm font-medium cursor-pointer"
-                                  onClick={()=> fileInputRef.current?.click()}>
-                    <input type="file" className='hidden' accept='image/*' ref={fileInputRef} onChange={handleFileChange}/>
-                    <h1>Upload</h1>
-                    <p className='text-[10px] text-primary'>2 MB maximum</p>
-                  </div>
-                )}
-              </div>
+                  {/* Profile Image */}
+                  <img src={   selectedFile
+                        ? URL.createObjectURL(selectedFile)
+                        : userInfo?.profile_picture ||
+                          "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" }
+                    alt="profile"
+                    className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
+                      imageLoading ? "opacity-0" : "opacity-100"
+                    }`}
+                    onLoad={() => setImageLoading(false)} />
+
+                  {/* Image Spinner */}
+                  {imageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
+                      <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+                    </div>
+                  )}
+
+                  {/* Upload Overlay (only in edit mode) */}
+                  {isEdit && !imageLoading && (
+                    <div
+                      className="absolute inset-0 flex flex-col items-center justify-center rounded-full
+                                bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}  >
+                      <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange}  />
+                      <h1>Upload</h1>
+                      <p className="text-[10px] text-primary">2 MB maximum</p>
+                    </div>
+                  )}
+                </div>
 
               <div className="text-center sm:text-left flex-1 pt-4">
                 <h2 className="text-xl font-semibold text-primary dark:text-table-header">{userInfo?.full_name || 'User'}</h2>
@@ -232,9 +258,9 @@ const SettingsPage = () => {
                   {...register("language")}
                   disabled={!isEdit}
                   className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
-                  <option value="">Select language</option>
-                  <option value="en">English</option>
-                  <option value="ar">Arabic</option>
+                  
+                  <option value="eng">English</option>
+                  <option value="arb">Arabic</option>
                 </select>
                 {errors.language && <p className="text-red-500 text-xs">Language is required</p>}
               </div>

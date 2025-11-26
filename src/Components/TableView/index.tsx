@@ -151,6 +151,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   })
 
 
+
   return (
     <div className='px-4 md:px-10 lg:px-20 py-4 w-full'>
       <div className="flex flex-wrap items-center justify-between gap-4 py-4">

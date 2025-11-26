@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface User {
   id: string;
   email: string;
-  language_preference?: string;
+  language_preference?: 'eng'|'arb';
   theme_preference?: 'light'|'dark';
   capital_view?:string;
   selected_columns?:string[];

@@ -1,23 +1,8 @@
-// import { StrictMode } from 'react'
-// import { createRoot } from 'react-dom/client'
-
-// import App from './App.tsx'
-// // import { Provider } from 'react-redux'
-// import "./i18n/i18nConfig";
-// import { BrowserRouter , Routes , Route , Link} from 'react-router-dom' 
-
-// createRoot(document.getElementById('root')!).render(
-//   <StrictMode>
-//     {/* <Provider> */}
-//       <App />
-//     {/* </Provider> */}
-//   </StrictMode>,
-// )
+import "./i18n/i18nConfig";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-// import { AuthProvider } from "./utils/authUtils";
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { store , persistor } from "./redux/store";
 import { Provider } from "react-redux";
