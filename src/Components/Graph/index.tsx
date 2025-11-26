@@ -5,6 +5,7 @@ import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
 import { styled } from '@mui/material/styles';
 import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
+import { useTranslation } from 'react-i18next';
 
 interface CompanyDataProps {
   AuthorizedCapital: string;
@@ -30,6 +31,7 @@ interface LabelsAboveBarsProps {
 }
 
 export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
+  const {t} = useTranslation()
   
   const authorizedCapital = parseFloat(company.AuthorizedCapital) || 0;
   const paidupCapital = parseFloat(company.PaidupCapital) || 0;
@@ -59,7 +61,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
       
       <div className="w-full max-w-[550px] dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
         <ChartContainer
-          xAxis={[{ scaleType: 'band', data: ['Authorised', 'Paid-up'] }]}
+          xAxis={[{ scaleType: 'band', data: [t("AuthorizedCapital"), t("PaidupCapital")] }]}
           series={[
             {
               type: 'bar',
@@ -91,7 +93,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
         <div className="flex items-center pl-20 lg:pl-30 gap-2">
           <div className="bg-bg-secondary w-3 h-3 md:w-4 md:h-4 rounded-full dark:border "></div>
           <div className="flex gap-6">
-            <h6 className='text-xs text-fourth dark:text-table-header'>Authorised capital</h6>
+            <h6 className='text-xs text-fourth dark:text-table-header'>{t("AuthorizedCapital")}</h6>
             <h2 className='text-xs text-fourth dark:text-table-header'>{authorizedCapital.toFixed(2)} Rs</h2>
           </div>
         </div>
@@ -100,7 +102,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
         <div className="flex items-center gap-2 pl-20 lg:pl-30">
           <div className="bg-bg-primary w-3 h-3 md:w-4 md:h-4 rounded-full dark:border"></div>
           <div className="flex gap-6">
-            <h2 className='text-xs text-fourth dark:text-table-header'>Paid-up capital</h2>
+            <h2 className='text-xs text-fourth dark:text-table-header'>{t("PaidupCapital")}</h2>
             <h2 className='text-xs text-fourth pl-5 dark:text-table-header'>{paidupCapital.toFixed(2)} Rs</h2>
           </div>
         </div>

@@ -118,9 +118,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   <div className="flex flex-wrap items-center  gap-6">
                       {/* Filter */}
                       <div className="flex items-center gap-1 md:gap-3">
-                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header">Filter by:</h1>
+                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header">{t("filter_by")}:</h1>
                         <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:text-table-header text-sm" >
-                            <option value="">State</option>
+                            <option value="">{t("state")}</option>
                             {indianStates.map((state, index) => (
                               <option className='cursor-pointer ' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
                             ))}
@@ -130,10 +130,10 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                       {/* Toggle Buttons */}
                       <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
                         <button onClick={() => handleChangeView("graph")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
-                            Graph
+                            {t("graph")}
                         </button>
                         <button onClick={() => handleChangeView("table")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"  }`} >
-                            Table
+                            {t("table")}
                         </button>
                       </div>
                   </div>
@@ -163,12 +163,12 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                         ? "bg-gray-200 text-gray-400 dark:bg-neutral-500 cursor-not-allowed"
                         : "bg-gray-300 text-secondary hover:transition-transform hover:scale-102 duration-300  cursor-pointer"
                     }`}>
-                    Prev
+                    {t("prev")}
                 </button>
 
                 {/* Middle text */}
                 <span className="text-secondary font-medium text-sm md:text-base">
-                    Page {currentPage} of {totalPages}
+                    {t("page")} {currentPage} {t("of")} {totalPages}
                 </span>
 
                 {/* Next Button */}
@@ -180,7 +180,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                         ? "bg-gray-200 text-gray-400 dark:bg-neutral-500 cursor-not-allowed"
                         : "bg-gray-300 text-secondary dark:bg-neutral-300 hover:transition-transform hover:scale-102 duration-300 cursor-pointer"
                     }`}>
-                    Next
+                    {t("next")}
                 </button>
                 </div>
         </div>

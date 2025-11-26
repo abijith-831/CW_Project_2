@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import './styles.css'
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
+import { useTranslation } from 'react-i18next';
+
 
 interface CompanyDataProps {
   AuthorizedCapital: string;
@@ -32,6 +34,7 @@ interface TableViewProps{
 
 const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
   const [sorting, setSorting] = useState([])
+  const {t} = useTranslation()
   
   const [columnVisibility, setColumnVisibility] = useState({
     CompanyName: true,
@@ -56,7 +59,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   const columns = [
     {
       accessorKey: 'CompanyName',
-      header: 'Company Name',
+      header: t("CompanyName"),
       size: 180,
       enableResizing: true,
       enableSorting: true,
@@ -77,7 +80,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     },
     {
       accessorKey: 'CompanyIndustrialClassification',
-      header: 'Industry',
+      header: t("CompanyIndustrialClassification"),
       enableSorting: false,
       size: 150,
       enableResizing: true,
@@ -85,7 +88,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     },
     {
       accessorKey: 'Registered_Office_Address',
-      header: 'Registered Address',
+      header: t("Registered_Office_Address"),
       size: 300,
       enableResizing: true,
       cell: (props: any) => {
@@ -95,21 +98,21 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     },
     {
       accessorKey: 'AuthorizedCapital',
-      header: 'Authorized Capital',
+      header: t("AuthorizedCapital"),
       enableResizing: true,
       enableSorting: true,
       cell: (props: any) => <p>{props.getValue()}</p>
     },
     {
       accessorKey: 'PaidupCapital',
-      header: 'Paidup Capital',
+      header: t("PaidupCapital"),
       enableResizing: true,
       enableSorting: true,
       cell: (props: any) => <p>{props.getValue()}</p>
     },
     {
       accessorKey: 'CompanyStatus',
-      header: 'Status',
+      header: t("CompanyStatus"),
       enableResizing: true,
       enableSorting: false,
       cell: (props: any) => (
@@ -126,14 +129,14 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         </span>
       ),
     },
-    { accessorKey: 'CIN', header: 'CIN' },
-    { accessorKey: 'CompanyROCcode', header: 'ROC Code' },
-    { accessorKey: 'CompanyRegistrationdate_date', header: 'Registration Date' },
-    { accessorKey: 'CompanyCategory', header: 'Category' },
-    { accessorKey: 'Listingstatus', header: 'Listing Status' },
-    { accessorKey: 'CompanyClass', header: 'Class' },
-    { accessorKey: 'CompanyStateCode', header: 'State Code' },
-    { accessorKey: 'nic_code', header: 'NIC Code' },
+    { accessorKey: 'CIN', header: t("CIN") },
+    { accessorKey: 'CompanyROCcode', header: t("CompanyROCcode") },
+    { accessorKey: 'CompanyRegistrationdate_date', header: t("CompanyRegistrationdate_date") },
+    { accessorKey: 'CompanyCategory', header: t("CompanyCategory") },
+    { accessorKey: 'Listingstatus', header: t("Listingstatus") },
+    { accessorKey: 'CompanyClass', header: t("CompanyClass") },
+    { accessorKey: 'CompanyStateCode', header: t("CompanyStateCode") },
+    { accessorKey: 'nic_code', header: t("nic_code") },
   ]
   
   const table = useReactTable({
@@ -156,7 +159,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     <div className='px-4 md:px-10 lg:px-20 py-4 w-full'>
       <div className="flex flex-wrap items-center justify-between gap-4 py-4">
         <h1 className="text-secondary dark:text-table-header text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
-          Registrars of Companies (RoC)-wise Company Master Data
+          {t("second_heading")}
         </h1>
 
         {/* Column Visibility Dropdown */}

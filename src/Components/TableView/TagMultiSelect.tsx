@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSnackbar } from "notistack";
 import { useDispatch , useSelector } from 'react-redux';
 import { updateSelectedColumns } from '../../redux/slices/authSlice';
+import { useTranslation } from 'react-i18next';
 
 
 interface Tag {
@@ -28,6 +29,7 @@ interface TagMultiSelectProps {
 }
 
 const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
+  const {t} = useTranslation()
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -178,7 +180,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 
             {/* If more than 3 → show text */}
             {selectedTags.length > 3 && (
-              <span className="text-xs ml-1 text-secondary dark:text-table-header"> +{selectedTags.length - 3} more</span>
+              <span className="text-xs ml-1 text-secondary dark:text-table-header"> +{selectedTags.length - 3} {t("more")}</span>
             )}
 
             {selectedTags.length <= 3 && (
@@ -188,7 +190,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 onFocus={() => setIsOpen(true)}
-                placeholder={selectedTags.length === 0 ? "Select columns..." : ""}
+                placeholder={selectedTags.length === 0 ? t("select_columns") : ""}
                 className="flex-1 bg-transparent outline-none text-sm min-w-[60px]" />
             )}
           </div>
