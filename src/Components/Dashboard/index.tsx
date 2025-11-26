@@ -1,6 +1,6 @@
 import GraphView from '../../Components/GraphView'
 import TableView from '../../Components/TableView'
-import Navbar from '../../layouts/Navbar'
+import Navbar from '../Navbar'
 import { useEffect, useState } from 'react'
 import { useSelector , useDispatch } from 'react-redux'
 import { updateCapitalView } from '../../redux/slices/authSlice'
@@ -49,14 +49,11 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const indianStates = [
     "andhra pradesh",
-    "arunachal pradesh",
-    "andaman and nicobar islands",
     "assam",
     "bihar",
     "chandigarh",
     "goa",
     "delhi",
-    "dadra & nagar haveli",
     "haryana",
     "jharkhand",
     "karnataka",
@@ -111,38 +108,38 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
                 {/* Heading */}
-                <h1 className="text-lg md:text-xl font-medium text-primary flex-1">
+                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary flex-1">
                     Registrars of Companies - {capitalView === 'graph' ? 'Graph View' : 'Table View'}
                 </h1>
 
                 {/* Filter + Toggle Wrapper */}
-                <div className="flex flex-wrap items-center gap-6">
-                    {/* Filter */}
-                    <div className="flex items-center gap-3">
-                    <h1 className="text-secondary text-sm md:text-base">Filter by:</h1>
-                    <select  onChange={(e) => setSelectedState(e.target.value)} className="border py-1.5 px-3 text-secondary rounded-lg border-border-primary text-sm" >
-                        <option value="">State</option>
-                        {indianStates.map((state, index) => (
-                        <option key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
-                        ))}
-                    </select>
-                    </div>
+                  <div className="flex flex-wrap items-center  gap-6">
+                      {/* Filter */}
+                      <div className="flex items-center gap-1 md:gap-3">
+                        <h1 className="text-secondary text-sm md:text-base">Filter by:</h1>
+                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary text-sm" >
+                            <option value="">State</option>
+                            {indianStates.map((state, index) => (
+                              <option className='cursor-pointer' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
+                            ))}
+                        </select>
+                      </div>
 
-                    {/* Toggle Buttons */}
-                    <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
-                    <button onClick={() => handleChangeView("graph")} className={`px-6 py-1.5 text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
-                        Graph
-                    </button>
-                    <button onClick={() => handleChangeView("table")} className={`px-6 py-1.5 text-sm ${ capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"  }`} >
-                        Table
-                    </button>
-                    </div>
-                </div>
+                      {/* Toggle Buttons */}
+                      <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
+                        <button onClick={() => handleChangeView("graph")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
+                            Graph
+                        </button>
+                        <button onClick={() => handleChangeView("table")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"  }`} >
+                            Table
+                        </button>
+                      </div>
+                  </div>
                 </div>
 
                 {/* Description */}
                 <div className="text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed">
-                <h6>
+                <h6 className='text-sm md:text-base'>
                     Visualize key insights from company registration data, including capital distribution,
                     company status, and registration trends over time. The graphs help you quickly understand
                     patterns across construction-related businesses.
@@ -150,18 +147,18 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </div>
 
             {/* conditionally rendering graphs and table */}
-           <div>
-            {capitalView === 'graph' ? (
-                <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-                ) : (
-                <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-            )}
+           <div >
+              {capitalView === 'graph' ? (
+                  <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                  ) : (
+                  <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+              )}
 
            </div>
            {/* pagination block */}
-           <div className="flex items-center justify-center gap-8 py-3">
+           <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-3">
                 {/* Prev Button */}
-                <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-10 shadow-sm py-1 rounded-lg ${
+                <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === 1
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-gray-300 text-secondary cursor-pointer"
@@ -170,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </button>
 
                 {/* Middle text */}
-                <span className="text-secondary font-medium text-md sm:text-base">
+                <span className="text-secondary font-medium text-sm md:text-base">
                     Page {currentPage} of {totalPages}
                 </span>
 
@@ -178,7 +175,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className={`px-10 py-1 rounded-lg shadow-sm ${
+                    className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === totalPages
                         ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                         : "bg-gray-300 text-secondary cursor-pointer"

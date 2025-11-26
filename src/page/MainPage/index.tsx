@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import Dashboard from '../Dashboard'
-import DetailsPage from '../DetailsPage'
+import Dashboard from '../../Components/Dashboard'
+import DetailsPage from '../../Components/DetailsPage'
 
 const MainPage = () => {
 

@@ -34,12 +34,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative flex items-center w-full py-6 bg-bg-primary px-4 sm:px-6 lg:px-8 dark:bg-gray-500">
+    <nav className="relative flex items-center w-full py-4 md:py-6 bg-bg-primary px-4 sm:px-6 lg:px-8 dark:bg-gray-500">
       {/* left */}
       <Link to="/">
         <div  className="flex items-center gap-2  sm:gap-4">
-          <img src="./logos/Vector.svg" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
-          <span className="text-lg sm:text-xl font-bold text-white">Amorphic</span>
+          <img src="./logos/Vector.svg" alt="Logo" className="h-5 w-5  sm:h-6 sm:w-6 md:h-8 md:w-8" />
+          <span className="text-md sm:text-lg md:text-xl font-bold text-white">Amorphic</span>
         </div>
       </Link> 
 
@@ -59,7 +59,7 @@ const Navbar = () => {
       </div>
 
       {/* right */}
-      <div className="flex items-center gap-2 sm:gap-8 ml-auto relative">
+      <div className="flex items-center gap-4 sm:gap-8 ml-auto relative">
         <ThemeToggle />
 
         {/* Profile Icon */}
@@ -70,8 +70,8 @@ const Navbar = () => {
 
           {/* Dropdown */}
          {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-44 bg-white border border-border-third rounded-lg p-2 space-y-2 shadow-lg z-50">    
-            <button className="flex cursor-pointer items-center gap-6 w-full text-left border border-border-third px-4 py-2 rounded-md hover:bg-gray-100 shadow-md"
+          <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white border border-border-third rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
+            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 shadow-md"
               onClick={() => {
                 navigate("/settings");
                 setDropdownOpen(false); }}>
@@ -79,7 +79,7 @@ const Navbar = () => {
               Settings
             </button>
 
-            <button className="flex cursor-pointer items-center gap-6 w-full text-left border border-border-third px-4 py-2 rounded-md hover:bg-gray-100 shadow-md" onClick={handleLogout}>
+            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 shadow-md" onClick={handleLogout}>
               <img src="./logos/logout.svg" alt="logout" className="w-4 h-4" />
               Logout
             </button>

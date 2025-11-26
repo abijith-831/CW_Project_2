@@ -1,4 +1,3 @@
-import { Box, Icon } from '@mui/material';
 import { getCoreRowModel, useReactTable, flexRender, getSortedRowModel } from '@tanstack/react-table';
 import React, { useState } from 'react'
 import './styles.css'
@@ -63,7 +62,17 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       enableSorting: true,
       cell: (props: any) => {
         const value = props.getValue()
-        return <p>{value.length > 22 ? value.slice(0, 20) + '...' : value}</p>
+        return <div className="relative group w-fit">
+          <p className="text-primary">
+            {value.length > 22 ? value.slice(0, 20) + '...' : value}
+          </p>
+
+          {value.length > 30 && (
+            <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+              {value}
+            </span>
+          )}
+        </div> 
       }
     },
     {
@@ -143,9 +152,9 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
 
   return (
-    <div className='px-20 py-4 w-full'>
+    <div className='px-4 md:px-10 lg:px-20 py-4 w-full'>
       <div className="flex flex-wrap items-center justify-between gap-4 py-4">
-        <h1 className="text-secondary text-lg sm:text-xl font-semibold flex-1 min-w-[250px]">
+        <h1 className="text-secondary text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
           Registrars of Companies (RoC)-wise Company Master Data
         </h1>
 
@@ -190,7 +199,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {table.getRowModel().rows.map(row => (
             <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 cursor-pointer" key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <div   className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary relative"   key={cell.id} style={{ width: cell.column.getSize() }} >
+                <div className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary relative overflow-visible">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}

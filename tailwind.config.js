@@ -15,21 +15,21 @@
 // };
 
 /** @type {import('tailwindcss').Config} */
-export default {
+// export default {
  
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-     extend: {
-      fontFamily: {
-        gabarito: ['Gabarito', 'sans-serif'], 
-      },
-    },
-  },
-  plugins: [],
-};
+//   content: [
+//     "./index.html",
+//     "./src/**/*.{js,ts,jsx,tsx}",
+//   ],
+//   theme: {
+//      extend: {
+//       fontFamily: {
+//         gabarito: ['Gabarito', 'sans-serif'], 
+//       },
+//     },
+//   },
+//   plugins: [],
+// };
 
 // /** @type {import('tailwindcss').Config} */
 // module.exports = {
@@ -43,3 +43,13 @@ export default {
 //   },
 //   plugins: [],
 // }
+
+
+export default {
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};

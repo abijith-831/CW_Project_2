@@ -47,8 +47,6 @@ import './App.css';
 
 
 
-import React from 'react'
-import Dashboard from './page/Dashboard'
 import { Routes , Route } from 'react-router-dom'
 import Login from '../src/page/Login'
 import SignUp from '../src/page/SignUp'

@@ -1,5 +1,5 @@
 import { supabase } from '../../api/supabase'
-import Navbar from '../../layouts/Navbar'
+import Navbar from '../../Components/Navbar'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
@@ -116,8 +116,8 @@ const SettingsPage = () => {
           <h1 className='font-bold text-2xl text-center lg:text-left mb-8'>Profile & Settings</h1>
 
           {/* Profile Banner */}
-          <div className='flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-4 p-6 sm:p-8 border border-border-secondary rounded-lg mb-8'>
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full">
+          <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary rounded-lg mb-8'>
+            <div className="flex flex-col lg:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
                 <img
                   src={  selectedFile    ? URL.createObjectURL(selectedFile)   : userInfo?.profile_picture || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"  }
@@ -135,24 +135,26 @@ const SettingsPage = () => {
                 )}
               </div>
 
-              <div className="text-center sm:text-left flex-1">
+              <div className="text-center sm:text-left flex-1 pt-4">
                 <h2 className="text-xl font-semibold text-primary">{userInfo?.full_name || 'User'}</h2>
                 <p className="text-gray-500 text-sm">{userInfo?.email}</p>
               </div>
             </div>
-
-            <button
-              onClick={() => {
-                if (!isEdit) {
-                  setIsEdit(true)
-                  setTimeout(() => setFocus("fullName"), 0)
-                } else {
-                  handleSubmit(onSubmit)()
-                }
-              }}
-              className='mt-4 cursor-pointer  sm:mt-0 px-12 py-2 rounded-md bg-border-secondary font-medium text-[#343333] hover:bg-secondary transition' >
-              {isEdit ? 'Update' : 'Edit'}
-            </button>
+              <div className=' sm:mt-14 lg:mt-4 '>
+                <button
+                  onClick={() => {
+                    if (!isEdit) {
+                      setIsEdit(true)
+                      setTimeout(() => setFocus("fullName"), 0)
+                    } else {
+                      handleSubmit(onSubmit)()
+                    }
+                  }}
+                  className='mt-4 cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
+                  {isEdit ? 'Update' : 'Edit'}
+              </button>
+              </div>
+            
           </div>
 
           {/* Form */}
@@ -199,7 +201,7 @@ const SettingsPage = () => {
                 <select
                   {...register("gender")}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
+                  className="w-full px-4 pr-10  py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>

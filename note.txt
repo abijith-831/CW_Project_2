@@ -1,142 +1,49 @@
-Got it 👍
-Flow required by you:
 
-GraphView  ➜  Dashboard  ➜  MainPage
-
-
-So GraphView sends selected company to Dashboard,
-then Dashboard sends it to MainPage,
-then MainPage opens DetailsPage with that company.
-
-You do NOT need Context API or Redux for this.
-Just pass callbacks step-by-step.
-
-✅ Step-by-step implementation
-🔹 MainPage
-
-Holds final selected company value.
-
-const MainPage = () => {
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<any>(null);
-
-  return (
-    <div>
-      {showDetails ? (
-        <DetailsPage
-          company={selectedCompany}
-          goToDashboard={() => setShowDetails(false)}
-        />
-      ) : (
-        <Dashboard
-          onSelectCompany={(company: any) => {
-            setSelectedCompany(company);
-            setShowDetails(true);
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-🔹 Dashboard
-
-Now Dashboard receives company data from GraphView & passes it to MainPage.
-
-const Dashboard = ({ onSelectCompany }: { onSelectCompany: (company: any) => void }) => {
-  return (
-    <div>
-      <Navbar />
-      <GraphView onCompanyClick={onSelectCompany} />
-      {/* If needed, TableView can also send company the same way */}
-    </div>
-  );
-};
-
-🔹 GraphView
-
-Here user selects the company → sends it upward to Dashboard.
-
-const GraphView = ({ onCompanyClick }: { onCompanyClick: (company: any) => void }) => {
-  return (
-    <div>
-      {companies.map(company => (
-        <button
-          key={company.CIN}
-          onClick={() => onCompanyClick(company)}
-        >
-          {company.CompanyName}
-        </button>
-      ))}
-    </div>
-  );
-};
-
-
-⛔ No need to store state in Dashboard, unless you want to show the company's details there too.
-
-🔹 DetailsPage
-
-Finally show the selected company.
-
-const DetailsPage = ({ company, goToDashboard }: { company: any; goToDashboard: () => void }) => {
-  return (
-    <div>
-      <h1>Details Page</h1>
-      <p>Company: {company.CompanyName}</p>
-      <p>State: {company.CompanyStateCode}</p>
-      <button onClick={goToDashboard}>Back</button>
-    </div>
-  );
-};
-
-🔥 Final Data Movement
-GraphView → Dashboard → MainPage → DetailsPage
-
-
-Each step just passes data upward → no global state needed.
-
-📌 Additional Tip
-
-If later you want multiple pages to access the selected company, then context or Redux makes sense.
-But for now, props drilling is the correct and lightweight solution.
-
-If you want, I can show the same logic using TypeScript interfaces and best practice folder structure also. 🚀
-
-
-
-
-
-
-
-
-
-
-
-Step 1 — Fix props destructuring
-const GraphView: React.FC<GraphViewProps & { onCompanyClick: (company: any) => void }> = ({
-  companyData,
-  loading,
-  onCompanyClick
-}) => {
-
-Step 2 — Add click handler inside map
-
-Wrap the graph component (or button) so when user clicks, it sends company data upward:
-
-{!loading &&
-  companyData?.map((company, index) => (
-    <div
-      key={index}
-      className="w-[450px] md:w-full mx-auto"
-      onClick={() => onCompanyClick(company)}   // <- sends selected company
-    >
-      <LabelsAboveBars company={company} />
-    </div>
-  ))
-}
-
-
-Optional: change cursor style
-
-className="w-[450px] md:w-full mx-auto cursor-pointer"
+AuthorizedCapital
+: 
+"100000.00"
+CIN
+: 
+"U70109DL2013PTC259499"
+CompanyCategory
+: 
+"Company limited by shares"
+CompanyClass
+: 
+"Private"
+CompanyIndian/Foreign Company
+: 
+"Indian"
+CompanyIndustrialClassification
+: 
+"Real Estate and Renting"
+CompanyName
+: 
+"JAI INFRAPROP PRIVATE LIMITED"
+CompanyROCcode
+: 
+"ROC Delhi"
+CompanyRegistrationdate_date
+: 
+"2013-10-24"
+CompanyStateCode
+: 
+"delhi"
+CompanyStatus
+: 
+"Strike Off"
+CompanySubCategory
+: 
+"Non-government company"
+Listingstatus
+: 
+"Unlisted"
+PaidupCapital
+: 
+"100000.00"
+Registered_Office_Address
+: 
+"B3/63   JANAK PURI,NEW DELHI,West Delhi,Delhi,110058-India"
+nic_code
+: 
+"70109"
