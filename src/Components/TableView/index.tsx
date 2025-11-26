@@ -63,7 +63,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       cell: (props: any) => {
         const value = props.getValue()
         return <div className="relative group w-fit">
-          <p className="text-primary dark:text-table-header">
+          <p className="text-primary  dark:text-neutral-400">
             {value.length > 22 ? value.slice(0, 20) + '...' : value}
           </p>
 
@@ -166,7 +166,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
 
       {/* table div */}
-      <div className="table w-full text-center border border-border-primary rounded-xl overflow-hidden mt-2">
+      <div className="table w-full text-center border border-border-primary dark:border-neutral-500 rounded-xl overflow-hidden mt-2">
         {/* header */}
         <div className="table-header-group bg-bg-primary text-table-header">
           {table.getHeaderGroups().map(headerGroup => (
@@ -199,7 +199,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {table.getRowModel().rows.map(row => (
             <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <div className="table-cell px-4 py-3 border-r  border-border-primary last:border-r-0 border-b border-border-secondary relative overflow-visible">
+                <div className="table-cell dark:text-neutral-400 px-4 py-3 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}

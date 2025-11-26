@@ -160,7 +160,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   return (
     <div className="w-full max-w-xl" ref={wrapperRef}>
       <div className="relative">
-        <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
+        <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
             {/* Show only first 3 selected tags */}
             {selectedTags.slice(0, 3).map(tag => (
               <div key={tag.topic} className="flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-xs">
