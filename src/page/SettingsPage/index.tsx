@@ -101,22 +101,22 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className='min-h-screen flex flex-col bg-gray-50'>
+    <div className='min-h-screen flex flex-col dark:bg-dark-primary'>
       <Navbar />
 
       <div className='flex flex-col lg:flex-row flex-1 gap-4 px-4 sm:px-8 lg:px-16 py-6 lg:py-8 overflow-auto'>
         
         {/* Left Image Section */}
-        <div className='w-full lg:w-1/2 h-64 lg:h-auto rounded-lg border bg-white shadow-md border-border-secondary flex items-center justify-center overflow-hidden'>
+        <div className='w-full lg:w-1/2 h-64 lg:h-auto rounded-lg border bg-white dark:border-neutral-600 shadow-md border-border-secondary flex items-center justify-center overflow-hidden'>
           <img src="/bg/today-bg.jpg" alt="" className='w-full h-full object-cover'/>
         </div>
         
         {/* Right Form Section */}
-        <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-6 lg:py-10 border bg-white shadow-md border-border-secondary overflow-auto'>
-          <h1 className='font-bold text-2xl text-center lg:text-left mb-8'>Profile & Settings</h1>
+        <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-2 md:py-4 lg:py-10 border bg-white dark:bg-neutral-800 dark:border-neutral-600 shadow-md border-border-secondary overflow-auto'>
+          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center lg:text-left mb-2 md:mb-4 md:mb-8 dark:text-table-header'>Profile & Settings</h1>
 
           {/* Profile Banner */}
-          <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary rounded-lg mb-8'>
+          <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
             <div className="flex flex-col lg:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
                 <img
@@ -136,8 +136,8 @@ const SettingsPage = () => {
               </div>
 
               <div className="text-center sm:text-left flex-1 pt-4">
-                <h2 className="text-xl font-semibold text-primary">{userInfo?.full_name || 'User'}</h2>
-                <p className="text-gray-500 text-sm">{userInfo?.email}</p>
+                <h2 className="text-xl font-semibold text-primary dark:text-table-header">{userInfo?.full_name || 'User'}</h2>
+                <p className="text-gray-500 dark:text-neutral-300 text-sm">{userInfo?.email}</p>
               </div>
             </div>
               <div className=' sm:mt-14 lg:mt-4 '>
@@ -150,7 +150,7 @@ const SettingsPage = () => {
                       handleSubmit(onSubmit)()
                     }
                   }}
-                  className='mt-4 cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
+                  className='mt-4 text-sm md:text-md lg:text-base cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
                   {isEdit ? 'Update' : 'Edit'}
               </button>
               </div>
@@ -161,7 +161,7 @@ const SettingsPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1">Full Name</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Full Name</label>
                 <input
                   {...register("fullName", {
                     pattern: {
@@ -170,7 +170,7 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
                   placeholder="Enter full name"  />
                 {errors.fullName && (
                   <p className="text-red-500 text-xs">{String(errors.fullName.message)}</p>
@@ -178,7 +178,7 @@ const SettingsPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm mb-1">Nick Name</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Nick Name</label>
                 <input
                   {...register("nickName", {
                     pattern: {
@@ -187,7 +187,7 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary dark:bg-neutral-600 dark:text-neutral-400 bg-bg-input rounded-md focus:ring focus:ring-blue-200"
                   placeholder="Enter nick name"  />
                 {errors.nickName && (
                   <p className="text-red-500 text-xs">{String(errors.nickName.message)}</p>
@@ -197,11 +197,11 @@ const SettingsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1">Gender</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Gender</label>
                 <select
                   {...register("gender")}
                   disabled={!isEdit}
-                  className="w-full px-4 pr-10  py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
+                  className="w-full px-4 pr-10  py-2 text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200" >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -211,11 +211,11 @@ const SettingsPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm mb-1">Country</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Country</label>
                 <select
                   {...register("country")}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"  >
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-neutral-400"  >
                   <option value="">Select country</option>
                   <option value="india">India</option>
                   <option value="uae">UAE</option>
@@ -228,11 +228,11 @@ const SettingsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1">Language</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Language</label>
                 <select
                   {...register("language")}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200" >
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
                   <option value="">Select language</option>
                   <option value="en">English</option>
                   <option value="ar">Arabic</option>
@@ -241,11 +241,11 @@ const SettingsPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm mb-1">Theme</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Theme</label>
                 <select
                   {...register("theme")}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200"  >
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200"  >
                   <option value="">Select theme</option>
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>

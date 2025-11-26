@@ -49,7 +49,7 @@ const Navbar = () => {
           <span className="absolute left-3 top-1/2 -translate-y-1/2">
             <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
           </span>
-          <input
+          <input 
             type="text"
             placeholder="Start search here..."
             value={searchQuery}
@@ -70,8 +70,8 @@ const Navbar = () => {
 
           {/* Dropdown */}
          {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white border border-border-third rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
-            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 shadow-md"
+          <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white dark:bg-neutral-800 border border-border-third dark:border-neutral-500 rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
+            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md"
               onClick={() => {
                 navigate("/settings");
                 setDropdownOpen(false); }}>
@@ -79,8 +79,8 @@ const Navbar = () => {
               Settings
             </button>
 
-            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 shadow-md" onClick={handleLogout}>
-              <img src="./logos/logout.svg" alt="logout" className="w-4 h-4" />
+            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md" onClick={handleLogout}>
+              <img src="./logos/logout.svg" alt="logout" className="w-4 h-4 " />
               Logout
             </button>
           </div>
