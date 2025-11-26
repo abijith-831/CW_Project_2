@@ -160,10 +160,10 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
   return (
     <div className="w-full max-w-xl" ref={wrapperRef}>
       <div className="relative">
-        <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 bg-white rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
+        <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
             {/* Show only first 3 selected tags */}
             {selectedTags.slice(0, 3).map(tag => (
-              <div key={tag.topic} className="flex items-center gap-1.5 bg-[#97bdbd] cursor-pointer font-medium px-2 py-1 rounded-full text-xs">
+              <div key={tag.topic} className="flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-xs">
                 <TagIcon />
                 {tag.topic}
                 <button  type="button"  disabled={selectedTags.length <= 1} className={`cursor-pointer hover:bg-green-700 rounded-full ${
@@ -178,7 +178,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 
             {/* If more than 3 → show text */}
             {selectedTags.length > 3 && (
-              <span className="text-xs ml-1 text-secondary"> +{selectedTags.length - 3} more</span>
+              <span className="text-xs ml-1 text-secondary dark:text-table-header"> +{selectedTags.length - 3} more</span>
             )}
 
             {selectedTags.length <= 3 && (
@@ -231,7 +231,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ table }) => {
 export default function TagMultiSelectPage({ table }: { table: any }) {
   return (
     <div className=" text-sm">
-      <div className="w-full max-w-2xl">
+      <div className="w-full  max-w-2xl">
         <TagMultiSelect table={table} />
       </div>
     </div>

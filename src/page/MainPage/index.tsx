@@ -8,7 +8,7 @@ const MainPage = () => {
     const [selectedCompany , setSelectedCompany ] = useState<any>(null)
 
   return (
-    <div>
+    <div className='bg-white dark:bg-neutral-800 '>
       {showDetails ? (
         <DetailsPage company={selectedCompany} goToDashboard={()=> setShowDetails(false)}/>
       ):(

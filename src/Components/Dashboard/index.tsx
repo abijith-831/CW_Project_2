@@ -21,7 +21,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   const [loading , setLoading] = useState(true)
 
   const [currentPage , setCurrentPage ] = useState(1)
-  const [itemsPerPage , setItemsPerPage] = useState(capitalView === 'table' ? 10 : 6)
+  const [itemsPerPage , setItemsPerPage] = useState(capitalView === 'table' ? 12 : 6)
   const [selectedState , setSelectedState] = useState('')
 
   const indexOfLastItem = currentPage * itemsPerPage
@@ -44,7 +44,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const handleChangeView = (value : 'graph' | 'table')=>{
     dispatch(updateCapitalView(value))
-    setItemsPerPage(value === 'table' ? 10 : 6)
+    setItemsPerPage(value === 'table' ? 12 : 6)
   }
 
   const indianStates = [
@@ -102,13 +102,13 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
    
   return (
-    <div className=' flex flex-col overflow-hidden'>
+    <div className=' flex flex-col overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   
         {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
             <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
                 {/* Heading */}
-                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary flex-1">
+                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header flex-1">
                     Registrars of Companies - {capitalView === 'graph' ? 'Graph View' : 'Table View'}
                 </h1>
 
@@ -116,11 +116,11 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   <div className="flex flex-wrap items-center  gap-6">
                       {/* Filter */}
                       <div className="flex items-center gap-1 md:gap-3">
-                        <h1 className="text-secondary text-sm md:text-base">Filter by:</h1>
-                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary text-sm" >
+                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header">Filter by:</h1>
+                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:text-table-header text-sm" >
                             <option value="">State</option>
                             {indianStates.map((state, index) => (
-                              <option className='cursor-pointer' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
+                              <option className='cursor-pointer ' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
                             ))}
                         </select>
                       </div>
@@ -139,7 +139,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
                 {/* Description */}
                 <div className="text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed">
-                <h6 className='text-sm md:text-base'>
+                <h6 className='text-sm md:text-md dark:text-table-header'>
                     Visualize key insights from company registration data, including capital distribution,
                     company status, and registration trends over time. The graphs help you quickly understand
                     patterns across construction-related businesses.
@@ -156,12 +156,12 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
            </div>
            {/* pagination block */}
-           <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-3">
+           <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 pb-4">
                 {/* Prev Button */}
                 <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === 1
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-gray-300 text-secondary cursor-pointer"
+                        ? "bg-gray-200 text-gray-400 dark:bg-neutral-500 cursor-not-allowed"
+                        : "bg-gray-300 text-secondary hover:transition-transform hover:scale-102 duration-300  cursor-pointer"
                     }`}>
                     Prev
                 </button>
@@ -177,8 +177,8 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     disabled={currentPage === totalPages}
                     className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === totalPages
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-gray-300 text-secondary cursor-pointer"
+                        ? "bg-gray-200 text-gray-400 dark:bg-neutral-500 cursor-not-allowed"
+                        : "bg-gray-300 text-secondary dark:bg-neutral-300 hover:transition-transform hover:scale-102 duration-300 cursor-pointer"
                     }`}>
                     Next
                 </button>
