@@ -62,7 +62,7 @@ const authSlice = createSlice({
       if(state.currentUser){
         state.currentUser.capital_view = action.payload;
       }
-    },
+    },  
     updateSelectedColumns(state,action){
       if(state.currentUser){
         state.currentUser.selected_columns = action.payload;
