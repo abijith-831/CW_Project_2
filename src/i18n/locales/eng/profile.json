@@ -2,6 +2,7 @@
     "profile_heading":"Profile & Settings",
     "edit_btn":"Edit",
     "update_btn":"Update",
+    "cancel_btn":"Cancel",
     "full_name":"Full Name",
     "nick_name":"Nick Name",
     "gender":"Gender",
@@ -22,5 +23,8 @@
     "english":"English",
     "arabic":"Arabic",
     "full_name_placeholder":"Enter Full Name",
-    "nick_name_placeholder":"Enter Nick Name"
+    "nick_name_placeholder":"Enter Nick Name",
+    "capital_view":"Capital View",
+    "graph_text":"Graph",
+    "table_text":"Table"
 }

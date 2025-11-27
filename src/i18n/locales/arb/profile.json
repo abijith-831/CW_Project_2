@@ -2,6 +2,7 @@
   "profile_heading": "الملف الشخصي والإعدادات",
   "edit_btn": "تعديل",
   "update_btn": "تحديث",
+  "cancel_btn": "إلغاء",
   "full_name": "الاسم الكامل",
   "nick_name": "الاسم المستعار",
   "gender": "الجنس",
@@ -22,5 +23,8 @@
   "english": "الإنجليزية",
   "arabic": "العربية",
   "full_name_placeholder": "أدخل الاسم الكامل",
-  "nick_name_placeholder": "أدخل الاسم المستعار"
+  "nick_name_placeholder": "أدخل الاسم المستعار",
+  "capital_view": "طريقة العرض",
+  "graph_text": "الرسم البياني",
+  "table_text": "الجدول"
 }

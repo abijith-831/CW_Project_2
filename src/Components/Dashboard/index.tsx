@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useSelector , useDispatch } from 'react-redux'
 import { updateCapitalView } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
+import { updateCapitalViewInDB } from '../../api/userProfile.api'
 import { useTranslation } from 'react-i18next'
 
 interface DashboardProps {
@@ -16,6 +17,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const dispatch = useDispatch()
   const { t } = useTranslation();
+  const user = useSelector((state:any) => state.auth.currentUser);
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
 
@@ -44,8 +46,11 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  const handleChangeView = (value : 'graph' | 'table')=>{
+  const handleChangeView = async(value : 'graph' | 'table')=>{
     dispatch(updateCapitalView(value))
+     if (user?.id) {
+        await updateCapitalViewInDB(user.id, value);
+      }
     setItemsPerPage(value === 'table' ? 12 : 6)
   }
 

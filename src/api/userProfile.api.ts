@@ -42,3 +42,11 @@ export const updateUserProfile = async (payload: any) => {
   if (error) throw error;
   return data;
 };
+
+
+export const updateCapitalViewInDB = async (userId: string, capitalView: string) => {
+  return await supabase
+    .from("usersTable")
+    .update({ capital_view: capitalView })
+    .eq("id", userId);
+};

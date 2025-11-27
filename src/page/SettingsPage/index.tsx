@@ -20,6 +20,7 @@ const SettingsPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light'
   const language = useSelector((state:any)=>state.auth.currentUser?.language_preference) || 'eng'
+  const capital_view = useSelector((state:any)=> state.auth.currentUser?.capital_view) || "graph"
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const {t} = useTranslation("profile")
@@ -55,8 +56,9 @@ const SettingsPage = () => {
       setValue("country", userInfo.country)
       setValue("language", language)
       setValue("theme", theme)
+      setValue("capital_view",capital_view)
     }
-  }, [userInfo, setValue,theme,isEdit])
+  }, [userInfo, setValue,theme,isEdit , capital_view])
 
   const isChanged =  formValues.fullName !== userInfo?.full_name ||
   formValues.nickName !== userInfo?.nick_name ||
@@ -64,6 +66,7 @@ const SettingsPage = () => {
   formValues.country !== userInfo?.country ||
   formValues.language !== userInfo?.language_preference ||
   formValues.theme !== userInfo?.theme_preference ||
+  formValues.capital_view !== userInfo?.capital_view ||
   selectedFile !== null;
   
   
@@ -88,6 +91,9 @@ const SettingsPage = () => {
         profilePictureUrl = urlData.publicUrl
       }
 
+      console.log('daa',data);
+      
+
       const res = await updateUserProfile({
         full_name: data.fullName,
         nick_name: data.nickName,
@@ -95,7 +101,8 @@ const SettingsPage = () => {
         country: data.country,
         language_preference: data.language,
         theme_preference: data.theme,
-        profile_picture: profilePictureUrl
+        profile_picture: profilePictureUrl,
+        capital_view : data.capital_view
       })
       dispatch(setUser(res));
 
@@ -154,7 +161,7 @@ const SettingsPage = () => {
                 }}
                 className="flex cursor-pointer items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
                 <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
-                <span className="font-medium text-table-header">Edit</span>
+                <span className="font-medium text-table-header">{t("edit_btn")}</span>
               </button>
             </div>
       
@@ -206,7 +213,7 @@ const SettingsPage = () => {
                 }}
                 className="flex items-center gap-2 px-4 py-1 rounded-md bg-bg-primary opacity-90 hover:scale-105 duration-300"  >
                 <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
-                <span className="font-medium text-table-header">Edit</span>
+                <span className="font-medium text-table-header">{t("edit_btn")}</span>
               </button>
             </div>
             </div>
@@ -227,7 +234,7 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary dark:placeholder:text-neutral-400 bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
                   placeholder= {t("full_name_placeholder")} />
                 {errors.fullName && (
                   <p className="text-red-500 text-xs">{String(errors.fullName.message)}</p>
@@ -244,7 +251,7 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:placeholder:text-neutral-400 dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
                   placeholder= {t("nick_name_placeholder")}   />
                 {errors.nickName && (
                   <p className="text-red-500 text-xs">{String(errors.nickName.message)}</p>
@@ -309,12 +316,26 @@ const SettingsPage = () => {
                 {errors.theme && <p className="text-red-500 text-xs">Theme is required</p>}
               </div>
             </div>
+
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center mx-auto">
+              <div >
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("capital_view")}</label>
+                <select
+                  {...register("capital_view")}
+                  disabled={!isEdit}
+                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
+                  
+                  <option value="graph">{t("graph_text")}</option>
+                  <option value="table">{t("table_text")}</option>
+                </select>
+              </div>
+            </div>
               {isEdit && (
               <div className='flex items-end justify-end gap-10 mb-4'>
-                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary cursor-pointer bg-neutral-300 hover:scale-102 duration-300 transition-transform'>Cancel</button>
+                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary cursor-pointer bg-neutral-300 hover:scale-102 duration-300 transition-transform'>{t("cancel_btn")}</button>
                 <button disabled={!isChanged} onSubmit={handleSubmit(onSubmit)} className={`px-4 py-1  rounded-md text-table-header bg-bg-primary  
                   ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102 cursor-pointer"} 
-                  duration-300 transition-transform`}>Update</button>
+                  duration-300 transition-transform`}>{t("update_btn")}</button>
 
               </div>
               )}

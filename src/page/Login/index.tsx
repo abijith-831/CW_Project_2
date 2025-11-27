@@ -73,13 +73,13 @@ export default function Login() {
 
       const metadata = session.user.user_metadata;
       const profilePicture =
-        metadata?.avatar_url || metadata?.picture || "";
+      metadata?.avatar_url || metadata?.picture || "";
       const fullName = metadata?.full_name || metadata?.name || "";
 
       // Check user in DB
       const { userDetails, error: userError } = await fetchUserFromDB(userId);
 
-      console.log('userda',userDetails);
+      console.log('deatisl',userDetails);
       
 
       if (userError || !userDetails) {
@@ -104,14 +104,13 @@ export default function Login() {
           })
         );
 
-        enqueueSnackbar("Login successful!", { variant: "success" });
         if (redirectToDashboard) navigate("/", { replace: true });
 
         return;
       }
 
-      // Update user profile if changed
-      // Update payload
+      // ppdate user profile if changed
+      // update payload
       const updatePayload: any = {};
 
       if (!userDetails.profile_picture && profilePicture) {
@@ -121,6 +120,13 @@ export default function Login() {
       if (fullName && fullName !== userDetails.full_name) {
         updatePayload.full_name = fullName;
       }
+
+      if (!userDetails.capital_view) {
+        updatePayload.capital_view = "graph"
+      }
+
+      console.log('update payload',updatePayload);
+      
 
       if (Object.keys(updatePayload).length > 0) {
         await updateUserInDB(userId, updatePayload);
@@ -135,7 +141,7 @@ export default function Login() {
         })
       );
 
-      enqueueSnackbar("Login successful!", { variant: "success" });
+      
       if (redirectToDashboard) navigate("/", { replace: true });
 
     } catch (error) {
