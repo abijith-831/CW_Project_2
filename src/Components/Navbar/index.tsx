@@ -7,10 +7,14 @@ import { supabase } from "../../api/supabase";
 import { useSnackbar } from "notistack";
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation()
+
+  
   const { enqueueSnackbar } = useSnackbar();
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
   const user = useSelector((state: any) => state.auth.currentUser);
@@ -46,23 +50,25 @@ const Navbar = () => {
       </Link> 
 
       {/* center: search bar */}
-      <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1/3">
-        <div className="relative w-[80%]">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2">
-            <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
-          </span>
-          <input 
-            type="text"
-            placeholder={t("search_text")}
-            value={searchQuery}
-            onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
-            className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300  bg-white  text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
-            {searchQuery && (
-              <button className="absolute right-3 top-1/2 -translate-y-1/2  hover:text-zinc-700 bg-bg-primary rounded-full px-1.5 opacity-50 text-black" onClick={()=>dispatch(updateSearchQuery(""))}>✕</button>
-            )}
+      {location.pathname ==='/' && (
+        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1/3">
+          <div className="relative w-[80%]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2">
+              <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
+            </span>
+            <input 
+              type="text"
+              placeholder={t("search_text")}
+              value={searchQuery}
+              onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
+              className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300  bg-white  text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
+              {searchQuery && (
+                <button className="absolute right-3 top-1/2 -translate-y-1/2  hover:text-zinc-700 bg-bg-primary rounded-full px-1.5 opacity-50 text-black" onClick={()=>dispatch(updateSearchQuery(""))}>✕</button>
+              )}
+          </div>
         </div>
-      </div>
-
+      )}
+      
       {/* right */}
       <div className="flex items-center gap-4 sm:gap-8 ml-auto relative">
         <ThemeToggle />
