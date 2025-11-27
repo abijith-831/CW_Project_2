@@ -28,6 +28,7 @@ export const googleLoginRequest = async ()=>{
             queryParams : { access_type: "offline", prompt: "consent" },
         }
     })
+    
 }
 
 
@@ -88,7 +89,7 @@ export const createUserInDB = async (payload: {
       email: payload.email,
       full_name: payload.full_name,
       profile_picture: payload.profile_picture,
-      language_preference: "arb",
+      language_preference: "eng",
       theme_preference: "light",
       capital_view: "graph",
       created_at: new Date(),

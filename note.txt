@@ -1,62 +1,77 @@
-✅ Solution: Store an array of open indexes
-Step 1 — Change state
-const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+f you need to check whether the Redux values (current user info) are the same as the form values before enabling “Update”, you should compare:
 
-Step 2 — Update your click handler
-const handleItemClick = (index: number) => {
-  setOpenIndexes(prev =>
-    prev.includes(index)
-      ? prev.filter(i => i !== index)  // close it
-      : [...prev, index]               // open it
-  );
-};
+✅ form values
+with
+✅ userInfo (from Redux or fetched profile)
 
-Step 3 — Update isOpen check
+React Hook Form already gives you isDirty, but it marks dirty even if the user types and then puts back the same value.
 
-Replace:
+✅ Best Approach: Use watch() + compare with original data
+✔ Step 1: Get all form values using watch()
+const { register, handleSubmit, formState: { errors }, setValue, setFocus, watch } = useForm();
 
-isOpen={openIndex === index}
+✔ Step 2: Create a function that checks if something changed
+const formValues = watch();
 
+const isChanged =
+  formValues.fullName !== userInfo?.full_name ||
+  formValues.nickName !== userInfo?.nick_name ||
+  formValues.gender !== userInfo?.gender ||
+  formValues.country !== userInfo?.country ||
+  formValues.language !== userInfo?.language_preference ||
+  formValues.theme !== userInfo?.theme_preference ||
+  selectedFile !== null;
 
-with:
+✔ Step 3: Use this isChanged for enabling the Update button
+<button
+  disabled={!isChanged}
+  className={`px-4 py-1 rounded-md text-table-header bg-bg-primary opacity-90 
+    ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
+    duration-300 transition-transform`}
+>
+  Update
+</button>
 
-isOpen={openIndexes.includes(index)}
+✅ Full working example only for the button section
+const formValues = watch();
 
-🎉 Final Updated AccordionLast Component
-const AccordionLast: React.FC<AccordionLastProps> = ({ company }) => {
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+const isChanged =
+  formValues.fullName !== userInfo?.full_name ||
+  formValues.nickName !== userInfo?.nick_name ||
+  formValues.gender !== userInfo?.gender ||
+  formValues.country !== userInfo?.country ||
+  formValues.language !== userInfo?.language_preference ||
+  formValues.theme !== userInfo?.theme_preference ||
+  selectedFile !== null;
 
-  const handleItemClick = (index: number) => {
-    setOpenIndexes(prev =>
-      prev.includes(index)
-        ? prev.filter(i => i !== index)  // close
-        : [...prev, index]               // open
-    );
-  };
+{isEdit && (
+  <div className='flex items-end justify-end gap-10 mb-4'>
+    
+    <button
+      onClick={() => setIsEdit(false)}
+      className='px-4 py-1 rounded-md text-secondary bg-neutral-300 hover:scale-102 duration-300 transition-transform'
+    >
+      Cancel
+    </button>
 
-  return (
-    <div className="flex items-center justify-center pt-2 pb-8 mb-6">
-      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-neutral-900 rounded-2xl shadow-lg dark:shadow-zinc-900/20 border border-zinc-200 dark:border-border-dark-primary overflow-hidden">
+    <button
+      disabled={!isChanged}
+      className={`px-4 py-1 rounded-md text-table-header bg-bg-primary opacity-90
+        ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
+        duration-300 transition-transform`}
+    >
+      Update
+    </button>
 
-        {accordionData.map((item, index) => (
-          <AccordionItem
-            key={index}
-            item={item}
-            isOpen={openIndexes.includes(index)}
-            onClick={() => handleItemClick(index)}
-            company={company}
-          />
-        ))}
+  </div>
+)}
 
-      </div>
-    </div>
-  );
-};
+🎉 Now the “Update” button will only enable when:
 
-🎯 Result
+✔ User actually changed something
+✔ Or a new profile image is selected
+✔ Putting back the old value makes the button disabled again
 
-✔ You can open any number of questions
-✔ Clicking an open one closes only that one
-✔ Clicking another doesn’t close others
+If you want, I can prepare a clean reusable hook like:
 
-If you want all to open initially, I can give that too.
+useIsFormChanged(formValues, userInfo);

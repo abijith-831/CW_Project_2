@@ -26,7 +26,8 @@ const SettingsPage = () => {
 
 
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState: { errors }, setValue, setFocus } = useForm()
+  const { register, handleSubmit, formState: { errors }, setValue, setFocus, watch } = useForm()
+  const formValues = watch()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,7 +43,9 @@ const SettingsPage = () => {
     }
     fetchUser()
   }, [])
-  
+
+
+
 
   useEffect(() => {
     if (userInfo) {
@@ -54,6 +57,16 @@ const SettingsPage = () => {
       setValue("theme", theme)
     }
   }, [userInfo, setValue,theme,isEdit])
+
+  const isChanged =  formValues.fullName !== userInfo?.full_name ||
+  formValues.nickName !== userInfo?.nick_name ||
+  formValues.gender !== userInfo?.gender ||
+  formValues.country !== userInfo?.country ||
+  formValues.language !== userInfo?.language_preference ||
+  formValues.theme !== userInfo?.theme_preference ||
+  selectedFile !== null;
+  
+  
 
   const onSubmit = async (data: any) => {
     try {
@@ -127,48 +140,53 @@ const SettingsPage = () => {
         {/* Right Form Section */}
         <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-2 md:py-4 lg:py-10 border bg-white dark:bg-neutral-800 dark:border-neutral-600 shadow-md border-border-secondary overflow-auto'>
         
-          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>{t("profile_heading")}</h1>
+          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 text-secondary dark:text-table-header'>{t("profile_heading")}</h1>
 
           {/* Profile Banner */}
           <div className='relative flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
-            <div className="absolute top-4 right-4">
-                <button onClick={() => {
-                    setIsEdit(true)
-                    setTimeout(() => setFocus("fullName"), 0)
-                  }}
-                  className="px-2 py-1.5 rounded-full  bg-gray-300 dark:bg-neutral-700 hover:scale-110 transition-all" >  <FontAwesomeIcon  icon={faPen} className="text-gray-900  dark:text-white" />
-                </button>
+
+            {/* Edit Button – Desktop (top-right) */}
+            <div className="hidden md:block absolute top-13 right-4">
+              <button
+                onClick={() => {
+                  setIsEdit(true);
+                  setTimeout(() => setFocus("fullName"), 0);
+                }}
+                className="flex items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-105 duration-300"  >
+                <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
+                <span className="font-medium text-table-header">Edit</span>
+              </button>
             </div>
 
+            
+
+            {/* Content */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
-                {/* Profile Image */}
-                <img src={
+                <img
+                  src={
                     selectedFile
                       ? URL.createObjectURL(selectedFile)
-                      : userInfo?.profile_picture ||   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  }  alt="profile"
+                      : userInfo?.profile_picture ||
+                        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                  }
+                  alt="profile"
                   className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
-                    imageLoading ? "opacity-0" : "opacity-100"
-                  }`}
-                  onLoad={() => setImageLoading(false)}/>
+                    imageLoading ? "opacity-0" : "opacity-100" }`}
+                  onLoad={() => setImageLoading(false)} />
 
-                {/* Image Spinner */}
                 {imageLoading && (
                   <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
                     <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
                   </div>
                 )}
 
-                {/* Upload Overlay (only in edit mode) */}
                 {isEdit && !imageLoading && (
                   <div
-                    className="absolute inset-0 flex flex-col items-center justify-center rounded-full
-                              bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer"
-                    onClick={() => fileInputRef.current?.click()}  >
-                    <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange}/>
+                    className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer" onClick={() => fileInputRef.current?.click()} >
+                    <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
                     <h1>Upload</h1>
-                    <p className="text-[10px] text-primary">2 MB maximum</p>
+                    <p className="text-[10px] text-table-header">2 MB maximum</p>
                   </div>
                 )}
               </div>
@@ -179,9 +197,22 @@ const SettingsPage = () => {
                 </h2>
                 <p className="text-gray-500 dark:text-neutral-300 text-sm">{userInfo?.email}</p>
               </div>
-            </div>
 
+              {/* Edit Button – Mobile (bottom-center) */}
+            <div className="md:hidden w-full flex justify-center mt-4">
+              <button
+                onClick={() => {
+                  setIsEdit(true);
+                  setTimeout(() => setFocus("fullName"), 0);
+                }}
+                className="flex items-center gap-2 px-4 py-1 rounded-md bg-bg-primary opacity-90 hover:scale-105 duration-300"  >
+                <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
+                <span className="font-medium text-table-header">Edit</span>
+              </button>
+            </div>
+            </div>
           </div>
+
 
 
           {/* Form */}
@@ -281,8 +312,11 @@ const SettingsPage = () => {
             </div>
               {isEdit && (
               <div className='flex items-end justify-end gap-10 mb-4'>
-                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary bg-neutral-300 '>Cancel</button>
-                <button onSubmit={handleSubmit(onSubmit)} className='px-4 py-1  rounded-md text-table-header bg-bg-primary opacity-90 hover:scale-101 duration-300 transition-transform'>Update</button>
+                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary bg-neutral-300 hover:scale-102 duration-300 transition-transform'>Cancel</button>
+                <button disabled={!isChanged} onSubmit={handleSubmit(onSubmit)} className={`px-4 py-1 rounded-md text-table-header bg-bg-primary  
+                  ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
+                  duration-300 transition-transform`}>Update</button>
+
               </div>
               )}
             

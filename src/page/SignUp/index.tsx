@@ -55,7 +55,7 @@ export default function SignUp() {
         nick_name: "",
         gender: "",
         country: "",
-        language_preference: "arb",
+        language_preference: "eng",
         theme_preference: "light",
         profile_picture: "",
         created_at: new Date(),
