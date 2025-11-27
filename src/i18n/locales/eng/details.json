@@ -1,0 +1,22 @@
+{
+    "main_heading":"Registrars of Companies - Detailed Information",
+    "description":"The following table provides a breakdown of vaccine doses distributed by manufacturer and source, including total doses received and administered . The following table provides a breakdown of vaccine doses distributed by manufacturer and source, including total doses received and administered",
+    "company_details":"Company Details",
+    "capital_info":"Capital Information",
+    "reg_details":"Registration Details",
+    "industry_details":"Industry Details",
+    "CompanyName": "Company Name",
+    "CompanyIndustrialClassification": "Industry",
+    "Registered_Office_Address": "Registered Address",
+    "AuthorizedCapital": "Authorized Capital",
+    "PaidupCapital": "Paid-up Capital",
+    "CompanyStatus": "Status",
+    "CIN": "CIN",
+    "CompanyROCcode": "ROC Code",
+    "CompanyRegistrationdate_date": "Registration Date",
+    "CompanyCategory": "Category",
+    "Listingstatus": "Listing Status",
+    "CompanyClass": "Class",
+    "CompanyStateCode": "State Code",
+    "nic_code": "NIC Code"
+}

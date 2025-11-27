@@ -11,11 +11,16 @@
   --color-table-header:#DEDEDE;
   --color-badge:#747474;
   --spacing-big: 4rem;
+
+  --color-border-dark-primary:#4b5563;
+
   --color-border-primary: #A7A7A7;
   --color-border-secondary:#B9B9B9;
   --color-border-third:#CBCBCB;
+
   --radius-primary: 0.8rem;  
   --radius-secondary: 0.6rem;
+
   --color-bg-primary:#0A4E4E;
   --color-bg-secondary:#3CB5B3;
   --color-bg-input:#F0F0F0;

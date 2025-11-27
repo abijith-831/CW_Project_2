@@ -8,6 +8,8 @@ import arb from "../i18n/locales/arb/dashboard.json";
 import profile_eng from "../i18n/locales/eng/profile.json";
 import profile_arb from "../i18n/locales/arb/profile.json";
 
+import details_eng from "../i18n/locales/eng/details.json"
+import details_arb from "../i18n/locales/arb/details.json"
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -15,11 +17,13 @@ i18n
     resources: {
       eng: {
         translation: eng,
-        profile: profile_eng
+        profile: profile_eng,
+        details:details_eng
       },
       arb: {
         translation: arb,
-        profile: profile_arb
+        profile: profile_arb,
+        details:details_arb
       }
     },
     fallbackLng: "eng",

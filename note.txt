@@ -1,0 +1,62 @@
+✅ Solution: Store an array of open indexes
+Step 1 — Change state
+const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+
+Step 2 — Update your click handler
+const handleItemClick = (index: number) => {
+  setOpenIndexes(prev =>
+    prev.includes(index)
+      ? prev.filter(i => i !== index)  // close it
+      : [...prev, index]               // open it
+  );
+};
+
+Step 3 — Update isOpen check
+
+Replace:
+
+isOpen={openIndex === index}
+
+
+with:
+
+isOpen={openIndexes.includes(index)}
+
+🎉 Final Updated AccordionLast Component
+const AccordionLast: React.FC<AccordionLastProps> = ({ company }) => {
+  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+
+  const handleItemClick = (index: number) => {
+    setOpenIndexes(prev =>
+      prev.includes(index)
+        ? prev.filter(i => i !== index)  // close
+        : [...prev, index]               // open
+    );
+  };
+
+  return (
+    <div className="flex items-center justify-center pt-2 pb-8 mb-6">
+      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-neutral-900 rounded-2xl shadow-lg dark:shadow-zinc-900/20 border border-zinc-200 dark:border-border-dark-primary overflow-hidden">
+
+        {accordionData.map((item, index) => (
+          <AccordionItem
+            key={index}
+            item={item}
+            isOpen={openIndexes.includes(index)}
+            onClick={() => handleItemClick(index)}
+            company={company}
+          />
+        ))}
+
+      </div>
+    </div>
+  );
+};
+
+🎯 Result
+
+✔ You can open any number of questions
+✔ Clicking an open one closes only that one
+✔ Clicking another doesn’t close others
+
+If you want all to open initially, I can give that too.

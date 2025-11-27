@@ -91,7 +91,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 }) => {
   return (
     <div className="border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
-      {/* Header */}
+      {/* header */}
       <button
         className="w-full flex justify-between items-center text-left py-3 md:py-4 px-5 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-opacity-75 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-200"
         onClick={onClick}
@@ -105,17 +105,16 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         <AccordionIcon isOpen={isOpen} />
       </button>
 
-      {/* Content */}
+      {/* content */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-screen" : "max-h-0"
-        }`} >
+          isOpen ? "max-h-screen" : "max-h-0"  }`} >
         <div className="p-5 pt-0 text-secondary dark:text-zinc-300 space-y-2">
 
-          {/* Company Details */}
+          {/* ccompany Details */}
           {item.question === "Company Details" && (
             <>
-              <div className="flex items-center justify-between text-xs md:text-sm px-8 py-2">
+              <div className="flex items-center justify-between text-xs md:text-sm px-8 py-2 dark:text-table-header">
                 <div>
                   <p><strong>CIN</strong> - {company.CIN}</p>
                   <p><strong>Sub-Category</strong> - {company.CompanySubCategory}</p>
@@ -182,21 +181,21 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 };
 
 const AccordionLast: React.FC<AccordionLastProps> = ({ company }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number[]>([]);
 
   const handleItemClick = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+    setOpenIndex(prev => prev.includes(index)?prev.filter(i=>i!==index): [...prev,index])
   };
 
   return (
-    <div className="flex items-center justify-center pt-2 pb-8 mb-6 dark:bg-zinc-950">
-      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg dark:shadow-zinc-900/20 border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+    <div className="flex items-center justify-center pt-2 pb-8 mb-6 ">
+      <div className="w-full max-w-3xl mx-auto bg-white dark:bg-neutral-900 rounded-2xl shadow-lg dark:shadow-zinc-900/20 border border-zinc-200 dark:border-border-dark-primary overflow-hidden">
         
         {accordionData.map((item, index) => (
           <AccordionItem
             key={index}
             item={item}
-            isOpen={openIndex === index}
+            isOpen={openIndex.includes(index)}
             onClick={() => handleItemClick(index)}
             company={company}
           />

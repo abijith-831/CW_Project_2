@@ -6,6 +6,7 @@ import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
 import { styled } from '@mui/material/styles';
 import { interpolateObject } from '@mui/x-charts-vendor/d3-interpolate';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 interface CompanyDataProps {
   AuthorizedCapital: string;
@@ -35,12 +36,15 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
   
   const authorizedCapital = parseFloat(company.AuthorizedCapital) || 0;
   const paidupCapital = parseFloat(company.PaidupCapital) || 0;
+
+  const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light';
+  const axisColor = theme === 'dark' ? '#DEDEDE' : '#2E2E2E'
   
   const isListed = company.Listingstatus?.toLowerCase() === 'listed';
   
   return (
-    <div className='border border-border-primary rounded-lg py-2 shadow-md'>
-      <div className='flex justify-between px-4'>
+    <div className='border border-border-primary overflow-hidden  dark:border-[#4b5563] rounded-lg py-2 shadow-md'>
+      <div className='flex justify-between px-4 overflow-hidden'>
         <div className="relative group w-fit">
           <h1 className="text-primary text-xs md:text-md dark:text-table-header lg:text-base">
             {company.CompanyName.length > 30
@@ -59,7 +63,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
         <h3 className={`border border-border-secondary md:pt-0.5 px-1 sm:px-2 md:px-4 text-sm rounded-sm text-badge ${company.CompanyStatus==='Active' ? 'bg-[#DDEFD0]' : company.CompanyStatus==='Strike Off'?'bg-[#EFCBC6]':'bg-blue-200'}`}>{company.CompanyStatus.length > 12    ? company.CompanyStatus.slice(0, 12) + "…"  : company.CompanyStatus}</h3>
       </div> 
       
-      <div className="w-full max-w-[550px] dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
+      <div className="w-full max-w-[550px] text-red-500 dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
         <ChartContainer
           xAxis={[{ scaleType: 'band', data: [t("AuthorizedCapital"), t("PaidupCapital")] }]}
           series={[
@@ -80,11 +84,33 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
           ]}
           height={220}
           yAxis={[{ width: 90 }]}
-          margin={{ left: 0, right: 120 }}
-        >
-          <BarPlot barLabel="value" slots={{ barLabel: BarLabel }} />
-          <ChartsXAxis />
-          <ChartsYAxis />
+          margin={{ left: 0, right: 120 }} >
+          <BarPlot  barLabel="value" slots={{ barLabel: BarLabel }}
+              slotProps={{
+                barLabel: { sx: { fill: axisColor } 
+                }
+              }} />
+
+          <ChartsXAxis
+              sx={{
+                "& .MuiChartsAxis-tickLabel": {
+                  fill: axisColor, 
+                },
+                "& .MuiChartsAxis-line": {
+                  stroke: axisColor,
+                }
+              }} />
+
+                      <ChartsYAxis
+              sx={{
+                "& .MuiChartsAxis-tickLabel": {
+                  fill: axisColor,
+                },
+                "& .MuiChartsAxis-line": {
+                  stroke: axisColor,
+                }
+              }} />
+
         </ChartContainer>
       </div>
 

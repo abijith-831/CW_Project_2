@@ -104,7 +104,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
    
   return (
-    <div className=' flex flex-col overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
+    <div className=' flex flex-col h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   
         {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -118,8 +118,8 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   <div className="flex flex-wrap items-center  gap-6">
                       {/* Filter */}
                       <div className="flex items-center gap-1 md:gap-3">
-                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header">{t("filter_by")}:</h1>
-                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:text-table-header text-sm" >
+                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header ">{t("filter_by")}:</h1>
+                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm" >
                             <option value="">{t("state")}</option>
                             {indianStates.map((state, index) => (
                               <option className='cursor-pointer ' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
@@ -128,7 +128,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                       </div>
 
                       {/* Toggle Buttons */}
-                      <div className="flex rounded-lg items-center overflow-hidden border border-gray-300">
+                      <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary">
                         <button onClick={() => handleChangeView("graph")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
                             {t("graph")}
                         </button>
@@ -156,7 +156,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
            </div>
            {/* pagination block */}
-           <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 pb-4">
+           <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-4">
                 {/* Prev Button */}
                 <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === 1

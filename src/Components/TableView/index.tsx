@@ -163,20 +163,20 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         </h1>
 
         {/* Column Visibility Dropdown */}
-        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg">
+        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg ">
           <TagMultiSelectPage table={table} />
         </div>
       </div>
 
 
       {/* table div */}
-      <div className="table w-full text-center border border-border-primary dark:border-neutral-500 rounded-xl overflow-hidden mt-2">
+      <div className="table w-full text-center border border-border-primary dark:border-border-dark-primary rounded-xl overflow-hidden mt-2">
         {/* header */}
         <div className="table-header-group bg-bg-primary text-table-header">
           {table.getHeaderGroups().map(headerGroup => (
             <div className="table-row" key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <div  className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary relative select-none cursor-pointer" 
+                <div  className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
                   key={header.id}
                   style={{ width: header.getSize() }}
                   onClick={header.column.getToggleSortingHandler()} >

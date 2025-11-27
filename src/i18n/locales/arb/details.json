@@ -1,0 +1,22 @@
+{
+  "main_heading": "مسجلو الشركات - المعلومات التفصيلية",
+  "description": "يوضح الجدول التالي توزيع جرعات اللقاح حسب الشركة المصنعة والمصدر، بما في ذلك إجمالي الجرعات المستلمة والمُعطاة. يوضح الجدول التالي توزيع جرعات اللقاح حسب الشركة المصنعة والمصدر، بما في ذلك إجمالي الجرعات المستلمة والمُعطاة.",
+  "company_details": "تفاصيل الشركة",
+  "capital_info": "معلومات رأس المال",
+  "reg_details": "تفاصيل التسجيل",
+  "industry_details": "تفاصيل الصناعة",
+  "CompanyName": "اسم الشركة",
+  "CompanyIndustrialClassification": "الصناعة",
+  "Registered_Office_Address": "عنوان المكتب المسجل",
+  "AuthorizedCapital": "رأس المال المصرح به",
+  "PaidupCapital": "رأس المال المدفوع",
+  "CompanyStatus": "الحالة",
+  "CIN": "رقم CIN",
+  "CompanyROCcode": "رمز ROC",
+  "CompanyRegistrationdate_date": "تاريخ التسجيل",
+  "CompanyCategory": "الفئة",
+  "Listingstatus": "حالة الإدراج",
+  "CompanyClass": "النوع",
+  "CompanyStateCode": "رمز الولاية",
+  "nic_code": "رمز NIC"
+}
