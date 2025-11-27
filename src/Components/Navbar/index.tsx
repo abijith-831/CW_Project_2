@@ -15,7 +15,6 @@ const Navbar = () => {
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
   const user = useSelector((state: any) => state.auth.currentUser);
 
-
   const { t } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -58,6 +57,9 @@ const Navbar = () => {
             value={searchQuery}
             onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
             className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300  bg-white  text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
+            {searchQuery && (
+              <button className="absolute right-3 top-1/2 -translate-y-1/2  hover:text-zinc-700 bg-bg-primary rounded-full px-1.5 opacity-50 text-black" onClick={()=>dispatch(updateSearchQuery(""))}>✕</button>
+            )}
         </div>
       </div>
 

@@ -152,7 +152,7 @@ const SettingsPage = () => {
                   setIsEdit(true);
                   setTimeout(() => setFocus("fullName"), 0);
                 }}
-                className="flex items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
+                className="flex cursor-pointer items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
                 <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
                 <span className="font-medium text-table-header">Edit</span>
               </button>
@@ -311,9 +311,9 @@ const SettingsPage = () => {
             </div>
               {isEdit && (
               <div className='flex items-end justify-end gap-10 mb-4'>
-                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary bg-neutral-300 hover:scale-102 duration-300 transition-transform'>Cancel</button>
-                <button disabled={!isChanged} onSubmit={handleSubmit(onSubmit)} className={`px-4 py-1 rounded-md text-table-header bg-bg-primary  
-                  ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
+                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary cursor-pointer bg-neutral-300 hover:scale-102 duration-300 transition-transform'>Cancel</button>
+                <button disabled={!isChanged} onSubmit={handleSubmit(onSubmit)} className={`px-4 py-1  rounded-md text-table-header bg-bg-primary  
+                  ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102 cursor-pointer"} 
                   duration-300 transition-transform`}>Update</button>
 
               </div>

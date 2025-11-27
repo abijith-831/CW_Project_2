@@ -1,77 +1,24 @@
-f you need to check whether the Redux values (current user info) are the same as the form values before enabling “Update”, you should compare:
+<div className="relative w-[80%]">
+  <span className="absolute left-3 top-1/2 -translate-y-1/2">
+    <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
+  </span>
 
-✅ form values
-with
-✅ userInfo (from Redux or fetched profile)
+  <input
+    type="text"
+    placeholder={t("search_text")}
+    value={searchQuery}
+    onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
+    className="w-full pl-10 pr-10 py-1.5 rounded-md border border-zinc-300 bg-white text-zinc-900
+    focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
 
-React Hook Form already gives you isDirty, but it marks dirty even if the user types and then puts back the same value.
-
-✅ Best Approach: Use watch() + compare with original data
-✔ Step 1: Get all form values using watch()
-const { register, handleSubmit, formState: { errors }, setValue, setFocus, watch } = useForm();
-
-✔ Step 2: Create a function that checks if something changed
-const formValues = watch();
-
-const isChanged =
-  formValues.fullName !== userInfo?.full_name ||
-  formValues.nickName !== userInfo?.nick_name ||
-  formValues.gender !== userInfo?.gender ||
-  formValues.country !== userInfo?.country ||
-  formValues.language !== userInfo?.language_preference ||
-  formValues.theme !== userInfo?.theme_preference ||
-  selectedFile !== null;
-
-✔ Step 3: Use this isChanged for enabling the Update button
-<button
-  disabled={!isChanged}
-  className={`px-4 py-1 rounded-md text-table-header bg-bg-primary opacity-90 
-    ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
-    duration-300 transition-transform`}
->
-  Update
-</button>
-
-✅ Full working example only for the button section
-const formValues = watch();
-
-const isChanged =
-  formValues.fullName !== userInfo?.full_name ||
-  formValues.nickName !== userInfo?.nick_name ||
-  formValues.gender !== userInfo?.gender ||
-  formValues.country !== userInfo?.country ||
-  formValues.language !== userInfo?.language_preference ||
-  formValues.theme !== userInfo?.theme_preference ||
-  selectedFile !== null;
-
-{isEdit && (
-  <div className='flex items-end justify-end gap-10 mb-4'>
-    
+  {/* Reset (Clear) Button */}
+  {searchQuery && (
     <button
-      onClick={() => setIsEdit(false)}
-      className='px-4 py-1 rounded-md text-secondary bg-neutral-300 hover:scale-102 duration-300 transition-transform'
+      onClick={() => dispatch(updateSearchQuery(""))}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700"
     >
-      Cancel
+      ✕
     </button>
-
-    <button
-      disabled={!isChanged}
-      className={`px-4 py-1 rounded-md text-table-header bg-bg-primary opacity-90
-        ${!isChanged ? "opacity-50 cursor-not-allowed" : "hover:scale-102"} 
-        duration-300 transition-transform`}
-    >
-      Update
-    </button>
-
-  </div>
-)}
-
-🎉 Now the “Update” button will only enable when:
-
-✔ User actually changed something
-✔ Or a new profile image is selected
-✔ Putting back the old value makes the button disabled again
-
-If you want, I can prepare a clean reusable hook like:
-
-useIsFormChanged(formValues, userInfo);
+  )}
+</div>
