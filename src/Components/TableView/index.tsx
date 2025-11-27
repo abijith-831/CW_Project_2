@@ -114,7 +114,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       accessorKey: 'CompanyStatus',
       header: t("CompanyStatus"),
       enableResizing: true,
-      enableSorting: false,
+      enableSorting: true,
       cell: (props: any) => (
         <span
           className={`px-3 py-1 rounded-md text-xs font-semibold

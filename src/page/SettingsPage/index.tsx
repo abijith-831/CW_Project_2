@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { getUserProfile, updateUserProfile } from "../../api/userProfile.api"
 import { useSnackbar } from 'notistack'
 import { useDispatch , useSelector} from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 import { setUser } from "../../redux/slices/authSlice";
 
@@ -19,7 +20,7 @@ const SettingsPage = () => {
   const language = useSelector((state:any)=>state.auth.currentUser?.language_preference) || 'eng'
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
-
+  const {t} = useTranslation("profile")
 
 
   const dispatch = useDispatch();
@@ -123,7 +124,7 @@ const SettingsPage = () => {
         {/* Right Form Section */}
         <div className='w-full lg:w-1/2 rounded-lg px-6 sm:px-8 py-2 md:py-4 lg:py-10 border bg-white dark:bg-neutral-800 dark:border-neutral-600 shadow-md border-border-secondary overflow-auto'>
         
-          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>Profile & Settings</h1>
+          <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>{t("profile_heading")}</h1>
 
           {/* Profile Banner */}
           <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
@@ -177,7 +178,7 @@ const SettingsPage = () => {
                     }
                   }}
                   className='mt-4 text-sm md:text-md lg:text-base cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
-                  {isEdit ? 'Update' : 'Edit'}
+                  {isEdit ? t("update_btn") : t("edit_btn")}
               </button>
               </div>           
           </div>
@@ -186,7 +187,7 @@ const SettingsPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Full Name</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("full_name")}</label>
                 <input
                   {...register("fullName", {
                     pattern: {
@@ -196,14 +197,14 @@ const SettingsPage = () => {
                   })}
                   disabled={!isEdit}
                   className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
-                  placeholder="Enter full name"  />
+                  placeholder= {t("full_name_placeholder")} />
                 {errors.fullName && (
                   <p className="text-red-500 text-xs">{String(errors.fullName.message)}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Nick Name</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("nick_name")}</label>
                 <input
                   {...register("nickName", {
                     pattern: {
@@ -212,8 +213,8 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary dark:bg-neutral-600 dark:text-neutral-400 bg-bg-input rounded-md focus:ring focus:ring-blue-200"
-                  placeholder="Enter nick name"  />
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
+                  placeholder= {t("nick_name_placeholder")}   />
                 {errors.nickName && (
                   <p className="text-red-500 text-xs">{String(errors.nickName.message)}</p>
                 )}
@@ -222,30 +223,30 @@ const SettingsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Gender</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("gender")}</label>
                 <select
                   {...register("gender")}
                   disabled={!isEdit}
                   className="w-full px-4 pr-10  py-2 text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200" >
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="">{t("select_gender")}</option>
+                  <option value="male">{t("male")}</option>
+                  <option value="female">{t("female")}</option>
+                  <option value="other">{t("others")}</option>
                 </select>
                 {errors.gender && <p className="text-red-500 text-xs">Gender is required</p>}
               </div>
 
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Country</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("country")}</label>
                 <select
                   {...register("country")}
                   disabled={!isEdit}
                   className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-neutral-400"  >
-                  <option value="">Select country</option>
-                  <option value="india">India</option>
-                  <option value="uae">UAE</option>
-                  <option value="usa">USA</option>
-                  <option value="uk">United Kingdom</option>
+                  <option value="">{t("select_country")}</option>
+                  <option value="india">{t("india")}</option>
+                  <option value="uae">{t("uae")}</option>
+                  <option value="usa">{t("usa")}</option>
+                  <option value="uk">{t("uk")}</option>
                 </select>
                 {errors.country && <p className="text-red-500 text-xs">Country is required</p>}
               </div>
@@ -253,27 +254,26 @@ const SettingsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Language</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("language")}</label>
                 <select
                   {...register("language")}
                   disabled={!isEdit}
                   className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
                   
                   <option value="eng">English</option>
-                  <option value="arb">Arabic</option>
+                  <option value="arb">العربية</option>
                 </select>
                 {errors.language && <p className="text-red-500 text-xs">Language is required</p>}
               </div>
 
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">Theme</label>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("theme")}</label>
                 <select
                   {...register("theme")}
                   disabled={!isEdit}
                   className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200"  >
-                  <option value="">Select theme</option>
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
+                  <option value="light">{t("light")}</option>
+                  <option value="dark">{t("dark")}</option>
                 </select>
                 {errors.theme && <p className="text-red-500 text-xs">Theme is required</p>}
               </div>

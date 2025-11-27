@@ -2,6 +2,7 @@ import LabelsAboveBars from '../Graph';
 import Navbar from '../Navbar'
 import React from 'react'
 import AccordionLast from '../Accordion';
+import { useTranslation } from 'react-i18next';
 
 interface DetailsPageProps{
     goToDashboard : ()=> void;
@@ -9,6 +10,8 @@ interface DetailsPageProps{
 }
 
 const DetailsPage:React.FC<DetailsPageProps> = ({goToDashboard , company}) => {
+    
+    const {t} = useTranslation()
     
   return (
     <div className="flex flex-col min-h-screen">
