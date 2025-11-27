@@ -152,13 +152,12 @@ const SettingsPage = () => {
                   setIsEdit(true);
                   setTimeout(() => setFocus("fullName"), 0);
                 }}
-                className="flex items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-105 duration-300"  >
+                className="flex items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
                 <FontAwesomeIcon icon={faPen} className="text-table-header text-sm" />
                 <span className="font-medium text-table-header">Edit</span>
               </button>
             </div>
-
-            
+      
 
             {/* Content */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4 w-full">

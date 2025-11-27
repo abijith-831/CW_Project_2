@@ -176,7 +176,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {table.getHeaderGroups().map(headerGroup => (
             <div className="table-row" key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <div  className="table-cell px-4 py-3 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
+                <div  className="table-cell px-4 py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
                   key={header.id}
                   style={{ width: header.getSize() }}
                   onClick={header.column.getToggleSortingHandler()} >
@@ -203,7 +203,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {table.getRowModel().rows.map(row => (
             <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <div className="table-cell dark:text-neutral-400 px-4 py-3 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
+                <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </div>
               ))}

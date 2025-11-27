@@ -79,6 +79,9 @@ export default function Login() {
       // Check user in DB
       const { userDetails, error: userError } = await fetchUserFromDB(userId);
 
+      console.log('userda',userDetails);
+      
+
       if (userError || !userDetails) {
         // Create new user
         const { newUser, error: createErr } = await createUserInDB({
@@ -108,16 +111,21 @@ export default function Login() {
       }
 
       // Update user profile if changed
+      // Update payload
       const updatePayload: any = {};
-      if (profilePicture && profilePicture !== userDetails.profile_picture)
-        updatePayload.profile_picture = profilePicture;
 
-      if (fullName && fullName !== userDetails.full_name)
+      if (!userDetails.profile_picture && profilePicture) {
+        updatePayload.profile_picture = profilePicture;
+      }
+
+      if (fullName && fullName !== userDetails.full_name) {
         updatePayload.full_name = fullName;
+      }
 
       if (Object.keys(updatePayload).length > 0) {
         await updateUserInDB(userId, updatePayload);
       }
+
 
       dispatch(
         loginSuccess({

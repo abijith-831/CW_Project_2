@@ -104,7 +104,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
    
   return (
-    <div className=' flex flex-col h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
+    <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   
         {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -167,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </button>
 
                 {/* Middle text */}
-                <span className="text-secondary font-medium text-sm md:text-base">
+                <span className="text-secondary font-medium text-sm md:text-base dark:text-table-header">
                     {t("page")} {currentPage} {t("of")} {totalPages}
                 </span>
 
