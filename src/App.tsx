@@ -20,8 +20,8 @@ const App = () => {
     <div >
       <SnackbarProvider maxSnack={3} autoHideDuration={3000} anchorOrigin={{vertical:'top',horizontal:'right'}}>
         <Routes>
-          <Route path='/' element={<ProtectedRoute> <MainPage /></ProtectedRoute>}/>
-          <Route path='/settings' element={<ProtectedRoute> <SettingsPage /></ProtectedRoute>}/>
+          <Route   path='/' element={<ProtectedRoute> <MainPage /></ProtectedRoute>}/>
+          <Route.  path='/settings' element={<ProtectedRoute> <SettingsPage /></ProtectedRoute>}/>
           <Route path='/login' element={<PublicRoute><Login /></PublicRoute>}/>
           <Route path='/signup' element={<PublicRoute><SignUp /></PublicRoute>}/>
 
