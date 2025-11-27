@@ -117,7 +117,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       enableSorting: true,
       cell: (props: any) => (
         <span
-          className={`px-3 py-1 rounded-md text-xs font-semibold
+          className={`px-3 py-1 rounded-md text-xs font-semibold text-primary
             ${props.getValue() === "Active"
               ? "bg-[#DDEFD0] text-badge"
               : props.getValue() === "Strike Off"

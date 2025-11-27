@@ -37,7 +37,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="relative flex items-center w-full py-4 md:py-6 bg-bg-primary px-4 sm:px-6 lg:px-8 ">
+    <nav className="relative flex items-center w-full py-4 md:py-6 bg-bg-primary  px-4 sm:px-6 lg:px-8 ">
       {/* left */}
       <Link to="/">
         <div  className="flex items-center gap-2  sm:gap-4">

@@ -8,6 +8,8 @@ import { useDispatch , useSelector} from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import { setUser } from "../../redux/slices/authSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 
 const SettingsPage = () => {
@@ -40,6 +42,7 @@ const SettingsPage = () => {
     }
     fetchUser()
   }, [])
+  
 
   useEffect(() => {
     if (userInfo) {
@@ -50,7 +53,7 @@ const SettingsPage = () => {
       setValue("language", language)
       setValue("theme", theme)
     }
-  }, [userInfo, setValue,theme])
+  }, [userInfo, setValue,theme,isEdit])
 
   const onSubmit = async (data: any) => {
     try {
@@ -127,61 +130,59 @@ const SettingsPage = () => {
           <h1 className='font-bold text-lg md:text-xl lg:text-2xl text-center  mb-2 md:mb-4 lg:mb-8 dark:text-table-header'>{t("profile_heading")}</h1>
 
           {/* Profile Banner */}
-          <div className='flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
-            <div className="flex flex-col lg:flex-row items-center md:items-start gap-4 w-full">
+          <div className='relative flex flex-col md:flex-row sm:justify-between items-center md:items-start gap-4 p-6 sm:p-8 border border-border-secondary dark:border-neutral-600 rounded-lg mb-8'>
+            <div className="absolute top-4 right-4">
+                <button onClick={() => {
+                    setIsEdit(true)
+                    setTimeout(() => setFocus("fullName"), 0)
+                  }}
+                  className="px-2 py-1.5 rounded-full  bg-gray-300 dark:bg-neutral-700 hover:scale-110 transition-all" >  <FontAwesomeIcon  icon={faPen} className="text-gray-900  dark:text-white" />
+                </button>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
+                {/* Profile Image */}
+                <img src={
+                    selectedFile
+                      ? URL.createObjectURL(selectedFile)
+                      : userInfo?.profile_picture ||   "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                  }  alt="profile"
+                  className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
+                    imageLoading ? "opacity-0" : "opacity-100"
+                  }`}
+                  onLoad={() => setImageLoading(false)}/>
 
-                  {/* Profile Image */}
-                  <img src={   selectedFile
-                        ? URL.createObjectURL(selectedFile)
-                        : userInfo?.profile_picture ||
-                          "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" }
-                    alt="profile"
-                    className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
-                      imageLoading ? "opacity-0" : "opacity-100"
-                    }`}
-                    onLoad={() => setImageLoading(false)} />
+                {/* Image Spinner */}
+                {imageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
+                    <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+                  </div>
+                )}
 
-                  {/* Image Spinner */}
-                  {imageLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
-                      <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                    </div>
-                  )}
-
-                  {/* Upload Overlay (only in edit mode) */}
-                  {isEdit && !imageLoading && (
-                    <div
-                      className="absolute inset-0 flex flex-col items-center justify-center rounded-full
-                                bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer"
-                      onClick={() => fileInputRef.current?.click()}  >
-                      <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange}  />
-                      <h1>Upload</h1>
-                      <p className="text-[10px] text-primary">2 MB maximum</p>
-                    </div>
-                  )}
-                </div>
+                {/* Upload Overlay (only in edit mode) */}
+                {isEdit && !imageLoading && (
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center rounded-full
+                              bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer"
+                    onClick={() => fileInputRef.current?.click()}  >
+                    <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange}/>
+                    <h1>Upload</h1>
+                    <p className="text-[10px] text-primary">2 MB maximum</p>
+                  </div>
+                )}
+              </div>
 
               <div className="text-center sm:text-left flex-1 pt-4">
-                <h2 className="text-xl font-semibold text-primary dark:text-table-header">{userInfo?.full_name || 'User'}</h2>
+                <h2 className="text-xl font-semibold text-primary dark:text-table-header">
+                  {userInfo?.full_name || 'User'}
+                </h2>
                 <p className="text-gray-500 dark:text-neutral-300 text-sm">{userInfo?.email}</p>
               </div>
             </div>
-              <div className=' sm:mt-14 lg:mt-4 '>
-                <button
-                  onClick={() => {
-                    if (!isEdit) {
-                      setIsEdit(true)
-                      setTimeout(() => setFocus("fullName"), 0)
-                    } else {
-                      handleSubmit(onSubmit)()
-                    }
-                  }}
-                  className='mt-4 text-sm md:text-md lg:text-base cursor-pointer  sm:mt-0 px-4 py-1 md:px-8 md:py-1.5 lg:px-12 lg:py-2 rounded-md bg-border-secondary font-medium text-[#343333]   transition-transform hover:scale-105 duration-300' >
-                  {isEdit ? t("update_btn") : t("edit_btn")}
-              </button>
-              </div>           
+
           </div>
+
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -278,6 +279,13 @@ const SettingsPage = () => {
                 {errors.theme && <p className="text-red-500 text-xs">Theme is required</p>}
               </div>
             </div>
+              {isEdit && (
+              <div className='flex items-end justify-end gap-10 mb-4'>
+                <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary bg-neutral-300 '>Cancel</button>
+                <button onSubmit={handleSubmit(onSubmit)} className='px-4 py-1  rounded-md text-table-header bg-bg-primary opacity-90 hover:scale-101 duration-300 transition-transform'>Update</button>
+              </div>
+              )}
+            
           </form>
         </div>
       </div>
