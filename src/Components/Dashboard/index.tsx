@@ -107,6 +107,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   fetchData();
 }, [selectedState]);
 
+  console.log('sele',selectedState);
+  
+
    
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
@@ -120,16 +123,24 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </h1>
 
                 {/* Filter + Toggle Wrapper */}
-                  <div className="flex flex-wrap items-center  gap-6">
+                  <div className="flex flex-wrap items-center  gap-6 lg:gap-16">
                       {/* Filter */}
                       <div className="flex items-center gap-1 md:gap-3">
                         <h1 className="text-secondary text-sm md:text-base dark:text-table-header ">{t("filter_by")}:</h1>
-                        <select  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm" >
+                        <select value={selectedState}  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm" >
                             <option value="">{t("state")}</option>
+                            
                             {indianStates.map((state, index) => (
                               <option className='cursor-pointer ' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
                             ))}
+                            
                         </select>
+                          <div className="w-6 flex justify-center">
+                            {selectedState && (
+                              <button onClick={() => setSelectedState("")}
+                                className="hover:text-zinc-700 dark:hover:text-black bg-bg-primary rounded-full px-1.5 opacity-50 ">  ✕  </button>
+                            )}
+                          </div>
                       </div>
 
                       {/* Toggle Buttons */}

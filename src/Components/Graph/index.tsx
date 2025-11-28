@@ -43,8 +43,8 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
   const isListed = company.Listingstatus?.toLowerCase() === 'listed';
   
   return (
-    <div className='border border-border-primary overflow-hidden  dark:border-[#4b5563] rounded-lg py-2 shadow-md'>
-      <div className='flex justify-between px-4 overflow-hidden'>
+    <div className='border border-border-primary   dark:border-border-dark-primary rounded-lg py-2 shadow-md'>
+      <div className='flex justify-between px-4 '>
         <div className="relative group w-fit">
           <h1 className="text-primary text-xs md:text-md dark:text-table-header lg:text-base">
             {company.CompanyName.length > 30
