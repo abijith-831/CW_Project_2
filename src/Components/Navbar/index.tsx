@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../../utils/ThemeUtils";
-import { logout, updateSearchQuery } from "../../redux/slices/authSlice";
+import { logout, updateSearchQuery , updateLanguagePreference} from "../../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../../api/supabase";
 import { useSnackbar } from "notistack";
@@ -18,6 +18,7 @@ const Navbar = () => {
   const { enqueueSnackbar } = useSnackbar();
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
   const user = useSelector((state: any) => state.auth.currentUser);
+
 
   const { t } = useTranslation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -71,6 +72,8 @@ const Navbar = () => {
       
       {/* right */}
       <div className="flex items-center gap-4 sm:gap-8 ml-auto relative">
+        <button onClick={()=>dispatch(updateLanguagePreference('eng'))}>eng</button>
+        <button onClick={()=>dispatch(updateLanguagePreference('arb'))}>arb</button>
         <ThemeToggle />
 
         {/* Profile Icon */}

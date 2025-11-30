@@ -70,7 +70,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             {value.length > 22 ? value.slice(0, 20) + '...' : value}
           </p>
 
-          {value.length > 30 && (
+          {value.length > 22 && (
             <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
               {value}
             </span>

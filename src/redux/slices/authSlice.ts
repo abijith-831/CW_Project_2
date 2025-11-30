@@ -78,6 +78,11 @@ const authSlice = createSlice({
         state.currentUser.theme_preference = action.payload
       }
     },
+    updateLanguagePreference(state , action:PayloadAction<'eng'|'arb'>){
+      if(state.currentUser){
+        state.currentUser.language_preference = action.payload
+      }
+    },
     setUser: (state, action) => {
       state.currentUser = action.payload;
     },
@@ -94,6 +99,7 @@ export const { loginSuccess,
                updateSelectedColumns,
                updateSearchQuery,
                updateThemePreference,
+               updateLanguagePreference,
                setUser
               } = authSlice.actions;
 export default authSlice.reducer;

@@ -17,6 +17,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const dispatch = useDispatch()
   const { t } = useTranslation();
+  const {i18n} = useTranslation()
+  const isArabic = i18n.language === "arb";
+  
   const user = useSelector((state:any) => state.auth.currentUser);
   const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
@@ -116,9 +119,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
         <Navbar/>   
         {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center">
+            <div className={`px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center ${ isArabic ? "flex-row-reverse text-right" : "" }`}>
                 {/* Heading */}
-                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header flex-1">
+                <h1 className="text-md rtl md:text-lg lg:text-xl font-medium text-primary dark:text-table-header flex-1">
                     {t("registrar_heading")} - {capitalView === "graph" ? t("graph_view") : t("table_view")}
                 </h1>
 
@@ -156,11 +159,12 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </div>
 
                 {/* Description */}
-                <div className="text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed">
-                <h6 className='text-sm md:text-md dark:text-table-header'>
-                    {t("description")}
-                </h6>
-                </div>
+               <div  className={`text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed ${    isArabic ? "text-right" : ""  }`} >
+                    <h6 className="text-sm md:text-md dark:text-table-header">
+                      {t("description")}
+                    </h6>
+               </div>
+
 
             {/* conditionally rendering graphs and table */}
            <div >
