@@ -96,6 +96,30 @@ export default function Login() {
           return;
         }
 
+        const defaultColumns = {
+          CompanyName: true,
+          CompanyIndustrialClassification: true,
+          Registered_Office_Address: true,
+          AuthorizedCapital: true,
+          PaidupCapital: true,
+          CompanyStatus: true,
+
+          CIN: false,
+          CompanyROCcode: false,
+          CompanyRegistrationdate_date: false,
+          CompanyCategory: false,
+          Listingstatus: false,
+          CompanyClass: false,
+          CompanyStateCode: false,
+          nic_code: false,
+        };
+
+        // Add selected_columns inside user
+        const userWithColumns = {
+          ...newUser,
+          selected_columns: defaultColumns
+        };
+
         dispatch(
           loginSuccess({
             user: newUser,
@@ -103,6 +127,7 @@ export default function Login() {
             refreshToken: session?.refresh_token,
           })
         );
+
 
         if (redirectToDashboard) navigate("/", { replace: true });
 

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSnackbar } from "notistack";
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { Columns } from 'lucide-react';
+import { updateSelectedColumns } from '../../redux/slices/authSlice';
 
 const XIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
@@ -33,6 +33,10 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
     headerMap[col.accessorKey] = col.header
   })
 
+  console.log('header',headerMap);
+  const dispatch = useDispatch()
+  
+
   
   const [isOpen , setIsOpen] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
@@ -51,20 +55,35 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  
+  const handleToggle = (tag:string , checked:boolean)=>{
+    if(checked){
+      removeTag(tag)
+    }else{
+      toggleTag(tag)
+    }
+  }
+
   const removeTag = (tag:string)=>{
     if (selectedTagCount <= 1) {
       enqueueSnackbar("Keep at least one column in table", { variant: "error" });
       return;
     } 
-    setColumnVisibility(prev => ({...prev , [tag]:false}))
+    setColumnVisibility(prev => {
+    const updated = { ...prev, [tag]: false };
+    dispatch(updateSelectedColumns(updated));
+    return updated;
+  });
   }
 
   const toggleTag = (tag:string)=>{
-    setColumnVisibility(prev => ({
-      ...prev , [tag]:!prev[tag]
-    }))
+    setColumnVisibility(prev => {
+    const updated = { ...prev, [tag]: !prev[tag] };
+    dispatch(updateSelectedColumns(updated));
+    return updated;
+  });
   }
+
+  
 
   return (
       <div className="w-full max-w-2xl" ref={wrapperRef}>
@@ -110,15 +129,9 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                   const checked = columnVisibility[tag]
                   return (
                     <li key={tag} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-600">
-                        <input checked={checked} onChange={()=>{
-                          if(checked) removeTag(tag)
-                          else toggleTag(tag) 
-                        }}
+                        <input checked={checked} onChange={()=> handleToggle(tag,checked)}
                          type="checkbox"  className="cursor-pointer bg-bg-dark-primary"/>   
-                        <label onClick={()=>{
-                          if(checked) removeTag(tag)
-                          else toggleTag(tag) 
-                        }} className="flex-1 cursor-pointer dark:text-neutral-300">{tag}</label>  
+                        <label onClick={()=> handleToggle(tag,checked)}  className="flex-1 cursor-pointer dark:text-neutral-300">{headerMap[tag]}</label>  
                     </li>
                   )
                 })}

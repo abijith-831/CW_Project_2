@@ -4,6 +4,7 @@ import './styles.css'
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 
 interface CompanyDataProps {
@@ -26,7 +27,6 @@ interface CompanyDataProps {
 }
 
 
-
 interface TableViewProps{
   companyData:CompanyDataProps[]
   loading:boolean;
@@ -37,24 +37,8 @@ interface TableViewProps{
 const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
   const [sorting, setSorting] = useState([])
   const {t} = useTranslation();
-  
-  const [columnVisibility, setColumnVisibility] = useState({
-    CompanyName: true,
-    CompanyIndustrialClassification: true,
-    Registered_Office_Address: true,
-    AuthorizedCapital: true,
-    PaidupCapital: true,
-    CompanyStatus:true,
-
-    CIN: false,
-    CompanyROCcode: false,
-    CompanyRegistrationdate_date: false,
-    CompanyCategory: false,
-    Listingstatus: false,
-    CompanyClass: false,
-    CompanyStateCode: false,
-    nic_code: false,
-  })
+  const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
+  const [columnVisibility, setColumnVisibility] = useState(selectedColumns)
 
   const columns = [
     {

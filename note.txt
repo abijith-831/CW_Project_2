@@ -295,3 +295,142 @@ export default function TagMultiSelectPage({ table }: { table: any }) {
   );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This is NOT an array of strings.
+It is a Record<string, boolean>.
+
+So your User interface is WRONG for this purpose.
+
+✅ Fix the type
+
+Change your User interface:
+
+interface User {
+  id: string;
+  email: string;
+  language_preference?: 'eng' | 'arb';
+  theme_preference?: 'light' | 'dark';
+  capital_view?: string;
+  selected_columns?: Record<string, boolean>;   // 👈 FIXED
+  search_query?: string;
+}
+
+❗ Your loginSuccess default is also wrong
+
+You are giving string array, but you want boolean object.
+
+Fix this too:
+
+if (!state.currentUser.selected_columns) {
+  state.currentUser.selected_columns = {
+    CompanyName: true,
+    CompanyIndustrialClassification: true,
+    Registered_Office_Address: true,
+    AuthorizedCapital: true,
+    PaidupCapital: true,
+    CompanyStatus: true,
+
+    CIN: false,
+    CompanyROCcode: false,
+    CompanyRegistrationdate_date: false,
+    CompanyCategory: false,
+    Listingstatus: false,
+    CompanyClass: false,
+    CompanyStateCode: false,
+    nic_code: false,
+  };
+}
+
+✅ Fix updateSelectedColumns reducer type
+
+Right now you have:
+
+updateSelectedColumns(state, action) {
+  if (state.currentUser) {
+    state.currentUser.selected_columns = action.payload;
+  }
+}
+
+
+But it should expect:
+
+updateSelectedColumns(
+  state,
+  action: PayloadAction<Record<string, boolean>>
+) {
+  if (state.currentUser) {
+    state.currentUser.selected_columns = action.payload;
+  }
+}
+
+🎯 Final Correct Slice (only important fixes)
+interface User {
+  id: string;
+  email: string;
+  language_preference?: 'eng'|'arb';
+  theme_preference?: 'light'|'dark';
+  capital_view?: string;
+  selected_columns?: Record<string, boolean>;
+  search_query?: string;
+}
+
+loginSuccess(
+  state,
+  action: PayloadAction<{
+    user: User;
+    accessToken: string | null;
+    refreshToken: string | null;
+  }>
+) {
+  state.currentUser = action.payload.user;
+  state.accessToken = action.payload.accessToken;
+  state.refreshToken = action.payload.refreshToken;
+  state.error = false;
+
+  if (!state.currentUser.selected_columns) {
+    state.currentUser.selected_columns = {
+      CompanyName: true,
+      CompanyIndustrialClassification: true,
+      Registered_Office_Address: true,
+      AuthorizedCapital: true,
+      PaidupCapital: true,
+      CompanyStatus: true,
+
+      CIN: false,
+      CompanyROCcode: false,
+      CompanyRegistrationdate_date: false,
+      CompanyCategory: false,
+      Listingstatus: false,
+      CompanyClass: false,
+      CompanyStateCode: false,
+      nic_code: false,
+    };
+  }
+}
+
+updateSelectedColumns(
+  state,
+  action: PayloadAction<Record<string, boolean>>
+) {
+  if (state.currentUser) {
+    state.currentUser.selected_columns = action.payload;
+  }
+}
+
+🎉 Now your Redux will correctly store your column visibility.
+
+If you want, I can also show how to sync this with Supabase automatically when the user toggles a column.

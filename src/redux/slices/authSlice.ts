@@ -6,7 +6,7 @@ interface User {
   language_preference?: 'eng'|'arb';
   theme_preference?: 'light'|'dark';
   capital_view?:string;
-  selected_columns?:string[];
+  selected_columns?: Record<string, boolean>;
   search_query?: string;
 }
 
@@ -41,15 +41,24 @@ const authSlice = createSlice({
         state.refreshToken = action.payload.refreshToken;
         state.error = false;
 
-        if (!state.currentUser.selected_columns || state.currentUser.selected_columns.length === 0) {
-          state.currentUser.selected_columns = [
-            "CompanyName",
-            "CIN",
-            "CompanyCategory",
-            "CompanySubcategory",
-            "CompanyStatus",
-            "Registered_Office_Address",
-          ];
+        if (!state.currentUser.selected_columns) {
+          state.currentUser.selected_columns = {
+            CompanyName: true,
+            CompanyIndustrialClassification: true,
+            Registered_Office_Address: true,
+            AuthorizedCapital: true,
+            PaidupCapital: true,
+            CompanyStatus: true,
+
+            CIN: false,
+            CompanyROCcode: false,
+            CompanyRegistrationdate_date: false,
+            CompanyCategory: false,
+            Listingstatus: false,
+            CompanyClass: false,
+            CompanyStateCode: false,
+            nic_code: false,
+          };
         }
       },
     logout(state) {
@@ -63,7 +72,7 @@ const authSlice = createSlice({
         state.currentUser.capital_view = action.payload;
       }
     },  
-    updateSelectedColumns(state,action){
+    updateSelectedColumns(state,action:PayloadAction<Record<string,boolean>>){
       if(state.currentUser){
         state.currentUser.selected_columns = action.payload;
       }
