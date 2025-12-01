@@ -34,9 +34,9 @@ interface TableViewProps{
 
 const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
   const [sorting, setSorting] = useState([])
-  const {t} = useTranslation()
+  const {t} = useTranslation();
   
-  const [columnVisibility, setColumnVisibility] = useState({
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, Boolean>>({
     CompanyName: true,
     CompanyIndustrialClassification: true,
     Registered_Office_Address: true,
@@ -53,8 +53,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     CompanyStateCode: false,
     nic_code: false,
   })
-
-  
 
   const columns = [
     {
@@ -163,8 +161,8 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         </h1>
 
         {/* Column Visibility Dropdown */}
-        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg ">
-          <TagMultiSelectPage table={table} />
+        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl ">
+          <TagMultiSelectPage columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility} />
         </div>
       </div>
 

@@ -1,24 +1,459 @@
-<div className="relative w-[80%]">
-  <span className="absolute left-3 top-1/2 -translate-y-1/2">
-    <img src="./logos/search.svg" alt="Search" className="h-5 w-5" />
-  </span>
 
-  <input
-    type="text"
-    placeholder={t("search_text")}
-    value={searchQuery}
-    onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
-    className="w-full pl-10 pr-10 py-1.5 rounded-md border border-zinc-300 bg-white text-zinc-900
-    focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
 
-  {/* Reset (Clear) Button */}
-  {searchQuery && (
-    <button
-      onClick={() => dispatch(updateSearchQuery(""))}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700"
-    >
-      ✕
-    </button>
-  )}
-</div>
+
+import React, { useState, useRef, useEffect } from 'react';
+import { useSnackbar } from "notistack";
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSelectedColumns } from '../../redux/slices/authSlice';
+import { useTranslation } from 'react-i18next';
+
+interface Tag {
+  topic: string;
+  count: number;
+  color?: string;
+}
+
+const XIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+  </svg>
+);
+
+const TagIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+    <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
+    <path d="M7 7h.01"/>
+  </svg>
+);
+
+interface TagMultiSelectProps {
+  columnVisibility : Record<string , boolean>
+  setColumnVisibility : (state : Record<string , boolean>) => void
+}
+
+const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columnVisibility , setColumnVisibility }) => {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
+  const selectedColumnNames = useSelector((state: any) => state.auth.currentUser?.selected_columns);
+
+  console.log('Selected column names from Redux:', selectedColumnNames);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Initialize all available tags/columns
+  useEffect(() => {
+    const columns = table
+      ?.getAllColumns()
+      ?.filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
+
+    setAllTags(columns || []);
+  }, [table]);
+
+  // SINGLE CONSOLIDATED EFFECT - Sync selectedTags and table visibility with Redux
+  useEffect(() => {
+    if (!selectedColumnNames || selectedColumnNames.length === 0 || !table) return;
+
+    console.log('Syncing with Redux selectedColumnNames:', selectedColumnNames);
+
+    // Get all available columns from table
+    const columns = table
+      .getAllColumns()
+      .filter((col: any) => col.getCanHide())
+      .map((col: any) => ({
+        topic: typeof col.columnDef.header === "string" ? col.columnDef.header : col.id,
+        count: 0,
+      }));
+
+    console.log('All available columns:', columns);
+
+    // Filter to only show columns that are in selectedColumnNames
+    const columnsToShow = columns.filter((col: Tag) =>
+      selectedColumnNames.includes(col.topic)
+    );
+
+    console.log('Columns to show (selectedTags):', columnsToShow);
+
+    // Update selectedTags state
+    setSelectedTags(columnsToShow);
+
+    // Update table column visibility to match Redux
+    table.getAllColumns().forEach((col: any) => {
+      const colName = typeof col.columnDef.header === "string"
+        ? col.columnDef.header
+        : col.id;
+
+      if (col.getCanHide()) {
+        const shouldBeVisible = selectedColumnNames.includes(colName);
+        const isCurrentlyVisible = col.getIsVisible();
+
+        // Only toggle if state doesn't match
+        if (isCurrentlyVisible !== shouldBeVisible) {
+          console.log(`Toggling ${colName}: ${isCurrentlyVisible} -> ${shouldBeVisible}`);
+          col.toggleVisibility();
+        }
+      }
+    });
+  }, [selectedColumnNames, table]);
+
+  console.log('Current selectedTags state:', selectedTags);
+
+  // Toggle column visibility
+  const toggleTag = (tag: Tag) => {
+    const isSelected = selectedTags.some(t => t.topic === tag.topic);
+
+    if (isSelected && selectedTags.length <= 1) {
+      enqueueSnackbar("Keep at least one column in table", { variant: "error" });
+      return;
+    }
+
+    const col = table.getAllColumns().find(
+      (c: any) =>
+        (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
+    );
+
+    if (col) {
+      col.toggleVisibility();
+
+      setSelectedTags(prev => {
+        const updated = prev.some(t => t.topic === tag.topic)
+          ? prev.filter(t => t.topic !== tag.topic)
+          : [...prev, tag];
+
+        console.log('Updated tags after toggle:', updated);
+
+        // Update Redux
+        dispatch(updateSelectedColumns(updated.map(t => t.topic)));
+
+        return updated;
+      });
+    }
+
+    setSearchTerm('');
+    inputRef.current?.focus();
+  };
+
+  // Remove a tag/column
+  const removeTag = (tag: Tag) => {
+    if (selectedTags.length <= 1) {
+      enqueueSnackbar("Keep at least one column in table", { variant: "error" });
+      return;
+    }
+
+    const col = table.getAllColumns().find(
+      (c: any) =>
+        (typeof c.columnDef.header === "string" ? c.columnDef.header : c.id) === tag.topic
+    );
+
+    if (col) {
+      col.toggleVisibility();
+
+      const updatedTags = selectedTags.filter(t => t.topic !== tag.topic);
+      setSelectedTags(updatedTags);
+
+      // Update Redux
+      dispatch(updateSelectedColumns(updatedTags.map(t => t.topic)));
+    }
+  };
+
+  const filteredTags = allTags.filter(tag =>
+    !selectedTags.some(t => t.topic === tag.topic) &&
+    tag.topic.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="w-full max-w-xl" ref={wrapperRef}>
+      <div className="relative">
+        <div
+          className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2"
+          onClick={() => {
+            setIsOpen(true);
+            inputRef.current?.focus();
+          }}
+        >
+          {/* Show only first 3 selected tags */}
+          {selectedTags.slice(0, 3).map(tag => (
+            <div
+              key={tag.topic}
+              className="flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-xs"
+            >
+              <TagIcon />
+              {tag.topic}
+              <button
+                type="button"
+                disabled={selectedTags.length <= 1}
+                className={`cursor-pointer hover:bg-green-700 rounded-full ${
+                  selectedTags.length <= 1 ? "opacity-40 cursor-not-allowed" : ""
+                }`}
+                onClick={e => {
+                  e.stopPropagation();
+                  if (selectedTags.length > 1) removeTag(tag);
+                }}
+              >
+                <XIcon />
+              </button>
+            </div>
+          ))}
+
+          {/* If more than 3 → show text */}
+          {selectedTags.length > 3 && (
+            <span className="text-xs ml-1 text-secondary dark:text-table-header">
+              +{selectedTags.length - 3} {t("more")}
+            </span>
+          )}
+
+          {selectedTags.length <= 3 && (
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              onFocus={() => setIsOpen(true)}
+              placeholder={selectedTags.length === 0 ? t("select_columns") : ""}
+              className="flex-1 bg-transparent outline-none text-sm min-w-[60px]"
+            />
+          )}
+        </div>
+
+        {isOpen && (
+          <div className="absolute z-10 w-full mt-2 max-h-60 overflow-y-auto bg-white dark:bg-neutral-700 dark:border-neutral-500 border rounded-md shadow-lg">
+            <ul className="p-1 space-y-1">
+              {allTags.length > 0 ? (
+                allTags
+                  .filter(tag =>
+                    tag.topic.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((tag) => {
+                    const checked = selectedTags.some(t => t.topic === tag.topic);
+                    return (
+                      <li
+                        key={tag.topic}
+                        className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-600"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => {
+                            if (checked) {
+                              removeTag(tag);
+                            } else {
+                              toggleTag(tag);
+                            }
+                          }}
+                          className="cursor-pointer"
+                        />
+                        <label
+                          className="flex-1 cursor-pointer dark:text-neutral-300"
+                          onClick={() => {
+                            if (checked) removeTag(tag);
+                            else toggleTag(tag);
+                          }}
+                        >
+                          {tag.topic}
+                        </label>
+                      </li>
+                    );
+                  })
+              ) : (
+                <li className="p-2 text-center text-gray-500 dark:text-neutral-400">No columns found.</li>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default function TagMultiSelectPage({ table }: { table: any }) {
+  return (
+    <div className="text-sm">
+      <div className="w-full max-w-2xl">
+        <TagMultiSelect table={table} />
+      </div>
+    </div>
+  );
+}
+
+
+
+Now, you want to update it incrementally on each click — i.e., add or remove a column without replacing the whole array.
+
+Here’s how you can modify the reducer for incremental updates:
+
+updateSelectedColumns(state, action: PayloadAction<string>) {
+  if (state.currentUser) {
+    const column = action.payload;
+    const selected = state.currentUser.selected_columns || [];
+
+    if (selected.includes(column)) {
+      // Remove the column if it exists
+      state.currentUser.selected_columns = selected.filter(c => c !== column);
+    } else {
+      // Add the column if it doesn't exist
+      state.currentUser.selected_columns = [...selected, column];
+    }
+  }
+}
+
+✅ Usage
+
+On each column click, dispatch:
+
+dispatch(updateSelectedColumns(columnName));
+
+
+Perfect! You want the selected_columns in Redux to be stored as an object where each key is a column and the value is true or false. Here’s how to do it step by step.
+
+1️⃣ Update the User interface
+interface User {
+  id: string;
+  email: string;
+  language_preference?: 'eng'|'arb';
+  theme_preference?: 'light'|'dark';
+  capital_view?: string;
+  selected_columns?: Record<string, boolean>; // store as object instead of array
+  search_query?: string;
+}
+
+2️⃣ Set initial selected columns in the slice (loginSuccess)
+if (!state.currentUser.selected_columns) {
+  state.currentUser.selected_columns = {
+    CompanyName: true,
+    CompanyIndustrialClassification: true,
+    Registered_Office_Address: true,
+    AuthorizedCapital: true,
+    PaidupCapital: true,
+    CompanyStatus: true,
+    CIN: false,
+    CompanyROCcode: false,
+    CompanyRegistrationdate_date: false,
+    CompanyCategory: false,
+    Listingstatus: false,
+    CompanyClass: false,
+    CompanyStateCode: false,
+    nic_code: false,
+  };
+}
+
+3️⃣ Update updateSelectedColumns to accept an object
+updateSelectedColumns(state, action: PayloadAction<Record<string, boolean>>) {
+  if (state.currentUser) {
+    state.currentUser.selected_columns = action.payload;
+  }
+}
+
+4️⃣ Toggle columns from React component
+const toggleColumn = (column: string) => {
+  if (!columnVisibility) return;
+
+  const updated = {
+    ...columnVisibility,
+    [column]: !columnVisibility[column],
+  };
+
+  // dispatch updated object to Redux
+  dispatch(updateSelectedColumns(updated));
+};
+
+
+✅ With this setup:
+
+Your Redux store selected_columns will always look like:
+
+{
+  CompanyName: true,
+  CompanyIndustrialClassification: true,
+  Registered_Office_Address: true,
+  AuthorizedCapital: true,
+  PaidupCapital: true,
+  CompanyStatus: true,
+  CIN: false,
+  CompanyROCcode: false,
+  CompanyRegistrationdate_date: false,
+  CompanyCategory: false,
+  Listingstatus: false,
+  CompanyClass: false,
+  CompanyStateCode: false,
+  nic_code: false,
+}
+
+
+You can read it, filter true values, and update any column individually.
+
+If you want, I can rewrite your TagMultiSelect component to directly toggle columns and save this object in Redux on each click.
+
+Do you want me to do that?
+
+
+
+Update your slice
+// In authSlice.ts
+updateSelectedColumns(state, action: PayloadAction<Record<string, boolean>>) {
+  if (state.currentUser) {
+    state.currentUser.selected_columns = action.payload;
+  }
+}
+
+
+You already have this, but now TypeScript knows selected_columns is a Record<string, boolean>.
+
+2. In your component
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSelectedColumns } from '../../redux/slices/authSlice';
+
+// inside your component
+const dispatch = useDispatch();
+const selectedColumns = useSelector((state: any) => state.auth.currentUser?.selected_columns);
+
+// Remove tag
+const removeTag = (tag: string) => {
+  if (!selectedColumns) return;
+  const trueCount = Object.values(selectedColumns).filter(v => v).length;
+  if (trueCount <= 1) {
+    enqueueSnackbar("Keep at least one column in table", { variant: "error" });
+    return;
+  }
+
+  const updated = { ...selectedColumns, [tag]: false };
+  dispatch(updateSelectedColumns(updated)); // update Redux
+};
+
+// Toggle tag
+const toggleTag = (tag: string) => {
+  if (!selectedColumns) return;
+  const updated = { ...selectedColumns, [tag]: !selectedColumns[tag] };
+  dispatch(updateSelectedColumns(updated)); // update Redux
+};
+
+3. Why this works
+
+selectedColumns is taken from Redux via useSelector.
+
+On each action (toggleTag or removeTag), you update a new object with the changed key.
+
+Dispatch the updated object with updateSelectedColumns to store it in Redux.
+
+✅ Now, Redux will always have the latest Record<string, boolean> for column visibility, and your component can use it directly.
+
+If you want, I can rewrite your TagMultiSelect component fully using this Redux store so you don’t need useState for columnVisibility at all. It will directly work with Redux. Do you want me to do that?
