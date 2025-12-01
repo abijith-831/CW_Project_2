@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSnackbar } from "notistack";
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { Columns } from 'lucide-react';
 
 const XIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
@@ -17,12 +18,22 @@ const TagIcon = () => (
 );
 
 interface TagMultiSelectProps {
+  columns:any[]
   columnVisibility : Record<string , boolean>,
   setColumnVisibility: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
 
-const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columnVisibility , setColumnVisibility }) => {
+const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibility , setColumnVisibility }) => {
   const { t } = useTranslation();
+
+  console.log('ccc',columns);
+
+  const headerMap:Record<string , string>={}
+  columns.forEach(col=>{
+    headerMap[col.accessorKey] = col.header
+  })
+
+  
   const [isOpen , setIsOpen] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -59,14 +70,12 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columnVisibility , setC
       <div className="w-full max-w-2xl" ref={wrapperRef}>
         <div className="relative">
            <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
-              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>(
+              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
                 <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[7px] md:text-[10px] lg:text-xs">
-                  <TagIcon />{tag.length > 15 ? tag.slice(0,15)+ '…' : tag}
-                  {tag.length > 15 && (
-                    <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                      {tag}
-                    </span>
-                  )}
+                 
+                 
+                  <TagIcon />{headerMap[tag]}
+                  
                   <button type="button"  
                     onClick={(e) => {
                       e.stopPropagation();
@@ -122,6 +131,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columnVisibility , setC
 }
 
 export default function TagMultiSelectPage({
+  columns,
   columnVisibility,
   setColumnVisibility
 }: TagMultiSelectProps) {
@@ -129,6 +139,7 @@ export default function TagMultiSelectPage({
     <div className="text-sm">
       <div className="w-full max-w-2xl">
         <TagMultiSelect
+          columns = {columns}
           columnVisibility={columnVisibility}
           setColumnVisibility={setColumnVisibility}
         />

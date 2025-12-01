@@ -25,6 +25,8 @@ interface CompanyDataProps {
   nic_code: string;
 }
 
+
+
 interface TableViewProps{
   companyData:CompanyDataProps[]
   loading:boolean;
@@ -36,7 +38,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   const [sorting, setSorting] = useState([])
   const {t} = useTranslation();
   
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, Boolean>>({
+  const [columnVisibility, setColumnVisibility] = useState({
     CompanyName: true,
     CompanyIndustrialClassification: true,
     Registered_Office_Address: true,
@@ -162,7 +164,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
         {/* Column Visibility Dropdown */}
         <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl ">
-          <TagMultiSelectPage columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility} />
+          <TagMultiSelectPage columns={columns} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility} />
         </div>
       </div>
 

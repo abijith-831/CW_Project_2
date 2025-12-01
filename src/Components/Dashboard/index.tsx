@@ -110,10 +110,6 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   fetchData();
 }, [selectedState]);
 
-  console.log('sele',selectedState);
-  
-
-   
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   
