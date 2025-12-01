@@ -85,7 +85,7 @@ const Navbar = () => {
           {/* Dropdown */}
          {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white dark:bg-neutral-800 border border-border-third dark:border-neutral-500 rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
-            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md"
+            <button className="flex text-primary dark:text-table-header cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md"
               onClick={() => {
                 navigate("/settings");
                 setDropdownOpen(false); }}>
@@ -93,7 +93,7 @@ const Navbar = () => {
               {t("settings_btn")}
             </button>
 
-            <button className="flex cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md" onClick={handleLogout}>
+            <button className="flex text-primary dark:text-table-header  cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md" onClick={handleLogout}>
               <img src="./logos/logout.svg" alt="logout" className="w-4 h-4 " />
               {t("logout_btn")}
             </button>
