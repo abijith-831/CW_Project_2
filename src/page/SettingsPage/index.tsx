@@ -154,15 +154,18 @@ const SettingsPage = () => {
 
             {/* Edit Button – Desktop (top-right) */}
             <div className="hidden md:block absolute top-13 right-4">
-              <button
-                onClick={() => {
-                  setIsEdit(true);
-                  setTimeout(() => setFocus("fullName"), 0);
-                }}
-                className="flex cursor-pointer items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
-                <FontAwesomeIcon icon={faPen} className="text-table-header text-xs  " />
-                <span className="font-medium text-table-header">{t("edit_btn")}</span>
-              </button>
+              {!isEdit && (
+                <button
+                  onClick={() => {
+                    setIsEdit(true);
+                    setTimeout(() => setFocus("fullName"), 0);
+                  }}
+                  className="flex cursor-pointer items-center gap-2 px-6 py-1.5 rounded-md bg-bg-primary opacity-90 hover:scale-102 duration-300"  >
+                  <FontAwesomeIcon icon={faPen} className="text-table-header text-xs  " />
+                  <span className="font-medium text-table-header">{t("edit_btn")}</span>
+                </button>
+              )}
+             
             </div>
       
 
