@@ -33,7 +33,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const selectedTagCount = Object.values(columnVisibility ?? {}).filter(v => v).length || 1
+  const selectedTagCount = Object.values(columnVisibility).filter(v => v).length || 1
   const headerMap:Record<string , string>={}
   columns.forEach(col=>{
     headerMap[col.accessorKey] = col.header

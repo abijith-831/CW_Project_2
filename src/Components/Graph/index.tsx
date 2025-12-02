@@ -60,7 +60,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
           )}
         </div>
 
-        <h3 className={`border border-border-secondary md:pt-0.5 px-1 sm:px-2 md:px-4 text-sm rounded-sm text-badge ${company.CompanyStatus==='Active' ? 'bg-[#DDEFD0]' : company.CompanyStatus==='Strike Off'?'bg-[#EFCBC6]':'bg-blue-200'}`}>{company.CompanyStatus.length > 12    ? company.CompanyStatus.slice(0, 12) + "…"  : company.CompanyStatus}</h3>
+        <h3 className={`border border-border-secondary md:pt-0.5 px-1 sm:px-2 md:px-4 text-sm rounded-sm text-primary font-semibold ${company.CompanyStatus==='Active' ? 'bg-[#DDEFD0]' : company.CompanyStatus==='Strike Off'?'bg-[#EFCBC6]':'bg-blue-200'}`}>{company.CompanyStatus.length > 12    ? company.CompanyStatus.slice(0, 12) + "…"  : company.CompanyStatus}</h3>
       </div> 
       
       <div className="w-full max-w-[550px] text-red-500 dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">

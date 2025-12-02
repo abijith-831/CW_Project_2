@@ -45,6 +45,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const currentItems = filteredData.slice(indexOfFirstItem,indexOfLastItem)
 
+  console.log('curre',currentItems);
+  
+
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -166,15 +169,21 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                </div>
 
 
-            {/* conditionally rendering graphs and table */}
-           <div className=''>
-              {capitalView === 'graph' ? (
-                  <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-                  ) : (
-                  <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-              )}
-
-           </div>
+            {currentItems.length > 0 ? (
+                <div className=''>
+                  {capitalView === 'graph' ? (
+                      <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                      ) : (
+                      <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                  )}
+                </div>
+            ) : (
+              <div className='h-[60vh] flex items-center justify-center'>
+                <h1 className='text-xl font-bold text-bg-primary'>No Companies found ... !</h1>
+              </div>
+            )}
+          
+           
            {/* pagination block */}
            <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-4">
                 {/* Prev Button */}

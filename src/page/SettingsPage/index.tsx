@@ -234,7 +234,7 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary dark:placeholder:text-neutral-400 bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary dark:placeholder:text-table-header bg-bg-input dark:bg-neutral-600 dark:text-table-header rounded-md focus:ring focus:ring-blue-200"
                   placeholder= {t("full_name_placeholder")} />
                 {errors.fullName && (
                   <p className="text-red-500 text-xs">{String(errors.fullName.message)}</p>
@@ -251,85 +251,129 @@ const SettingsPage = () => {
                     }
                   })}
                   disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:placeholder:text-neutral-400 dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200"
+                  className="w-full px-4 py-2 text-secondary placeholder:text-secondary bg-bg-input dark:placeholder:text-table-header dark:bg-neutral-600 dark:text-table-header rounded-md focus:ring focus:ring-blue-200"
                   placeholder= {t("nick_name_placeholder")}   />
                 {errors.nickName && (
                   <p className="text-red-500 text-xs">{String(errors.nickName.message)}</p>
                 )}
               </div>
             </div>
+                {/* gender and country */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative">
+                  <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                    {t("gender")}
+                  </label>
+                    <div className="relative">
+                      <select {...register("gender")} disabled={!isEdit}
+                        className=" w-full pl-6 pr-4 py-2  text-secondary  bg-bg-input dark:bg-neutral-600 dark:text-table-header  rounded-md appearance-none      focus:ring focus:ring-blue-200 "  >
+                        <option value="">{t("select_gender")}</option>
+                        <option value="male">{t("male")}</option>
+                        <option value="female">{t("female")}</option>
+                        <option value="other">{t("others")}</option>
+                      </select>
+                      <span className="absolute  right-4 top-1/2 -translate-y-1/2 pointer-events-none ">
+                        <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                        <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                      </span>
+                    </div>
+
+                    {errors.gender && ( <p className="text-red-500 text-xs">Gender is required</p> )}
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                  {t("country")}
+                </label>
+
+                <div className="relative">
+                  <select {...register("country")} disabled={!isEdit} className="w-full pl-6 pr-4 py-2 text-secondary bg-bg-input rounded-md appearance-none focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-table-header" >
+                    <option value="">{t("select_country")}</option>
+                    <option value="india">{t("india")}</option>
+                    <option value="uae">{t("uae")}</option>
+                    <option value="usa">{t("usa")}</option>
+                    <option value="uk">{t("uk")}</option>
+                  </select>
+
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                    <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                    <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                  </span>
+                </div>
+
+                {errors.country && (
+                  <p className="text-red-500 text-xs">Country is required</p>
+                )}
+              </div>
+            </div>
+
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Language */}
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("gender")}</label>
-                <select
-                  {...register("gender")}
-                  disabled={!isEdit}
-                  className="w-full px-4 pr-10  py-2 text-secondary bg-bg-input dark:bg-neutral-600 dark:text-neutral-400 rounded-md focus:ring focus:ring-blue-200" >
-                  <option value="">{t("select_gender")}</option>
-                  <option value="male">{t("male")}</option>
-                  <option value="female">{t("female")}</option>
-                  <option value="other">{t("others")}</option>
-                </select>
-                {errors.gender && <p className="text-red-500 text-xs">Gender is required</p>}
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                  {t("language")}
+                </label>
+                <div className="relative">
+                  <select {...register("language")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2 text-secondary bg-bg-input rounded-md  appearance-none  focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-table-header " >
+                    <option value="eng">English</option>
+                    <option value="arb">العربية</option>
+                  </select>
+
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                    <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                  </span>
+                </div>
+
+                {errors.language && (
+                  <p className="text-red-500 text-xs">Language is required</p>
+                )}
               </div>
 
+              {/* Theme */}
               <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("country")}</label>
-                <select
-                  {...register("country")}
-                  disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-neutral-400"  >
-                  <option value="">{t("select_country")}</option>
-                  <option value="india">{t("india")}</option>
-                  <option value="uae">{t("uae")}</option>
-                  <option value="usa">{t("usa")}</option>
-                  <option value="uk">{t("uk")}</option>
-                </select>
-                {errors.country && <p className="text-red-500 text-xs">Country is required</p>}
-              </div>
-            </div>
+                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                  {t("theme")}
+                </label>
+                <div className="relative">
+                  <select {...register("theme")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2   text-secondary bg-bg-input rounded-md   appearance-none  focus:ring focus:ring-blue-200 dark:bg-neutral-600 dark:text-table-header" >
+                    <option value="light">{t("light")}</option>
+                    <option value="dark">{t("dark")}</option>
+                  </select>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("language")}</label>
-                <select
-                  {...register("language")}
-                  disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
-                  
-                  <option value="eng">English</option>
-                  <option value="arb">العربية</option>
-                </select>
-                {errors.language && <p className="text-red-500 text-xs">Language is required</p>}
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                    <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                  </span>
+                </div>
+
+                {errors.theme && (
+                  <p className="text-red-500 text-xs">Theme is required</p>
+                )}
+              </div>
+          </div>
+
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center mx-auto">
+                <div>
+                  <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                    {t("capital_view")}
+                  </label>
+                  <div className="relative">
+                    <select {...register("capital_view")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2    text-secondary bg-bg-input rounded-md  appearance-none   focus:ring focus:ring-blue-200  dark:bg-neutral-600 dark:text-neutral-400  ">
+                      <option value="graph">{t("graph_text")}</option>
+                      <option value="table">{t("table_text")}</option>
+                    </select>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                      <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("theme")}</label>
-                <select
-                  {...register("theme")}
-                  disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200"  >
-                  <option value="light">{t("light")}</option>
-                  <option value="dark">{t("dark")}</option>
-                </select>
-                {errors.theme && <p className="text-red-500 text-xs">Theme is required</p>}
-              </div>
-            </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center mx-auto">
-              <div >
-                <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("capital_view")}</label>
-                <select
-                  {...register("capital_view")}
-                  disabled={!isEdit}
-                  className="w-full px-4 py-2 text-secondary bg-bg-input rounded-md focus:ring dark:bg-neutral-600 dark:text-neutral-400 focus:ring-blue-200" >
-                  
-                  <option value="graph">{t("graph_text")}</option>
-                  <option value="table">{t("table_text")}</option>
-                </select>
-              </div>
-            </div>
               {isEdit && (
               <div className='flex items-end justify-end gap-10 mb-4'>
                 <button onClick={() => setIsEdit(false)}  className='px-4 py-1  rounded-md text-secondary cursor-pointer bg-neutral-300 hover:scale-102 duration-300 transition-transform'>{t("cancel_btn")}</button>

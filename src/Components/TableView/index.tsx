@@ -89,7 +89,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         else if (colSize <= 120) maxChars = 25;
 
         return <div className="relative group w-fit">
-          <p className="text-primary dark:text-neutral-400 ">
+          <p className="text-primary dark:text-neutral-400 line-clamp-3">
             {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
           </p>
 
@@ -116,11 +116,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         if (colSize < 250) maxChars = 30;
         else if (colSize <= 350) maxChars = 50;
 
-        console.log('sss',colSize);
-        
-
-        
-        
         return  <div className="relative group w-fit">
           <p className="text-primary dark:text-neutral-400 line-clamp-3">
             {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
@@ -154,19 +149,34 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       header: t("CompanyStatus"),
       enableResizing: true,
       enableSorting: true,
-      cell: (props: any) => (
-        <span
-          className={`px-3 py-1 rounded-md text-xs font-semibold text-primary 
-            ${props.getValue() === "Active"
-              ? "bg-[#DDEFD0] text-badge"
-              : props.getValue() === "Strike Off"
-                ? "bg-[#EFCBC6] text-badge"
-                : "bg-blue-200 text-badge"
-            }`}
-        >
-          {props.getValue()}
-        </span>
-      ),
+      cell: (props: any) => {
+        const value = props.getValue();
+        const column = props.column; 
+        const colSize = column.getSize();
+
+        let maxChars = 20;
+        if (colSize < 80) maxChars = 8;
+        else if (colSize <= 120) maxChars = 12;
+        
+        return <div className="relative group w-fit">
+            <span
+              className={`px-3 py-1 rounded-md text-xs font-semibold text-primary 
+                ${props.getValue() === "Active"
+                  ? "bg-[#DDEFD0] text-badge"
+                  : props.getValue() === "Strike Off"
+                    ? "bg-[#EFCBC6] text-badge"
+                    : "bg-blue-200 text-badge"
+                }`}
+            >
+              {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
+            </span>
+            {value.length > maxChars && (
+            <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+              {value}
+            </span>
+          )}
+         </div>
+    },
     },
     { accessorKey: 'CIN', header: t("CIN") },
     { accessorKey: 'CompanyROCcode', header: t("CompanyROCcode") },
