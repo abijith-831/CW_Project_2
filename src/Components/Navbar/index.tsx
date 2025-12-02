@@ -64,7 +64,7 @@ const Navbar = () => {
               onChange={(e) => dispatch(updateSearchQuery(e.target.value))}
               className="w-full pl-10 pr-4 py-1.5 rounded-md border border-zinc-300  bg-white  text-zinc-900 focus:outline-none focus:ring-2 focus:ring-blue-500"  />
               {searchQuery && (
-                <button className="absolute right-3 top-1/2 -translate-y-1/2  hover:text-zinc-700 dark:hover:text-black bg-bg-primary rounded-full px-1.5 opacity-50 " onClick={()=>dispatch(updateSearchQuery(""))}>✕</button>
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-table-header bg-bg-primary rounded-full px-1.5 opacity-70 hover:opacity-100 " onClick={()=>dispatch(updateSearchQuery(""))}>✕</button>
               )}
           </div>
         </div>

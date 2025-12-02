@@ -25,25 +25,19 @@ interface TagMultiSelectProps {
 
 const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibility , setColumnVisibility }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const { enqueueSnackbar } = useSnackbar();
+  
+  const [isOpen , setIsOpen] = useState(false)
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  console.log('ccc',columns);
-
+  const selectedTagCount = Object.values(columnVisibility ?? {}).filter(v => v).length || 1
   const headerMap:Record<string , string>={}
   columns.forEach(col=>{
     headerMap[col.accessorKey] = col.header
   })
-
-  console.log('header',headerMap);
-  const dispatch = useDispatch()
-  
-
-  
-  const [isOpen , setIsOpen] = useState(false)
-  const { enqueueSnackbar } = useSnackbar();
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const selectedTagCount = Object.values(columnVisibility).filter(v => v).length;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -83,13 +77,11 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   });
   }
 
-  
-
   return (
       <div className="w-full max-w-2xl" ref={wrapperRef}>
         <div className="relative">
            <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
-              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
+              {Object.keys(columnVisibility ).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
                 <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[7px] md:text-[10px] lg:text-xs">
                  
                  
@@ -145,7 +137,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
 
 export default function TagMultiSelectPage({
   columns,
-  columnVisibility,
+  columnVisibility ,
   setColumnVisibility
 }: TagMultiSelectProps) {
   return (

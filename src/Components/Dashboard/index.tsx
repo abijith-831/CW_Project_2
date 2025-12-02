@@ -103,12 +103,11 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+       setLoading(false);  
     }
   };
-
   fetchData();
-}, [selectedState]);
+}, [selectedState])
 
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
@@ -124,23 +123,28 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 {/* Filter + Toggle Wrapper */}
                   <div className="flex flex-wrap items-center  gap-6 lg:gap-16">
                       {/* Filter */}
-                      <div className="flex items-center gap-1 md:gap-3">
-                        <h1 className="text-secondary text-sm md:text-base dark:text-table-header ">{t("filter_by")}:</h1>
-                        <select value={selectedState}  onChange={(e) => setSelectedState(e.target.value)} className="border cursor-pointer py-1 md:py-1.5  text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm" >
-                            <option value="">{t("state")}</option>
-                            
-                            {indianStates.map((state, index) => (
-                              <option className='cursor-pointer ' key={index} value={state}>{state.charAt(0).toUpperCase() + state.slice(1)}</option>
-                            ))}
-                            
+                     <div className="relative inline-block">
+                        <select
+                          value={selectedState}
+                          onChange={(e) => setSelectedState(e.target.value)}
+                          className="border cursor-pointer py-1.5 pr-8 pl-2 text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm"  >
+                          <option value="">{t("state")}</option>
+                          {indianStates.map((state, index) => (
+                            <option key={index} value={state}>
+                              {state.charAt(0).toUpperCase() + state.slice(1)}
+                            </option>
+                          ))}
                         </select>
-                          <div className="w-6 flex justify-center">
-                            {selectedState && (
-                              <button onClick={() => setSelectedState("")}
-                                className="hover:text-zinc-700 dark:hover:text-black bg-bg-primary rounded-full px-1.5 opacity-50 ">  ✕  </button>
-                            )}
-                          </div>
+
+                        {selectedState && (
+                          <button
+                            onClick={() => setSelectedState("")}
+                            className="absolute right-6 top-1/2 -translate-y-1/2 py-1 px-1.5 rounded-full  text-table-header bg-bg-primary opacity-70 hover:opacity-100 text-sm leading-none " >
+                            ✕
+                          </button>
+                        )}
                       </div>
+
 
                       {/* Toggle Buttons */}
                       <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary">
@@ -163,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
 
             {/* conditionally rendering graphs and table */}
-           <div >
+           <div className=''>
               {capitalView === 'graph' ? (
                   <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
                   ) : (

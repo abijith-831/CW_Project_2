@@ -5,6 +5,8 @@ import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import SkeletonLoaderGraph from '../SkeletonLoader/GraphSkeleton';
+import TableSkeleton from '../SkeletonLoader/TableSkeleton';
 
 
 interface CompanyDataProps {
@@ -39,7 +41,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   const {t} = useTranslation();
   const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
   const [columnVisibility, setColumnVisibility] = useState(selectedColumns)
-
+  
   const columns = [
     {
       accessorKey: 'CompanyName',
@@ -48,18 +50,27 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       enableResizing: true,
       enableSorting: true,
       cell: (props: any) => {
-        const value = props.getValue()
+        const value = props.getValue();
+        const column = props.column;   
+        const colSize = column.getSize();
+
+        let maxChars = 60;
+        if (colSize < 60) maxChars = 15;
+        else if (colSize < 200) maxChars = 20;
+
+
+
         return <div className="relative group w-fit">
-          <p className="text-primary  dark:text-neutral-400">
-            {value.length > 22 ? value.slice(0, 20) + '...' : value}
+          <p className="text-primary dark:text-neutral-400">
+            {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
           </p>
 
-          {value.length > 22 && (
+          {value.length > maxChars && (
             <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
               {value}
             </span>
           )}
-        </div> 
+      </div>
       }
     },
     {
@@ -68,16 +79,60 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       enableSorting: false,
       size: 150,
       enableResizing: true,
-      cell: (props: any) => <p>{props.getValue()}</p>
+      cell: (props: any) => {
+        const value = props.getValue();
+        const column = props.column;   
+        const colSize = column.getSize();
+
+        let maxChars = 50;
+        if (colSize < 90) maxChars = 20;
+        else if (colSize <= 120) maxChars = 25;
+
+        return <div className="relative group w-fit">
+          <p className="text-primary dark:text-neutral-400 ">
+            {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
+          </p>
+
+          {value.length > maxChars && (
+            <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+              {value}
+            </span>
+          )}
+      </div>
+
+      } 
     },
     {
       accessorKey: 'Registered_Office_Address',
       header: t("Registered_Office_Address"),
-      size: 300,
+      size: 350,
       enableResizing: true,
       cell: (props: any) => {
         const value = props.getValue();
-        return <p>{value.length > 40 ? value.slice(0, 40) + "…" : value}</p>;
+        const column = props.column; 
+        const colSize = column.getSize();
+
+        let maxChars = 80;
+        if (colSize < 250) maxChars = 30;
+        else if (colSize <= 350) maxChars = 50;
+
+        console.log('sss',colSize);
+        
+
+        
+        
+        return  <div className="relative group w-fit">
+          <p className="text-primary dark:text-neutral-400 line-clamp-3">
+            {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
+          </p>
+
+          {value.length > maxChars && (
+            <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+              {value}
+            </span>
+          )}
+      </div>
+
       }
     },
     {
@@ -101,7 +156,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       enableSorting: true,
       cell: (props: any) => (
         <span
-          className={`px-3 py-1 rounded-md text-xs font-semibold text-primary
+          className={`px-3 py-1 rounded-md text-xs font-semibold text-primary 
             ${props.getValue() === "Active"
               ? "bg-[#DDEFD0] text-badge"
               : props.getValue() === "Strike Off"
@@ -140,6 +195,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
 
   return (
+
     <div className='px-4 md:px-10 lg:px-20 py-4 w-full'>
       <div className="flex flex-wrap items-center justify-between gap-4 py-4">
         <h1 className="text-secondary dark:text-table-header text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
@@ -154,45 +210,78 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
 
       {/* table div */}
-      <div className="table w-full text-center border border-border-primary dark:border-border-dark-primary rounded-xl overflow-hidden mt-2">
-        {/* header */}
-        <div className="table-header-group bg-bg-primary text-table-header">
-          {table.getHeaderGroups().map(headerGroup => (
-            <div className="table-row" key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <div  className="table-cell px-4 py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
-                  key={header.id}
-                  style={{ width: header.getSize() }}
-                  onClick={header.column.getToggleSortingHandler()} >
-                  <div className="flex items-center justify-between gap-2">
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {header.column.getCanSort() && (
-                      <>
-                        {header.column.getIsSorted() === "asc" && (<ArrowUp size={16} className="text-table-header" />)}
-                        {header.column.getIsSorted() === "desc" && (<ArrowDown size={16} className="text-table-header" />)}
-                        {!header.column.getIsSorted() && (<ArrowUpDown size={16} className="text-border-table-header" />)}
-                      </>
-                    )}
+      <div className="w-full overflow-x-auto">
+        <div className="table  w-full text-center border border-border-primary dark:border-border-dark-primary rounded-xl overflow-hidden  mt-2">
+          {/* header */}
+          <div className="table-header-group bg-bg-primary text-table-header">
+            {table.getHeaderGroups().map(headerGroup => (
+              <div className="table-row" key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <div  className="table-cell px-4 py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
+                    key={header.id}
+                    style={{ width: header.getSize() }}
+                    onClick={header.column.getToggleSortingHandler()} >
+                    <div className="flex items-center justify-between gap-2">
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanSort() && (
+                        <>
+                          {header.column.getIsSorted() === "asc" && (<ArrowUp size={16} className="text-table-header" />)}
+                          {header.column.getIsSorted() === "desc" && (<ArrowDown size={16} className="text-table-header" />)}
+                          {!header.column.getIsSorted() && (<ArrowUpDown size={16} className="text-border-table-header" />)}
+                        </>
+                      )}
+                    </div>
+                    {/* resizer */}
+                    <div  onMouseDown={header.getResizeHandler()}  onTouchStart={header.getResizeHandler()}  className={`resizer ${header.column.getIsResizing() ? "isResizing" : ""}`}/>
                   </div>
-                  {/* resizer */}
-                  <div  onMouseDown={header.getResizeHandler()}  onTouchStart={header.getResizeHandler()}  className={`resizer ${header.column.getIsResizing() ? "isResizing" : ""}`}/>
+                ))}
+              </div>
+            ))}
+          </div>
+          {/* {loading &&
+              Array.from({ length: 10 }).map(() => {
+                return table.getHeaderGroups().map(headerGroup => (
+                  <tr {...headerGroup.headers}>
+                    {headerGroup.headers.map(column => (
+                      <td className='p-4' {...column.getContext()}>
+                        <TableSkeleton />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+            })} */}
+          
+  
+          {/* body */}
+            {loading ? (
+          <div className="table-row-group text-sm">
+            {table.getRowModel().rows.map(row => (
+              <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
+                    {/* {loading ? (<TableSkeleton/>) : (flexRender(cell.column.columnDef.cell, cell.getContext()))}               */}
+                    <TableSkeleton/>
+                  </div>
+                ))}
+              </div>
+            ))}
+            </div>
+        ) : (
+            <div className="table-row-group text-sm">
+              {table.getRowModel().rows.map(row => (
+                <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
+                      {/* {loading ? (<TableSkeleton/>) : (flexRender(cell.column.columnDef.cell, cell.getContext()))}               */}
+                      {(flexRender(cell.column.columnDef.cell, cell.getContext()))}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
-          ))}
-        </div>
- 
-        {/* body */}
-        <div className="table-row-group text-sm">
-          {table.getRowModel().rows.map(row => (
-            <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </div>
-              ))}
-            </div>
-          ))}
+          )}
+
+          
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import LabelsAboveBars from "../Graph";
-import SkeletonLoaderGraph from "../SkeletonLoader";
+import SkeletonLoaderGraph from "../SkeletonLoader/GraphSkeleton";
 
 interface GraphViewProps {
   companyData: any[];
