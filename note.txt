@@ -350,3 +350,96 @@ export default function TagMultiSelectPage({ table }: { table: any }) {
               </div>
             ))}
           </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{item.question === "Registration Details" && (
+            <>
+              <div className="flex items-center justify-between text-xs md:text-sm px-6 ">
+                <div className=" w-1/2">
+                      <p className="flex">
+                      <strong className="">Authorised Capital</strong>
+                      <span className="px-4">-</span>
+                      <span className="flex-1">{company.AuthorizedCapital}</span></p>
+                   </div>
+                   <div className=" w-1/2">
+                      <p className="flex">
+                      <strong className="">Paid up Capital</strong>
+                      <span className="px-4">-</span>
+                      <span className="flex-1">{company.PaidupCapital}</span></p>
+                   </div>
+              </div>
+                <p className="flex text-xs md:text-sm px-6">
+                    <strong className="">Registration Address</strong>
+                    <span className="px-4">-</span>
+                    <span className="flex-1">{company.PaidupCapital}</span>
+                </p>
+             </>
+          )}
+
+
+          Registration Date - 2013-11-13
+
+State Code - delhi
+
+Registered Address
+- F - 201, Ashish Complex, 2 Local Shopping Centre, New Rajdhani Enclave, Vikas Marg, Delhi,-110092,Delhi,East Delhi,Delhi,110092-India
+
+
+Industrial Classification - Real Estate and Renting
+
+NIC Code - 70109
+
+Indian/Foreign
+-Indian
+
+ <div className="flex items-center justify-between text-xs md:text-sm px-8 ">
+                <p><strong>Industrial Classification</strong> - {company.CompanyIndustrialClassification}</p>
+                <p><strong>NIC Code</strong> - {company.nic_code}</p>
+              </div>
+              <p className="flex items-center justify-between text-xs md:text-sm px-8 "><strong>Indian/Foreign</strong> -Indian</p>

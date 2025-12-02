@@ -65,21 +65,10 @@ const accordionData: AccordionItem[] = [
 ];
 
 const AccordionIcon: React.FC<AccordionIconProps> = ({ isOpen }) => (
-  <svg
-    className={`w-6 h-6 text-zinc-500 dark:text-zinc-400 transition-transform duration-300 ${
+  <svg className={`w-6 h-6 text-zinc-500 dark:text-zinc-400 transition-transform duration-300 ${
       isOpen ? "rotate-180" : ""
-    }`}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 9l-7 7-7-7"
-    />
+    }`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 );
 
@@ -114,30 +103,93 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           {/* ccompany Details */}
           {item.question === "Company Details" && (
             <>
-              <div className="flex items-center justify-between text-xs md:text-sm px-8 py-2 dark:text-table-header">
-                <div>
-                  <p><strong>CIN</strong> - {company.CIN}</p>
-                  <p><strong>Sub-Category</strong> - {company.CompanySubCategory}</p>
-                  <p><strong>Company Name</strong> - {company.CompanyName}</p>
-                  <p><strong>Company Class</strong> - {company.CompanyClass}</p>
+              <div className="relative flex flex-col md:flex-row items-start md:items-start justify-between gap-6 text-[12px] md:px-4 md:text-xs lg:text-sm py-2 dark:text-table-header w-full">
+
+                {/* LEFT COLUMN */}
+                <div className="space-y-1 w-full">
+                  {/* CIN */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>CIN</strong>
+                    <span>-</span>
+                    <span>{company.CIN}</span>
+                  </div>
+
+                  {/* Sub Category */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>Sub-Category</strong>
+                    <span>-</span>
+                    <span>{company.CompanySubCategory}</span>
+                  </div>
+
+                  {/* Company Name */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1 relative group">
+                    <strong>Company Name</strong>
+                    <span>-</span>
+                    <span>
+                      {company.CompanyName.length > 24
+                        ? company.CompanyName.slice(0, 24) + "…"
+                        : company.CompanyName}
+                    </span>
+
+                    {company.CompanyName.length > 24 && (
+                      <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                        {company.CompanyName}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Company Class */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>Company Class</strong>
+                    <span>-</span>
+                    <span>{company.CompanyClass}</span>
+                  </div>
                 </div>
-                <div>
-                  <p><strong>ROC Code</strong> - {company.CompanyROCcode}</p>
-                  <p><strong>Category</strong> - {company.CompanyCategory}</p>
-                  <p><strong>Listing Status</strong> - {company.Listingstatus}</p>
-                  <p>
-                    <strong>Company Status</strong> - 
+
+
+                {/* RIGHT COLUMN */}
+                <div className="space-y-1 w-full">
+
+                  {/* ROC Code */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>ROC Code</strong>
+                    <span>-</span>
+                    <span>{company.CompanyROCcode}</span>
+                  </div>
+
+                  {/* Category */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>Category</strong>
+                    <span>-</span>
+                    <span>{company.CompanyCategory}</span>
+                  </div>
+
+                  {/* Listing Status */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>Listing Status</strong>
+                    <span>-</span>
+                    <span>{company.Listingstatus}</span>
+                  </div>
+
+                  {/* Company Status */}
+                  <div className="grid grid-cols-[120px_10px_1fr] items-start gap-1">
+                    <strong>Company Status</strong>
+                    <span>-</span>
                     <span className={
-                        company.CompanyStatus.toLowerCase() === "active"
-                          ? "text-green-600"
-                          : company.CompanyStatus.toLowerCase() === "strike off"
-                          ? "text-red-600"
-                          : "text-blue-600"
-                      } > {"  "}{company.CompanyStatus} </span>
-                  </p>
+                      company.CompanyStatus.toLowerCase() === "active"
+                        ? "text-green-600"
+                        : company.CompanyStatus.toLowerCase() === "strike off"
+                        ? "text-red-600"
+                        : "text-blue-600"
+                    }>
+                      {company.CompanyStatus}
+                    </span>
+                  </div>
 
                 </div>
-              </div>    
+
+              </div>
+                
               
             </>
           )}
@@ -145,34 +197,104 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
           {/* Capital Info */}
           {item.question === "Capital Information" && (
             <>
-              <div className="flex items-center justify-between text-xs md:text-sm px-8 py-2">
-                <p><strong>Authorized Capital</strong> - {company.AuthorizedCapital} Rs</p>
-                <p><strong>Paidup Capital</strong> - {company.PaidupCapital} Rs</p>
+              <div className="relative flex flex-col md:flex-row items-start justify-between gap-4 text-[12px] md:px-4 md:text-xs lg:text-sm py-2 dark:text-table-header w-full">
+
+                {/* LEFT COLUMN */}
+                <div className="space-y-1 w-full md:w-1/2">
+                  <div className="grid grid-cols-[150px_10px_1fr] items-start gap-1">
+                    <strong>Authorised Capital</strong>
+                    <span>-</span>
+                    <span>{company.AuthorizedCapital} Rs</span>
+                  </div>
+                </div>
+
+                {/* RIGHT COLUMN */}
+                <div className="space-y-1 w-full md:w-1/2">
+                  <div className="grid grid-cols-[150px_10px_1fr] items-start gap-1">
+                    <strong>Paid up Capital</strong>
+                    <span>-</span>
+                    <span>{company.PaidupCapital} Rs</span>
+                  </div>
+                </div>
+
               </div>
             </>
           )}
+
 
           {/* Registration */}
           {item.question === "Registration Details" && (
             <>
-              <div className="flex items-center justify-between text-xs md:text-sm px-8 ">
-                <p><strong>Registration Date</strong> - {company.CompanyRegistrationdate_date}</p>
-                <p><strong>State Code</strong> - {company.CompanyStateCode}</p>
+              <div className="relative flex flex-col md:flex-row items-start justify-between gap-4 text-[12px] md:px-4 md:text-xs lg:text-sm py-2 dark:text-table-header w-full">
+
+                {/* LEFT COLUMN */}
+                <div className="space-y-1 w-full md:w-1/2">
+                  <div className="grid grid-cols-[150px_10px_1fr] items-start gap-1">
+                    <strong>Registration Date</strong>
+                    <span>-</span>
+                    <span>{company.CompanyRegistrationdate_date}</span>
+                  </div>
+                </div>
+
+                {/* RIGHT COLUMN */}
+                <div className="space-y-1 w-full md:w-1/2">
+                  <div className="grid grid-cols-[150px_10px_1fr] items-start gap-1">
+                    <strong>State Code</strong>
+                    <span>-</span>
+                    <span>{company.CompanyStateCode}</span>
+                  </div>
+                </div>
+
               </div>
-              <p className="flex items-center justify-between text-xs md:text-sm px-8"><strong>Registered Address</strong> - {company.Registered_Office_Address}</p>
+
+              {/* Registered Address — full width */}
+              <div className="mt-1 md:px-4">
+                <div className="grid grid-cols-[150px_10px_1fr] items-start gap-1 text-xs md:text-sm">
+                  <strong>Registered Address</strong>
+                  <span>-</span>
+                  <span>{company.Registered_Office_Address}</span>
+                </div>
+              </div>
             </>
           )}
+
 
           {/* Industry */}
           {item.question === "Industry Details" && (
             <>
-              <div className="flex items-center justify-between text-xs md:text-sm px-8 ">
-                <p><strong>Industrial Classification</strong> - {company.CompanyIndustrialClassification}</p>
-                <p><strong>NIC Code</strong> - {company.nic_code}</p>
+              <div className="relative flex flex-col md:flex-row items-start justify-between gap-4 text-[12px] md:px-4 md:text-xs lg:text-sm py-2 dark:text-table-header w-full">
+
+                {/* Left Column */}
+                <div className="w-full md:w-1/2">
+                  <div className="grid grid-cols-[170px_10px_1fr] items-start gap-1">
+                    <strong>Industrial Classification</strong>
+                    <span>-</span>
+                    <span>{company.CompanyIndustrialClassification}</span>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="w-full md:w-1/2">
+                  <div className="grid grid-cols-[170px_10px_1fr] items-start gap-1">
+                    <strong>NIC Code</strong>
+                    <span>-</span>
+                    <span>{company.nic_code}</span>
+                  </div>
+                </div>
+
               </div>
-              <p className="flex items-center justify-between text-xs md:text-sm px-8 "><strong>Indian/Foreign</strong> -Indian</p>
+
+              {/* Nationality (full width) */}
+              <div className="mt-1 md:px-4">
+                <div className="grid grid-cols-[170px_10px_1fr] items-start gap-1 text-xs md:text-sm">
+                  <strong>Nationality</strong>
+                  <span>-</span>
+                  <span>{company.Registered_Office_Address}</span>
+                </div>
+              </div>
             </>
           )}
+
 
         </div>
       </div>

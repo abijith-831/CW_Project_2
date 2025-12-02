@@ -33,7 +33,8 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const selectedTagCount = Object.values(columnVisibility).filter(v => v).length || 1
+  const selectedTagCount = Object.values(columnVisibility || {}).filter(v => v).length
+  
   const headerMap:Record<string , string>={}
   columns.forEach(col=>{
     headerMap[col.accessorKey] = col.header
@@ -81,10 +82,10 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
       <div className="w-full max-w-2xl" ref={wrapperRef}>
         <div className="relative">
            <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
-              {Object.keys(columnVisibility ).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
+              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
                 <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[7px] md:text-[10px] lg:text-xs">
                  
-                 
+     
                   <TagIcon />{headerMap[tag]}
                   
                   <button type="button"  
@@ -117,8 +118,8 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
            {isOpen && (
             <div className="absolute z-10 w-full mt-2 max-h-60 overflow-y-auto bg-white dark:bg-neutral-700 dark:border-neutral-500 border rounded-md shadow-lg">
               <ul className="p-1 space-y-1">
-                {Object.keys(columnVisibility).map((tag)=>{
-                  const checked = columnVisibility[tag]
+                {Object.keys(columnVisibility || {}).map((tag)=>{
+                  const checked = columnVisibility?.[tag]
                   return (
                     <li key={tag} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-600">
                         <input checked={checked} onChange={()=> handleToggle(tag,checked)}

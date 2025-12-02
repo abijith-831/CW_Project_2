@@ -48,7 +48,6 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   console.log('curre',currentItems);
   
 
-
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -170,14 +169,23 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                </div>
 
 
-                <div className=''>
-                  {capitalView === 'graph' ? (
+
+
+                {filteredData.length > 0 ? (
+                    capitalView === "graph" ? (
                       <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-                      ) : (
+                    ) : (
                       <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                    )
+                  ) : (
+                    <div className="h-[70vh] flex items-center justify-center">
+                      <h1 className="text-bg-primary  text-xl dark:text-table-header font-bold">
+                        No companies found...
+                      </h1>
+                    </div>
                   )}
-                </div>
-          
+                            
+
            
            {/* pagination block */}
            <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-4">
