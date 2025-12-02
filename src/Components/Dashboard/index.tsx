@@ -126,11 +126,10 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 {/* Filter + Toggle Wrapper */}
                   <div className="flex flex-wrap items-center  gap-6 lg:gap-16">
                       {/* Filter */}
-                     <div className="relative inline-block">
-                        <select
-                          value={selectedState}
-                          onChange={(e) => setSelectedState(e.target.value)}
-                          className="border cursor-pointer py-1.5 pr-8 pl-2 text-secondary rounded-lg border-border-primary dark:border-border-dark-primary dark:text-table-header text-sm"  >
+                     <div className="relative inline-block border rounded-lg border-border-primary dark:border-border-dark-primary px-6">
+                        {/* Select */}
+                        <select value={selectedState} onChange={(e) => setSelectedState(e.target.value)}
+                          className="cursor-pointer py-1.5 pr-14 pl-2 text-secondary dark:text-table-header        text-sm appearance-none bg-transparent w-full focus:outline-none focus:ring-0 focus:border-transparent" >
                           <option value="">{t("state")}</option>
                           {indianStates.map((state, index) => (
                             <option key={index} value={state}>
@@ -139,15 +138,17 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                           ))}
                         </select>
 
+                        {/* Clear Button — Middle */}
                         {selectedState && (
-                          <button
-                            onClick={() => setSelectedState("")}
-                            className="absolute right-6 top-1/2 -translate-y-1/2 py-1 px-1.5 rounded-full  text-table-header bg-bg-primary opacity-70 hover:opacity-100 text-sm leading-none " >
+                          <button  onClick={() => setSelectedState("")}
+                            className="absolute right-10 top-1/2 -translate-y-1/2    py-0.5 px-1.5 rounded-full text-xs   bg-bg-primary text-table-header opacity-70 hover:opacity-100" >
                             ✕
                           </button>
                         )}
-                      </div>
 
+                        <img  src="/logos/down.svg"  alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
+                        <img src="/logos/dark_down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none hidden dark:block" />
+                      </div>
 
                       {/* Toggle Buttons */}
                       <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary">
@@ -169,7 +170,6 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                </div>
 
 
-            {currentItems.length > 0 ? (
                 <div className=''>
                   {capitalView === 'graph' ? (
                       <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
@@ -177,11 +177,6 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                       <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
                   )}
                 </div>
-            ) : (
-              <div className='h-[60vh] flex items-center justify-center'>
-                <h1 className='text-xl font-bold text-bg-primary'>No Companies found ... !</h1>
-              </div>
-            )}
           
            
            {/* pagination block */}
