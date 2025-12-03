@@ -3,8 +3,9 @@ import LabelsAboveBars from "../Graph";
 import SkeletonLoaderGraph from "../SkeletonLoader/GraphSkeleton";
 
 interface GraphViewProps {
-  companyData: any[];
-  loading: boolean;
+  companyData?: any[];
+  loading?: boolean;
+  onCompanyClick?:(company:any)=>void
 }
 
 const GraphView: React.FC<GraphViewProps & { onCompanyClick: (company: any) => void }> = ({

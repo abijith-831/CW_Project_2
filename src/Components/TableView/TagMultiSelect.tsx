@@ -83,7 +83,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
         <div className="relative">
            <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
               {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
-                <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[7px] md:text-[10px] lg:text-xs">
+                <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[9px] md:text-[12px] lg:text-xs">
                  
      
                   <TagIcon />{headerMap[tag]}
@@ -99,7 +99,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                 </div>
               ))}
               {selectedTagCount > 3 && (
-                <span className="text-xs ml-1 text-secondary dark:text-table-header">
+                <span className="text-[9px] md:text-[12px] lg:text-xs ml-1 text-secondary dark:text-table-header">
                   +{selectedTagCount - 3} {t("more")}
                 </span>
               )}

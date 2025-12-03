@@ -7,6 +7,7 @@ import { updateCapitalView } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
 import { updateCapitalViewInDB } from '../../api/userProfile.api'
 import { useTranslation } from 'react-i18next'
+import { updateSearchQuery } from '../../redux/slices/authSlice'
 
 interface DashboardProps {
   goToDetails: () => void;
@@ -86,29 +87,22 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
    ];
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-
-      const baseUrl = import.meta.env.VITE_API_URL;
-      let url = `${baseUrl}&limit=50`;
-
-      if (selectedState) {
-        url = `${baseUrl}&limit=50&filters%5BCompanyStateCode%5D=${selectedState}`;
+    const fetchData = async ()=>{
+      try {
+        setLoading(true)
+        const result = await getCompanyData(selectedState)
+        setCompanyData(result.records || [])
+        setCurrentPage(1)
+      } catch (error) {
+        console.log(error);
+      }finally{
+        setLoading(false)
+        setTimeout(() => {
+          
+        }, 2000);
       }
-      
-      const response = await fetch(url);
-      const result = await response.json();
-      setCompanyData(result.records || []);
-      setCurrentPage(1); 
-
-    } catch (error) {
-      console.log(error);
-    } finally {
-       setLoading(false);  
     }
-  };
-  fetchData();
+    fetchData();
 }, [selectedState])
 
   return (
@@ -116,77 +110,96 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
         <Navbar/>   
         {/* <button onClick={goToDetails}>extra detaisls</button> */}
         <div className="flex-1 flex flex-col overflow-hidden">
-            <div className={`px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-wrap gap-4 justify-between items-center ${ isArabic ? "flex-row-reverse text-right" : "" }`}>
+              <div className={`px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${ isArabic ? "flex-col-reverse md:flex-row-reverse text-right" : "" }`}>
                 {/* Heading */}
-                <h1 className="text-md rtl md:text-lg lg:text-xl font-medium text-primary dark:text-table-header flex-1">
-                    {t("registrar_heading")} - {capitalView === "graph" ? t("graph_view") : t("table_view")}
+                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header w-full  whitespace-nowrap overflow-hidden ">
+                  {t("registrar_heading")} - {capitalView === "graph" ? t("graph_view") : t("table_view")}
                 </h1>
 
-                {/* Filter + Toggle Wrapper */}
-                  <div className="flex flex-wrap items-center  gap-6 lg:gap-16">
-                      {/* Filter */}
-                     <div className="relative inline-block border rounded-lg border-border-primary dark:border-border-dark-primary px-6">
-                        {/* Select */}
-                        <select value={selectedState} onChange={(e) => setSelectedState(e.target.value)}
-                          className="cursor-pointer py-1.5 pr-14 pl-2 text-secondary dark:text-table-header        text-sm appearance-none bg-transparent w-full focus:outline-none focus:ring-0 focus:border-transparent" >
-                          <option value="">{t("state")}</option>
-                          {indianStates.map((state, index) => (
-                            <option key={index} value={state}>
-                              {state.charAt(0).toUpperCase() + state.slice(1)}
-                            </option>
-                          ))}
-                        </select>
+                {/* Filter + Toggle */}
+                <div className="w-full flex justify-between md:justify-end items-center gap-4 md:gap-6">
+                  {/* Filter */}
+                  <div className="relative inline-block border rounded-lg border-border-primary dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
+                    <select
+                      value={selectedState}
+                      onChange={(e) => setSelectedState(e.target.value)}
+                      className="cursor-pointer  md:py-1.5 pl-2 pr-10 md:pr-14 text-secondary dark:text-table-header text-sm w-full bg-transparent appearance-none focus:outline-none"  >
+                      <option value="">{t("state")}</option>
+                      {indianStates.map((state, index) => (
+                        <option key={index} value={state}>
+                          {state.charAt(0).toUpperCase() + state.slice(1)}
+                        </option>
+                      ))}
+                    </select>
 
-                        {/* Clear Button — Middle */}
-                        {selectedState && (
-                          <button  onClick={() => setSelectedState("")}
-                            className="absolute right-10 top-1/2 -translate-y-1/2    py-0.5 px-1.5 rounded-full text-xs   bg-bg-primary text-table-header opacity-70 hover:opacity-100" >
-                            ✕
-                          </button>
-                        )}
+                    {selectedState && (
+                      <button onClick={() => setSelectedState("")} className="absolute right-10 top-1/2 -translate-y-1/2 py-0.5 px-1.5 rounded-full text-xs bg-bg-primary text-table-header opacity-70 hover:opacity-100" >
+                        ✕
+                      </button>
+                    )}
 
-                        <img  src="/logos/down.svg"  alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
-                        <img src="/logos/dark_down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none hidden dark:block" />
-                      </div>
+                    <img src="/logos/down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
+                    <img src="/logos/dark_down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none hidden dark:block" />
+                  </div>
 
-                      {/* Toggle Buttons */}
-                      <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary">
-                        <button onClick={() => handleChangeView("graph")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "graph" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary" }`} >
-                            {t("graph")}
-                        </button>
-                        <button onClick={() => handleChangeView("table")} className={`px-2 sm:px-3 md:px-6 py-1 md:py-1.5 cursor-pointer text-sm ${ capitalView === "table" ? "bg-bg-primary text-white" : "bg-gray-100 text-secondary"  }`} >
-                            {t("table")}
-                        </button>
-                      </div>
+                  {/* Toggle Buttons */}
+                  <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary md:w-1/2 md:w-auto justify-end">
+                    <button
+                      onClick={() => handleChangeView("graph")}
+                      className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
+                        capitalView === "graph"
+                          ? "bg-bg-primary text-white"
+                          : "bg-gray-100 text-secondary"
+                      }`} >
+                      {t("graph")}
+                    </button>
+                    <button
+                      onClick={() => handleChangeView("table")}
+                      className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
+                        capitalView === "table"
+                          ? "bg-bg-primary text-white"
+                          : "bg-gray-100 text-secondary"   }`}  >
+                      {t("table")}
+                    </button>
                   </div>
                 </div>
+              </div>
+
+
 
                 {/* Description */}
                <div  className={`text-secondary px-5 sm:px-10 md:px-14 lg:px-20 text-sm leading-relaxed ${    isArabic ? "text-right" : ""  }`} >
-                    <h6 className="text-sm md:text-md dark:text-table-header">
+                    <h6 className="text-xs  md:text-sm lg:text-md dark:text-table-header">
                       {t("description")}
                     </h6>
                </div>
 
-
-
-
-                {filteredData.length > 0 ? (
-                    capitalView === "graph" ? (
-                      <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-                    ) : (
-                      <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
-                    )
+               <div>
+                {filteredData.length === 0 && searchQuery?.length > 0 ? (
+                    <div className="w-full h-[60vh] flex flex-col items-center justify-center py-10 space-y-6 text-center">
+                      <h2 className="text-xl font-bold text-bg-primary dark:text-table-header">
+                        No results found
+                      </h2>
+                      <div className="flex gap-8 mt-2">
+                        <button onClick={() => window.location.reload()} className="px-6 py-1.5 bg-bg-primary text-white rounded-lg shadow hover:opacity-90 transition" >
+                          Retry
+                        </button>
+                        <button onClick={() => dispatch(updateSearchQuery(""))} className="px-6 py-1.5 bg-gray-300 dark:bg-neutral-600 text-secondary dark:text-table-header rounded-lg shadow hover:opacity-80 transition"  >
+                          Clear Search
+                        </button>
+                    </div>
+                    </div>
                   ) : (
-                    <div className="h-[70vh] flex items-center justify-center">
-                      <h1 className="text-bg-primary  text-xl dark:text-table-header font-bold">
-                        No companies found...
-                      </h1>
+                    <div>
+                      {capitalView === "graph" ? (
+                        <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                      ) : (
+                        <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                      )}
                     </div>
                   )}
-                            
+               </div>
 
-           
            {/* pagination block */}
            <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-4">
                 {/* Prev Button */}
@@ -214,7 +227,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     }`}>
                     {t("next")}
                 </button>
-                </div>
+            </div>
         </div>
     </div>
   )

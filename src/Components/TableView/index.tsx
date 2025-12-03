@@ -5,7 +5,6 @@ import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import SkeletonLoaderGraph from '../SkeletonLoader/GraphSkeleton';
 import TableSkeleton from '../SkeletonLoader/TableSkeleton';
 
 
@@ -30,13 +29,14 @@ interface CompanyDataProps {
 
 
 interface TableViewProps{
-  companyData:CompanyDataProps[]
-  loading:boolean;
+  companyData?:CompanyDataProps[]
+  loading?:boolean;
   onCompanyClick?:(company:CompanyDataProps)=>void
 }
 
 
 const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
+  console.log("loading",loading)
   const [sorting, setSorting] = useState([])
   const {t} = useTranslation();
   const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
@@ -120,7 +120,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           <p className="text-primary dark:text-neutral-400 line-clamp-3">
             {value.length > maxChars ? value.slice(0, maxChars) + '...' : value}
           </p>
-
           {value.length > maxChars && (
             <span className="absolute -top-8 left-0 scale-0 group-hover:scale-100 transition-transform bg-bg-primary text-table-header text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
               {value}
@@ -160,7 +159,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         
         return <div className="relative group w-fit">
             <span
-              className={`px-3 py-1 rounded-md text-xs font-semibold text-primary 
+              className={`px-3 py-1 rounded-md text-[10px] md:text-xs font-semibold text-primary 
                 ${props.getValue() === "Active"
                   ? "bg-[#DDEFD0] text-badge"
                   : props.getValue() === "Strike Off"
@@ -227,11 +226,11 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             {table.getHeaderGroups().map(headerGroup => (
               <div className="table-row" key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <div  className="table-cell px-4 py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
+                  <div  className="table-cell px-2 md:px-4 py-1 pt-2  md:py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
                     key={header.id}
                     style={{ width: header.getSize() }}
                     onClick={header.column.getToggleSortingHandler()} >
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-2 text-xs md:text-md lg:text-base">
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() && (
                         <>
@@ -281,7 +280,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
               {table.getRowModel().rows.map(row => (
                 <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
                   {row.getVisibleCells().map(cell => (
-                    <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
+                    <div className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 \  md:py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
                       {/* {loading ? (<TableSkeleton/>) : (flexRender(cell.column.columnDef.cell, cell.getContext()))}               */}
                       {(flexRender(cell.column.columnDef.cell, cell.getContext()))}
                     </div>

@@ -443,3 +443,114 @@ Indian/Foreign
                 <p><strong>NIC Code</strong> - {company.nic_code}</p>
               </div>
               <p className="flex items-center justify-between text-xs md:text-sm px-8 "><strong>Indian/Foreign</strong> -Indian</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Your current function does not support filters or limit
+
+So let’s fix it.
+
+✅ Revised getCompanyData (supports selectedState)
+
+src/api/companyData.api.ts
+
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+export const getCompanyData = async (selectedState?: string) => {
+  try {
+    let url = `${API_URL}&limit=50`;
+
+    if (selectedState) {
+      url += `&filters%5BCompanyStateCode%5D=${selectedState}`;
+    }
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.log("API error:", error);
+    throw error;
+  }
+};
+
+
+✔ Supports filters
+✔ Supports limit
+✔ Works with axios
+✔ Reusable anywhere
+
+✅ 2. Update useEffect inside Dashboard
+
+Replace your entire useEffect with:
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+
+      const result = await getCompanyData(selectedState);
+      setCompanyData(result.records || []);
+      setCurrentPage(1);
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+  };
+
+  fetchData();
+}, [selectedState]);
+
+🎉 Now What Happens
+When selectedState changes:
+
+✔ Call API using axios
+✔ API includes filter query
+✔ Data updates
+✔ Pagination resets
+✔ Loading state shows for 2 seconds             
