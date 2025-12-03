@@ -221,7 +221,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative w-full flex items-center h-screen justify-center overflow-hidden bg-[url('./bg/today-bg.jpg')] bg-cover">
+    <div style={{ backgroundImage: "url('/bg/today-bg.jpg')" }} className="relative w-full flex items-center h-screen justify-center overflow-hidden bg-[url('./bg/today-bg.jpg')] bg-cover">
       <div className="relative w-full max-w-sm p-6 space-y-6 px-8 bg-white/60  backdrop-blur-sm border border-white/20  shadow-xl rounded-xl">
         {/* Header section */}
         <div className="text-center space-y-3">

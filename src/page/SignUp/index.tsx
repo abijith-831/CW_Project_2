@@ -92,7 +92,7 @@ export default function SignUp() {
 
 
   return (
-    <div className="relative  w-full flex m items-center h-screen justify-center  overflow-hidden bg-[url('./bg/today-bg.jpg')] bg-cover">
+    <div style={{ backgroundImage: "url('/bg/today-bg.jpg')" }} className="relative  w-full flex m items-center h-screen justify-center  overflow-hidden bg-[url('./bg/today-bg.jpg')] bg-cover">
       <div className="relative w-full max-w-sm py-6 px-8 space-y-6  bg-white/60 dark:bg-black/20  backdrop-blur-sm  border border-white/20 dark:border-zinc-700  shadow-xl  rounded-xl">
 
         {/* Header section with icon and title - More compact */}
