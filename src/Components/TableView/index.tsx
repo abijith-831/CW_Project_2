@@ -1,14 +1,17 @@
-import { getCoreRowModel, useReactTable, flexRender, getSortedRowModel } from '@tanstack/react-table';
+import { getCoreRowModel, useReactTable, flexRender, getSortedRowModel ,TableMeta } from '@tanstack/react-table';
 import React, { useState } from 'react'
 import './styles.css'
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
 import { useTranslation } from 'react-i18next';
 import TableSkeleton from '../SkeletonLoader/TableSkeleton';
-import { updateItemsPerPage } from '../../redux/slices/authSlice';
+// import { updateItemsPerPage } from '../../redux/slices/authSlice';
 import { useDispatch , useSelector} from 'react-redux';
-import {  updateItemsPerPageInDB } from '../../api/userProfile.api';
+import { SortingState } from '@tanstack/react-table'
 
+interface MyTableMeta extends TableMeta<CompanyDataProps> {
+  isLoading?: boolean;
+}
 
 interface CompanyDataProps {
   AuthorizedCapital: string;
@@ -40,9 +43,7 @@ interface TableViewProps{
 
 
 const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick , itemsPerPage , onItemsPerPageChange}) => {
-  console.log("loading",loading)
-  const [sorting, setSorting] = useState([])
-  const dispatch = useDispatch()
+  const [sorting, setSorting] = useState<SortingState>([])
   const {t} = useTranslation();
   const user = useSelector((state:any) => state.auth.currentUser);
   const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
@@ -67,8 +68,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         let maxChars = 60;
         if (colSize < 60) maxChars = 15;
         else if (colSize < 200) maxChars = 20;
-
-
 
         return <div className="relative group w-fit">
           <p className="text-primary dark:text-neutral-400">
@@ -136,7 +135,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             </span>
           )}
       </div>
-
       }
     },
     {
@@ -197,8 +195,8 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     { accessorKey: 'nic_code', header: t("nic_code") },
   ]
   
-  const table = useReactTable({
-    data: companyData,
+  const table = useReactTable<CompanyDataProps>({
+    data: companyData || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -209,7 +207,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     },
     onColumnVisibilityChange: setColumnVisibility,
     onSortingChange: setSorting,
-    meta:{isLoading : loading}
+    meta: { isLoading: loading } as MyTableMeta
   })
 
 
@@ -250,7 +248,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             {table.getHeaderGroups().map(headerGroup => (
               <div className="table-row" key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <div  className="table-cell px-2 md:px-4 py-1 pt-2  md:py-2.5 border-r border-border-primary last:border-r-0 border-b border-border-secondary dark:border-border-dark-primary relative select-none cursor-pointer" 
+                  <div  className="table-cell px-2 md:px-4 py-1 pt-2  md:py-2.5 border-r border-border-primary last:border-r-0 border-b  dark:border-border-dark-primary relative select-none cursor-pointer" 
                     key={header.id}
                     style={{ width: header.getSize() }}
                     onClick={header.column.getToggleSortingHandler()} >
@@ -287,37 +285,27 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   
           {/* Table body */}
           <div className="table-row-group text-sm">
-            {table.options.meta?.isLoading
-              ? // Render placeholder rows while loading
+            {(table.options.meta as MyTableMeta)?.isLoading ? 
                 Array.from({ length: 12 }).map((_, rowIndex) => (
                   <div className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={rowIndex}>
                     {columns.slice(0,6).map((col, colIndex) => (
-                      <div
-                        key={colIndex}
-                        className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible"
-                      >
+                      <div key={colIndex}
+                        className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r border-border-secondary dark:border-neutral-600 last:border-r-0 border-b relative overflow-visible" >
                         <TableSkeleton />
                       </div>
                     ))}
                   </div>
                 ))
-              : // Render actual table rows when data is loaded
-                table.getRowModel().rows.map((row) => (
-                  <div
-                    onClick={() => onCompanyClick?.(row.original)}
-                    className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer"
-                    key={row.id}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <div
-                        key={cell.id}
-                        className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 md:py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                : table.getRowModel().rows.map(row => (
+                    <div onClick={() => onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
+                      {row.getVisibleCells().map(cell => (
+                        <div key={cell.id} className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 md:py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b  relative overflow-visible">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </div>
+                      ))}
+                    </div>
+                  ))
+              }
           </div>
 
 

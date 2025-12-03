@@ -26,7 +26,7 @@ const GraphView: React.FC<GraphViewProps & { onCompanyClick: (company: any) => v
         
         {!loading &&
           companyData?.map((company, index) => (
-            <div onClick={()=> onCompanyClick(company)} key={index} className="w-[350px]  sm:w-[350px] md:w-[350px] lg:w-[400px] xl:w-[500px] cursor-pointer mx-auto hover:bg-gray-100 dark:bg-neutral-700 hover:dark:bg-neutral-600 dark:border-[#4b5563] rounded-lg duration-300  transition-transform">
+            <div onClick={()=> onCompanyClick(company)} key={index} className="w-[350px]  sm:w-[350px] md:w-[350px] lg:w-[400px] xl:w-[500px] cursor-pointer mx-auto hover:bg-gray-100 dark:bg-neutral-700 hover:dark:bg-neutral-600 dark:border-border-dark-primary rounded-lg duration-300  transition-transform">
               <LabelsAboveBars company={company} />
             </div>
           ))}

@@ -64,54 +64,38 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
       </div> 
       
       <div className="w-full max-w-[550px] text-red-500 dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
-        <ChartContainer
-          xAxis={[{ scaleType: 'band', data: [t("AuthorizedCapital"), t("PaidupCapital")] }]}
-          series={[
-            {
-              type: 'bar',
-              id: 'series1',
-              data: [authorizedCapital, null],
-              color: '#3CB5B3',
-              stack: 'total'
-            },
-            {
-              type: 'bar',
-              id: 'series2',
-              data: [null, paidupCapital],
-              color: '#0A4E4E',
-              stack: 'total'
-            }
-          ]}
-          height={220}
-          yAxis={[{ width: 90 }]}
-          margin={{ left: 0, right: 120 }} >
-          <BarPlot  barLabel="value" slots={{ barLabel: BarLabel }}
+        <ChartContainer xAxis={[{ scaleType: 'band', data: [t("AuthorizedCapital"), t("PaidupCapital")] }]}
+            series={[
+              {
+                type: 'bar',
+                id: 'series1',
+                data: [authorizedCapital, null],
+                color: '#3CB5B3',
+                stack: 'total',
+                barLabel: (item) => item.value?.toString() || '', 
+              },
+              {
+                type: 'bar',
+                id: 'series2',
+                data: [null, paidupCapital],
+                color: '#0A4E4E',
+                stack: 'total',
+                barLabel: (item) => item.value?.toString() || '',
+              }
+            ]}
+            height={220}
+            yAxis={[{ width: 90 }]}
+            margin={{ left: 0, right: 120 }}  >
+            <BarPlot
+              slots={{ barLabel: BarLabel }} 
               slotProps={{
-                barLabel: { sx: { fill: axisColor } 
-                }
-              }} />
+                barLabel: { fill: axisColor }
+              }}  />
 
-          <ChartsXAxis
-              sx={{
-                "& .MuiChartsAxis-tickLabel": {
-                  fill: axisColor, 
-                },
-                "& .MuiChartsAxis-line": {
-                  stroke: axisColor,
-                }
-              }} />
+            <ChartsXAxis  sx={{ "& .MuiChartsAxis-tickLabel": { fill: axisColor }, "& .MuiChartsAxis-line": { stroke: axisColor } }} />
+            <ChartsYAxis sx={{ "& .MuiChartsAxis-tickLabel": { fill: axisColor }, "& .MuiChartsAxis-line": { stroke: axisColor }  }}  />
+          </ChartContainer>
 
-                      <ChartsYAxis
-              sx={{
-                "& .MuiChartsAxis-tickLabel": {
-                  fill: axisColor,
-                },
-                "& .MuiChartsAxis-line": {
-                  stroke: axisColor,
-                }
-              }} />
-
-        </ChartContainer>
       </div>
 
       <div className="flex flex-col gap-2">

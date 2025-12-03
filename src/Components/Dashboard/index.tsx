@@ -150,7 +150,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   </div>
 
                   {/* Toggle Buttons */}
-                  <div className="flex rounded-lg items-center overflow-hidden border shadow border-slate-300 dark:border-border-dark-primary md:w-1/2 md:w-auto justify-end">
+                  <div className="flex rounded-lg items-center overflow-hidden border shadow border-slate-300 dark:border-border-dark-primary  md:w-auto justify-end">
                     <button
                       onClick={() => handleChangeView("graph")}
                       className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${

@@ -78,7 +78,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   });
   }
 
-  const limit = window.innerWidth < 640 ? 1 : 3;
+  const limit = window.innerWidth < 640 ? 1 : window.innerWidth < 1200 ? 2 :  3;
 
   return (
       <div className="w-full max-w-2xl" ref={wrapperRef}>
