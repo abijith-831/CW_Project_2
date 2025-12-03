@@ -4,8 +4,10 @@ import './styles.css'
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import TagMultiSelectPage from './TagMultiSelect';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import TableSkeleton from '../SkeletonLoader/TableSkeleton';
+import { updateItemsPerPage } from '../../redux/slices/authSlice';
+import { useDispatch , useSelector} from 'react-redux';
+import {  updateItemsPerPageInDB } from '../../api/userProfile.api';
 
 
 interface CompanyDataProps {
@@ -32,13 +34,17 @@ interface TableViewProps{
   companyData?:CompanyDataProps[]
   loading?:boolean;
   onCompanyClick?:(company:CompanyDataProps)=>void
+  itemsPerPage: number; 
+  onItemsPerPageChange?: (value: 10 | 15 | 20) => void
 }
 
 
-const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick }) => {
+const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyClick , itemsPerPage , onItemsPerPageChange}) => {
   console.log("loading",loading)
   const [sorting, setSorting] = useState([])
+  const dispatch = useDispatch()
   const {t} = useTranslation();
+  const user = useSelector((state:any) => state.auth.currentUser);
   const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
   const [columnVisibility, setColumnVisibility] = useState(selectedColumns)
   
@@ -201,6 +207,12 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     onSortingChange: setSorting
   })
 
+  const handleItemsPerPage = async(value:10|15|20)=>{
+    dispatch(updateItemsPerPage(value))
+    if (user?.id) {
+        await updateItemsPerPageInDB(user.id, value);
+    } 
+  }
 
 
   return (
@@ -210,6 +222,14 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         <h1 className="text-secondary dark:text-table-header text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
           {t("second_heading")}
         </h1>
+
+        <div>
+          <select value={itemsPerPage} onChange={(e)=> onItemsPerPageChange?.(Number(e.target.value) as 10|15|20) } name="" id="" className='border text-sm py-2.5 px-8 border-slate-300 dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md'>
+            <option value={10}>10 Items</option>
+            <option value={15}>15 Items</option>
+            <option value={20}>20 Items</option>
+          </select>
+        </div>
 
         {/* Column Visibility Dropdown */}
         <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl ">

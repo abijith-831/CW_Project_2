@@ -26,5 +26,9 @@
     "nick_name_placeholder":"Enter Nick Name",
     "capital_view":"Capital View",
     "graph_text":"Graph",
-    "table_text":"Table"
+    "table_text":"Table",
+    "items_per_page":"Items Per Page - Table",
+    "10_items":"10 Items",
+    "15_items":"15 Items",
+    "20_items":"20 Items"
 }

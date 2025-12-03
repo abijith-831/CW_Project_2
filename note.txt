@@ -554,3 +554,97 @@ When selectedState changes:
 ✔ Data updates
 ✔ Pagination resets
 ✔ Loading state shows for 2 seconds             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**TableView should NOT handle items_per_page itself.
+
+Dashboard must own the state, and TableView should only notify when it changes.**
+
+✅ 1️⃣ Modify TableView Props
+
+Add a new prop:
+
+interface TableViewProps {
+  companyData?: CompanyDataProps[];
+  loading?: boolean;
+  onCompanyClick?: (company: CompanyDataProps) => void;
+  onItemsPerPageChange?: (value: 10 | 15 | 20) => void; // NEW
+}
+
+✅ 2️⃣ Remove DB calls & Redux calls from TableView (Dashboard will handle them)
+
+Replace your entire handleItemsPerPage() with this:
+
+const handleItemsPerPage = (value: 10 | 15 | 20) => {
+  onItemsPerPageChange?.(value); // call parent function
+};
+
+
+That's it. TableView no longer updates Redux or DB.
+
+✅ 3️⃣ Use Dashboard to update Redux + DB + local state
+
+In Dashboard, add:
+
+const handleItemsPerPageChange = async (value: 10 | 15 | 20) => {
+  setItemsPerPage(value);                   // Update Dashboard UI state
+  dispatch(updateItemsPerPage(value));      // Redux update
+
+  if (user?.id) {
+    await updateItemsPerPageInDB(user.id, value); // DB update
+  }
+
+  setCurrentPage(1); // Reset pagination
+};
+
+✅ 4️⃣ Pass the callback to TableView
+<TableView
+    companyData={currentItems}
+    loading={loading}
+    onCompanyClick={onSelectCompany}
+    onItemsPerPageChange={handleItemsPerPageChange}  // NEW
+/>
+
+✅ 5️⃣ Fix TableView Select Dropdown
+
+Modify your select:
+
+<select
+  value={items_per_page}
+  onChange={(e) => handleItemsPerPage(Number(e.target.value) as 10 | 15 | 20)}
+  className="border text-sm py-2.5 px-8 border-slate-300 dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md"
+>
+  <option value={10}>10 Items</option>
+  <option value={15}>15 Items</option>
+  <option value={20}>20 Items</option>
+</select>
+
+🎉 Final Result
+
+TableView only triggers the change
+
+Dashboard owns & manages the real state
+
+Redux + DB + Pagination all stay in sync
+
+No more TypeScript errors
+
+Clean architecture

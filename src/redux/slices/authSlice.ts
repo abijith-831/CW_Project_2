@@ -8,6 +8,7 @@ interface User {
   capital_view?:string;
   selected_columns?: Record<string, boolean>;
   search_query?: string;
+  items_per_page?:number;
 }
 
 interface UserState {
@@ -72,6 +73,11 @@ const authSlice = createSlice({
         state.currentUser.capital_view = action.payload;
       }
     },  
+    updateItemsPerPage:(state , action: PayloadAction<number>) =>{
+      if(state.currentUser){
+        state.currentUser.items_per_page = action.payload;
+      }
+    },
     updateSelectedColumns(state,action:PayloadAction<Record<string,boolean>>){
       if(state.currentUser){
         state.currentUser.selected_columns = action.payload;
@@ -109,6 +115,7 @@ export const { loginSuccess,
                updateSearchQuery,
                updateThemePreference,
                updateLanguagePreference,
+               updateItemsPerPage,
                setUser
               } = authSlice.actions;
 export default authSlice.reducer;

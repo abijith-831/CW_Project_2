@@ -3,9 +3,9 @@ import TableView from '../../Components/TableView'
 import Navbar from '../Navbar'
 import { useEffect, useState } from 'react'
 import { useSelector , useDispatch } from 'react-redux'
-import { updateCapitalView } from '../../redux/slices/authSlice'
+import { updateCapitalView, updateItemsPerPage } from '../../redux/slices/authSlice'
 import { getCompanyData } from '../../api/companyData.api'
-import { updateCapitalViewInDB } from '../../api/userProfile.api'
+import { updateCapitalViewInDB, updateItemsPerPageInDB , } from '../../api/userProfile.api'
 import { useTranslation } from 'react-i18next'
 import { updateSearchQuery } from '../../redux/slices/authSlice'
 
@@ -22,14 +22,15 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   const isArabic = i18n.language === "arb";
   
   const user = useSelector((state:any) => state.auth.currentUser);
-  const capitalView = useSelector((state:any)=> state.auth.currentUser?.capital_view)
+  
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
 
   const [companyData , setCompanyData] = useState<any[]>([])
   const [loading , setLoading] = useState(true)
 
   const [currentPage , setCurrentPage ] = useState(1)
-  const [itemsPerPage , setItemsPerPage] = useState(capitalView === 'table' ? 12 : 6)
+  const savedItemsPerPage = useSelector((state:any)=>state.auth.currentUser?.items_per_page)
+  const [itemsPerPage , setItemsPerPage] = useState(user?.capital_view === 'table' ? savedItemsPerPage : 6)
   const [selectedState , setSelectedState] = useState('')
 
   const indexOfLastItem = currentPage * itemsPerPage
@@ -46,9 +47,6 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const currentItems = filteredData.slice(indexOfFirstItem,indexOfLastItem)
 
-  console.log('curre',currentItems);
-  
-
   const totalPages = Math.ceil(filteredData.length / itemsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -57,7 +55,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
      if (user?.id) {
         await updateCapitalViewInDB(user.id, value);
       }
-    setItemsPerPage(value === 'table' ? 12 : 6)
+    setItemsPerPage(value === 'table' ? savedItemsPerPage : 6)
   }
 
   const indianStates = [
@@ -105,6 +103,18 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
     fetchData();
 }, [selectedState])
 
+  const handleItemsPerPageChange = async (value: 10 | 15 | 20) => {
+    setItemsPerPage(value); 
+    dispatch(updateItemsPerPage(value))
+
+    if (user?.id) {
+      await updateItemsPerPageInDB(user.id, value); 
+    }
+
+    setCurrentPage(1); 
+  };
+
+
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   
@@ -113,13 +123,13 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
               <div className={`px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${ isArabic ? "flex-col-reverse md:flex-row-reverse text-right" : "" }`}>
                 {/* Heading */}
                 <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header w-full  whitespace-nowrap overflow-hidden ">
-                  {t("registrar_heading")} - {capitalView === "graph" ? t("graph_view") : t("table_view")}
+                  {t("registrar_heading")} - {user?.capital_view === "graph" ? t("graph_view") : t("table_view")}
                 </h1>
 
                 {/* Filter + Toggle */}
                 <div className="w-full flex justify-between md:justify-end items-center gap-4 md:gap-6">
                   {/* Filter */}
-                  <div className="relative inline-block border rounded-lg border-border-primary dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
+                  <div className="relative inline-block border rounded-lg border-slate-300 shadow dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
                     <select
                       value={selectedState}
                       onChange={(e) => setSelectedState(e.target.value)}
@@ -143,11 +153,11 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   </div>
 
                   {/* Toggle Buttons */}
-                  <div className="flex rounded-lg items-center overflow-hidden border border-gray-300 dark:border-border-dark-primary md:w-1/2 md:w-auto justify-end">
+                  <div className="flex rounded-lg items-center overflow-hidden border shadow border-slate-300 dark:border-border-dark-primary md:w-1/2 md:w-auto justify-end">
                     <button
                       onClick={() => handleChangeView("graph")}
                       className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
-                        capitalView === "graph"
+                        user?.capital_view === "graph"
                           ? "bg-bg-primary text-white"
                           : "bg-gray-100 text-secondary"
                       }`} >
@@ -156,7 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     <button
                       onClick={() => handleChangeView("table")}
                       className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
-                        capitalView === "table"
+                        user?.capital_view === "table"
                           ? "bg-bg-primary text-white"
                           : "bg-gray-100 text-secondary"   }`}  >
                       {t("table")}
@@ -182,7 +192,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                       </h2>
                       <div className="flex gap-8 mt-2">
                         <button onClick={() => window.location.reload()} className="px-6 py-1.5 bg-bg-primary text-white rounded-lg shadow hover:opacity-90 transition" >
-                          Retry
+                          Refresh Page
                         </button>
                         <button onClick={() => dispatch(updateSearchQuery(""))} className="px-6 py-1.5 bg-gray-300 dark:bg-neutral-600 text-secondary dark:text-table-header rounded-lg shadow hover:opacity-80 transition"  >
                           Clear Search
@@ -191,10 +201,10 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     </div>
                   ) : (
                     <div>
-                      {capitalView === "graph" ? (
+                      {user?.capital_view === "graph" ? (
                         <GraphView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
                       ) : (
-                        <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} />
+                        <TableView companyData={currentItems} onCompanyClick={onSelectCompany} loading={loading} itemsPerPage={itemsPerPage} onItemsPerPageChange={handleItemsPerPageChange}/>
                       )}
                     </div>
                   )}

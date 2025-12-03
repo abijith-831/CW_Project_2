@@ -49,4 +49,12 @@ export const updateCapitalViewInDB = async (userId: string, capitalView: string)
     .from("usersTable")
     .update({ capital_view: capitalView })
     .eq("id", userId);
-};
+}
+
+
+export const updateItemsPerPageInDB = async(userId : string , items_per_page:number)=>{
+  return await supabase
+  .from("usersTable")
+  .update({ items_per_page: items_per_page })
+  .eq("id", userId);
+}

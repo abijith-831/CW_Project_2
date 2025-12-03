@@ -58,6 +58,7 @@ export default function SignUp() {
         language_preference: "eng",
         theme_preference: "light",
         profile_picture: "",
+        items_per_page:10,
         created_at: new Date(),
         is_Verified: false,
         capital_view:'graph'

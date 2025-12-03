@@ -114,7 +114,7 @@ export default function Login() {
           nic_code: false,
         };
 
-        // Add selected_columns inside user
+        // selected_columns inside user
         const userWithColumns = {
           ...newUser,
           selected_columns: defaultColumns

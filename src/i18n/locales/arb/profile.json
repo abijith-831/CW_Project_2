@@ -26,7 +26,11 @@
   "nick_name_placeholder": "أدخل الاسم المستعار",
   "capital_view": "طريقة العرض",
   "graph_text": "الرسم البياني",
-  "table_text": "الجدول"
+  "table_text": "الجدول",
+  "items_per_page": "عدد العناصر في الصفحة",
+  "10_items": "10 عناصر",
+  "15_items": "15 عنصرًا",
+  "20_items": "20 عنصرًا"
 }
 
 

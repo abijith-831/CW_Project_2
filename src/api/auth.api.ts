@@ -92,6 +92,7 @@ export const createUserInDB = async (payload: {
       language_preference: "eng",
       theme_preference: "light",
       capital_view: "graph",
+      items_per_page:10,
       created_at: new Date(),
       is_Verified: true,
     })

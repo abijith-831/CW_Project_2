@@ -21,6 +21,7 @@ const SettingsPage = () => {
   const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light'
   const language = useSelector((state:any)=>state.auth.currentUser?.language_preference) || 'eng'
   const capital_view = useSelector((state:any)=> state.auth.currentUser?.capital_view) || "graph"
+  const items_per_page = useSelector((state:any)=>state.auth.currentUser?.items_per_page) || 10
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const {t} = useTranslation("profile")
@@ -35,6 +36,9 @@ const SettingsPage = () => {
       try {
         setLoading(true)
         const data = await getUserProfile()
+
+        console.log('daadad',data);
+        
         setUserInfo(data)
       } catch (error) {
         console.error(error)
@@ -45,9 +49,6 @@ const SettingsPage = () => {
     fetchUser()
   }, [])
 
-
-
-
   useEffect(() => {
     if (userInfo) {
       setValue("fullName", userInfo.full_name)
@@ -57,6 +58,7 @@ const SettingsPage = () => {
       setValue("language", language)
       setValue("theme", theme)
       setValue("capital_view",capital_view)
+      setValue("items_per_page",items_per_page )
     }
   }, [userInfo, setValue,theme,isEdit , capital_view])
 
@@ -67,10 +69,9 @@ const SettingsPage = () => {
   formValues.language !== userInfo?.language_preference ||
   formValues.theme !== userInfo?.theme_preference ||
   formValues.capital_view !== userInfo?.capital_view ||
+  formValues.items_per_page !== userInfo?.items_per_page ||
   selectedFile !== null;
   
-  
-
   const onSubmit = async (data: any) => {
     try {
 
@@ -91,9 +92,6 @@ const SettingsPage = () => {
         profilePictureUrl = urlData.publicUrl
       }
 
-      console.log('daa',data);
-      
-
       const res = await updateUserProfile({
         full_name: data.fullName,
         nick_name: data.nickName,
@@ -102,7 +100,8 @@ const SettingsPage = () => {
         language_preference: data.language,
         theme_preference: data.theme,
         profile_picture: profilePictureUrl,
-        capital_view : data.capital_view
+        capital_view : data.capital_view,
+        items_per_page : data.items_per_page
       })
       dispatch(setUser(res));
 
@@ -356,26 +355,42 @@ const SettingsPage = () => {
                   <p className="text-red-500 text-xs">Theme is required</p>
                 )}
               </div>
-          </div>
+            </div>
 
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center mx-auto">
-                <div>
-                  <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
-                    {t("capital_view")}
-                  </label>
-                  <div className="relative">
-                    <select {...register("capital_view")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2    text-secondary bg-bg-input rounded-md  appearance-none   focus:ring focus:ring-blue-200  dark:bg-neutral-600 dark:text-neutral-400  ">
-                      <option value="graph">{t("graph_text")}</option>
-                      <option value="table">{t("table_text")}</option>
-                    </select>
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
-                      <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
-                    </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                      {t("capital_view")}
+                    </label>
+                    <div className="relative">
+                      <select {...register("capital_view")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2    text-secondary bg-bg-input rounded-md  appearance-none   focus:ring focus:ring-blue-200  dark:bg-neutral-600 dark:text-table-header ">
+                        <option value="graph">{t("graph_text")}</option>
+                        <option value="table">{t("table_text")}</option>
+                      </select>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                        <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </div>
+                  <div>
+                    <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">
+                      {t("items_per_page")}
+                    </label>
+                    <div className="relative">
+                      <select {...register("items_per_page")} disabled={!isEdit} className="   w-full pl-6 pr-4 py-2    text-secondary bg-bg-input rounded-md  appearance-none   focus:ring focus:ring-blue-200  dark:bg-neutral-600 dark:text-table-header ">
+                        <option value="10">{t("10_items")}</option>
+                        <option value="15">{t("15_items")}</option>
+                        <option value="20">{t("20_items")}</option>
+                      </select>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <img src="/logos/down.svg" alt="" className=' text-bold w-4 h-4  dark:hidden' />
+                        <img src="/logos/dark_down.svg" alt="" className=' text-bold w-4 h-4 hidden dark:block' />
+                      </span>
+                    </div>
+                  </div>
+            </div>
+             
 
               {isEdit && (
               <div className='flex items-end justify-end gap-10 mb-4'>
