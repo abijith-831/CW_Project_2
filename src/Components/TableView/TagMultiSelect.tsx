@@ -78,11 +78,13 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   });
   }
 
+  const limit = window.innerWidth < 640 ? 1 : 3;
+
   return (
       <div className="w-full max-w-2xl" ref={wrapperRef}>
         <div className="relative">
-           <div className="flex flex-wrap items-center gap-2 p-2 min-h-[40px] text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
-              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,3).map((tag)=>( 
+           <div className="flex flex-wrap items-center gap-2 p-2 min-h-6 md:min-h-10 text-sm border border-slate-300 dark:border-neutral-500 bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
+              {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,limit).map((tag)=>( 
                 <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[9px] md:text-[12px] lg:text-xs">
                  
      
@@ -98,13 +100,13 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                   </button>
                 </div>
               ))}
-              {selectedTagCount > 3 && (
+              {selectedTagCount > limit && (
                 <span className="text-[9px] md:text-[12px] lg:text-xs ml-1 text-secondary dark:text-table-header">
-                  +{selectedTagCount - 3} {t("more")}
+                  +{selectedTagCount - limit} {t("more")}
                 </span>
               )}
 
-              {selectedTagCount <= 3 && (
+              {selectedTagCount <= limit && (
               <input
                 ref={inputRef}
                 type="text"

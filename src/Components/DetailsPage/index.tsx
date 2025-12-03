@@ -12,8 +12,10 @@ interface DetailsPageProps{
 const DetailsPage:React.FC<DetailsPageProps> = ({goToDashboard , company}) => {
     
     const {t} = useTranslation("details")
+    const {i18n} = useTranslation()
+    const isArabic = i18n.language === "arb";
     
-  return (
+  return ( 
     <div className="flex flex-col min-h-screen">
         <Navbar />
 
@@ -34,10 +36,15 @@ const DetailsPage:React.FC<DetailsPageProps> = ({goToDashboard , company}) => {
             <LabelsAboveBars company={company} />
         </div>
 
-        <div className='px-4 md:px-8 lg:pl-20 py-4 space-y-2'>
-            <h1 className='text-md md:text-lg lg:text-xl font-medium text-secondary dark:text-table-header'>{t("main_heading")}</h1>
-            <h3 className='text-secondary dark:text-third text-sm'>{t("description")}</h3>
-        </div>   
+         <div className={`px-4 md:px-8 lg:pl-20 py-4 space-y-2  ${isArabic ? "flex-col-reverse md:flex-row-reverse text-right" : ""}`} dir={isArabic ? "rtl" : "ltr"}  >
+            <h1 className="text-md md:text-lg lg:text-xl font-medium text-secondary dark:text-table-header">
+                {t("main_heading")}
+            </h1>
+            <h3 className="text-secondary dark:text-third text-sm">
+                {t("description")}
+            </h3>
+         </div>
+
         <div className='px-4 md:px-8'>   
             <AccordionLast company={company} />
         </div>

@@ -47,6 +47,10 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   const user = useSelector((state:any) => state.auth.currentUser);
   const selectedColumns = useSelector((state:any)=>state.auth.currentUser?.selected_columns)
   const [columnVisibility, setColumnVisibility] = useState(selectedColumns)
+
+  const selectedTagCount = Object.values(columnVisibility || {}).filter(v=>v).length
+  console.log('ss',selectedTagCount);
+  
   
   const columns = [
     {
@@ -163,9 +167,9 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         if (colSize < 80) maxChars = 8;
         else if (colSize <= 120) maxChars = 12;
         
-        return <div className="relative group w-fit">
+        return <div className="relative group w-fit items-center justify-center ">
             <span
-              className={`px-3 py-1 rounded-md text-[10px] md:text-xs font-semibold text-primary 
+              className={`px-1 md:px-3 py-1 rounded-md text-[8px] md:text-xs font-semibold text-primary 
                 ${props.getValue() === "Active"
                   ? "bg-[#DDEFD0] text-badge"
                   : props.getValue() === "Strike Off"
@@ -204,39 +208,39 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
       columnVisibility,
     },
     onColumnVisibilityChange: setColumnVisibility,
-    onSortingChange: setSorting
+    onSortingChange: setSorting,
+    meta:{isLoading : loading}
   })
 
-  const handleItemsPerPage = async(value:10|15|20)=>{
-    dispatch(updateItemsPerPage(value))
-    if (user?.id) {
-        await updateItemsPerPageInDB(user.id, value);
-    } 
-  }
 
 
   return (
 
     <div className='px-4 md:px-10 lg:px-20 py-4 w-full'>
-      <div className="flex flex-wrap items-center justify-between gap-4 py-4">
-        <h1 className="text-secondary dark:text-table-header text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
-          {t("second_heading")}
-        </h1>
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 py-4">
+          {/* Heading */}
+          <h1 className="text-secondary dark:text-table-header text-md md:text-lg lg:text-xl font-semibold flex-1 min-w-[250px]">
+            {t("second_heading")}
+          </h1>
 
-        <div>
-          <select value={itemsPerPage} onChange={(e)=> onItemsPerPageChange?.(Number(e.target.value) as 10|15|20) } name="" id="" className='border text-sm py-2.5 px-8 border-slate-300 dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md'>
-            <option value={10}>10 Items</option>
-            <option value={15}>15 Items</option>
-            <option value={20}>20 Items</option>
-          </select>
+          {/* Dropdowns container */}
+          <div className="flex w-full lg:w-auto flex-row gap-4 justify-between mt-2 lg:mt-0">
+            {/* Items per page */}
+            <div className="w-1/3 lg:w-auto">
+              <select value={itemsPerPage} onChange={(e) =>  onItemsPerPageChange?.(Number(e.target.value) as 10 | 15 | 20) }
+                className="border text-sm py-2.5 px-0 lg:px-8 border-slate-300 dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md w-full"  >
+                <option value={10}>10 Items</option>
+                <option value={15}>15 Items</option>
+                <option value={20}>20 Items</option>
+              </select>
+            </div>
+
+            {/* Column Visibility Dropdown */}
+            <div className="w-1/2 lg:w-auto relative max-w-[350px] sm:max-w-lg md:max-w-xl lg:max-w-2xl">
+              <TagMultiSelectPage columns={columns} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility}/>
+            </div>
+          </div>
         </div>
-
-        {/* Column Visibility Dropdown */}
-        <div className="relative w-full sm:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl ">
-          <TagMultiSelectPage columns={columns} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility} />
-        </div>
-      </div>
-
 
       {/* table div */}
       <div className="w-full overflow-x-auto">
@@ -281,34 +285,41 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             })} */}
           
   
-          {/* body */}
-            {loading ? (
+          {/* Table body */}
           <div className="table-row-group text-sm">
-            {table.getRowModel().rows.map(row => (
-              <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <div className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
-                    {/* {loading ? (<TableSkeleton/>) : (flexRender(cell.column.columnDef.cell, cell.getContext()))}               */}
-                    <TableSkeleton/>
+            {table.options.meta?.isLoading
+              ? // Render placeholder rows while loading
+                Array.from({ length: 12 }).map((_, rowIndex) => (
+                  <div className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={rowIndex}>
+                    {columns.slice(0,6).map((col, colIndex) => (
+                      <div
+                        key={colIndex}
+                        className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible"
+                      >
+                        <TableSkeleton />
+                      </div>
+                    ))}
+                  </div>
+                ))
+              : // Render actual table rows when data is loaded
+                table.getRowModel().rows.map((row) => (
+                  <div
+                    onClick={() => onCompanyClick?.(row.original)}
+                    className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer"
+                    key={row.id}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <div
+                        key={cell.id}
+                        className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 md:py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible"
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </div>
+                    ))}
                   </div>
                 ))}
-              </div>
-            ))}
-            </div>
-        ) : (
-            <div className="table-row-group text-sm">
-              {table.getRowModel().rows.map(row => (
-                <div onClick={()=>onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <div className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 \  md:py-2.5 border-r  border-border-primary dark:border-neutral-600 last:border-r-0 border-b border-border-secondary relative overflow-visible">
-                      {/* {loading ? (<TableSkeleton/>) : (flexRender(cell.column.columnDef.cell, cell.getContext()))}               */}
-                      {(flexRender(cell.column.columnDef.cell, cell.getContext()))}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
+          </div>
+
 
           
         </div>

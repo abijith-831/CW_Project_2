@@ -18,6 +18,9 @@ const SettingsPage = () => {
   const { enqueueSnackbar } = useSnackbar()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const user = useSelector((state:any)=>state.auth.currentUser)
+  console.log('user',user);
+  
   const theme = useSelector((state:any)=> state.auth.currentUser?.theme_preference) || 'light'
   const language = useSelector((state:any)=>state.auth.currentUser?.language_preference) || 'eng'
   const capital_view = useSelector((state:any)=> state.auth.currentUser?.capital_view) || "graph"
@@ -37,7 +40,7 @@ const SettingsPage = () => {
         setLoading(true)
         const data = await getUserProfile()
 
-        console.log('daadad',data);
+        // console.log('daadad',data);
         
         setUserInfo(data)
       } catch (error) {
@@ -99,10 +102,13 @@ const SettingsPage = () => {
         country: data.country,
         language_preference: data.language,
         theme_preference: data.theme,
-        profile_picture: profilePictureUrl,
+        profile_picture: profilePictureUrl,    
         capital_view : data.capital_view,
         items_per_page : data.items_per_page
       })
+
+      console.log('ressss',res);
+      
       dispatch(setUser(res));
 
       setUserInfo(res)

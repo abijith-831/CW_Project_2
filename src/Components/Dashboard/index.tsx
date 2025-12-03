@@ -94,10 +94,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
       } catch (error) {
         console.log(error);
       }finally{
-        setLoading(false)
-        setTimeout(() => {
-          
-        }, 2000);
+        setLoading(false);
       }
     }
     fetchData();
