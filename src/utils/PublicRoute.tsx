@@ -10,5 +10,5 @@ export default function PublicRoute({ children }: { children: React.JSX.Element 
     return <Navigate to="/" replace />;
   }
 
-  return children; // allow access
+  return children;
 }
