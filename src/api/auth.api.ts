@@ -26,8 +26,7 @@ export const googleLoginRequest = async ()=>{
         options:{
             redirectTo : `${window.location.origin}/login`,
             queryParams : { access_type: "offline", prompt: "consent" },
-        }
-        
+        }    
     })  
 }
 

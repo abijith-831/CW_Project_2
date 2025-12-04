@@ -165,7 +165,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 {/* Filter + Toggle */}
                 <div className="w-full flex justify-between md:justify-end items-center gap-4 md:gap-6">
                   {/* Filter */}
-                  <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 shadow dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
+                  <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 shadow dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-2">
                     <select
                       value={selectedState}
                       onChange={(e) => setSelectedState(e.target.value)}

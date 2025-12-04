@@ -72,8 +72,8 @@ const Navbar = () => {
       
       {/* right */}
       <div className="flex items-center gap-4 sm:gap-8 ml-auto relative">
-        <button onClick={()=>dispatch(updateLanguagePreference('eng'))}>eng</button>
-        <button onClick={()=>dispatch(updateLanguagePreference('arb'))}>arb</button>
+        {/* <button onClick={()=>dispatch(updateLanguagePreference('eng'))}>eng</button>
+        <button onClick={()=>dispatch(updateLanguagePreference('arb'))}>arb</button> */}
         <ThemeToggle />
 
         {/* Profile Icon */}

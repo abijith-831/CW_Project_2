@@ -163,7 +163,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
         if (colSize < 80) maxChars = 8;
         else if (colSize <= 120) maxChars = 12;
         
-        return <div className="relative group w-fit items-center justify-center ">
+        return <div className="relative group w-fit items-center justify-center line-clamp-1">
             <span
               className={`px-1 md:px-3 py-1 rounded-md text-[8px] md:text-xs font-semibold text-primary 
                 ${props.getValue() === "Active"
@@ -222,13 +222,19 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {/* Dropdowns container */}
           <div className="flex w-full lg:w-auto flex-row gap-4 justify-between mt-2 lg:mt-0 ">
             {/* Items per page */}
-            <div className="w-1/3 lg:w-auto ">
-              <select value={itemsPerPage} onChange={(e) =>  onItemsPerPageChange?.(Number(e.target.value) as 10 | 15 | 20) }
-                className="border text-sm py-2.5 px-0 cursor-pointer lg:px-8 border-slate-300 dark:bg-neutral-600  dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md w-full"  >
+            <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 dark:border-border-dark-primary shadow w-1/2 md:w-auto px-4 md:px-2 pt-1 space-x-4">
+              <select value={itemsPerPage}  onChange={(e) =>
+                  onItemsPerPageChange?.(Number(e.target.value) as 10 | 15 | 20)  }
+                className="cursor-pointer md:py-1.5 pl-2 pr-10 md:pr-14 text-secondary dark:text-table-header text-sm w-full bg-transparent appearance-none focus:outline-none" >
                 <option value={10}>10 Items</option>
                 <option value={15}>15 Items</option>
                 <option value={20}>20 Items</option>
               </select>
+
+             
+              {/* Dropdown Icons */}
+              <img  src="/logos/down.svg"   alt=""   className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
+              <img src="/logos/dark_down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none hidden dark:block" />
             </div>
 
             {/* Column Visibility Dropdown */}
