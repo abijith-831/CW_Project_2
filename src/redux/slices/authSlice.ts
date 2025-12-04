@@ -9,6 +9,8 @@ interface User {
   selected_columns?: Record<string, boolean>;
   search_query?: string;
   items_per_page?:number;
+  table_currentPage?:number;
+  graph_currentPage?:number
 }
 
 interface UserState {
@@ -60,6 +62,12 @@ const authSlice = createSlice({
             CompanyStateCode: false,
             nic_code: false,
           };
+        }
+        if (state.currentUser.table_currentPage === undefined) {
+          state.currentUser.table_currentPage = 1;
+        }
+        if (state.currentUser.graph_currentPage === undefined) {
+          state.currentUser.graph_currentPage = 1;
         }
       },
     logout(state) {

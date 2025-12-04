@@ -30,6 +30,8 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   const [currentPage , setCurrentPage ] = useState(1)
   const savedItemsPerPage = useSelector((state:any)=>state.auth.currentUser?.items_per_page)
+  const graph_currentPage = useSelector((state:any)=>state.auth.currentUser?.graph_currentPage)
+  const table_currentPage = useSelector((state:any)=>state.auth.currentUser?.table_currentPage)
   const [itemsPerPage , setItemsPerPage] = useState(user?.capital_view === 'table' ? savedItemsPerPage : 6)
   const [selectedState , setSelectedState] = useState('')
 
@@ -126,7 +128,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 {/* Filter + Toggle */}
                 <div className="w-full flex justify-between md:justify-end items-center gap-4 md:gap-6">
                   {/* Filter */}
-                  <div className="relative inline-block border rounded-lg border-slate-300 shadow dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
+                  <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 shadow dark:border-border-dark-primary w-1/2 md:w-auto px-4 md:px-6">
                     <select
                       value={selectedState}
                       onChange={(e) => setSelectedState(e.target.value)}
@@ -140,7 +142,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     </select>
 
                     {selectedState && (
-                      <button onClick={() => setSelectedState("")} className="absolute right-10 top-1/2 -translate-y-1/2 py-0.5 px-1.5 rounded-full text-xs bg-bg-primary text-table-header opacity-70 hover:opacity-100" >
+                      <button onClick={() => setSelectedState("")} className="absolute cursor-pointer right-10 top-1/2 -translate-y-1/2 py-0.5 px-1.5 rounded-full text-xs bg-bg-primary text-table-header opacity-70 hover:opacity-100" >
                         ✕
                       </button>
                     )}
@@ -153,7 +155,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                   <div className="flex rounded-lg items-center overflow-hidden border shadow border-slate-300 dark:border-border-dark-primary  md:w-auto justify-end">
                     <button
                       onClick={() => handleChangeView("graph")}
-                      className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
+                      className={`px-3 md:px-6 py-0.5 md:py-1.5 cursor-pointer text-sm ${
                         user?.capital_view === "graph"
                           ? "bg-bg-primary text-white"
                           : "bg-gray-100 text-secondary"
@@ -162,7 +164,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                     </button>
                     <button
                       onClick={() => handleChangeView("table")}
-                      className={`px-3 md:px-6 py-0.5 md:py-1.5 text-sm ${
+                      className={`px-3 md:px-6 py-0.5 md:py-1.5 cursor-pointer text-sm ${
                         user?.capital_view === "table"
                           ? "bg-bg-primary text-white"
                           : "bg-gray-100 text-secondary"   }`}  >

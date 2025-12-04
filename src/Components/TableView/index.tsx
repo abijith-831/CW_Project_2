@@ -222,11 +222,11 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           </h1>
 
           {/* Dropdowns container */}
-          <div className="flex w-full lg:w-auto flex-row gap-4 justify-between mt-2 lg:mt-0">
+          <div className="flex w-full lg:w-auto flex-row gap-4 justify-between mt-2 lg:mt-0 ">
             {/* Items per page */}
-            <div className="w-1/3 lg:w-auto">
+            <div className="w-1/3 lg:w-auto ">
               <select value={itemsPerPage} onChange={(e) =>  onItemsPerPageChange?.(Number(e.target.value) as 10 | 15 | 20) }
-                className="border text-sm py-2.5 px-0 lg:px-8 border-slate-300 dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md w-full"  >
+                className="border text-sm py-2.5 px-0 cursor-pointer lg:px-8 border-slate-300 dark:bg-neutral-600  dark:border-border-dark-primary text-secondary dark:text-table-header shadow rounded-md w-full"  >
                 <option value={10}>10 Items</option>
                 <option value={15}>15 Items</option>
                 <option value={20}>20 Items</option>
@@ -288,7 +288,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             {(table.options.meta as MyTableMeta)?.isLoading ? 
                 Array.from({ length: 12 }).map((_, rowIndex) => (
                   <div className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={rowIndex}>
-                    {columns.slice(0,6).map((col, colIndex) => (
+                    {columns.slice(0,selectedTagCount).map((col, colIndex) => (
                       <div key={colIndex}
                         className="table-cell dark:text-neutral-400 px-4 py-2.5 border-r border-border-secondary dark:border-neutral-600 last:border-r-0 border-b relative overflow-visible" >
                         <TableSkeleton />

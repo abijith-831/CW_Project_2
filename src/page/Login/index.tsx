@@ -200,12 +200,19 @@ export default function Login() {
     }
   }
 
+//   useEffect(() => {
+//   console.log("REDIRECT_TO:", `${window.location.origin}/login`);
+// }, []);
+
+
   
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
 
       const { error } = await googleLoginRequest();
+      
+
 
       if (error) {
         enqueueSnackbar(error.message, { variant: "error" });
@@ -229,7 +236,7 @@ export default function Login() {
             <img src="./logos/user.svg" className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 "> Welcome back</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 "> Welcome </h1>
             <p className="text-sm font-medium text-zinc-600  mt-1"> Enter your credentials to sign in</p>
           </div>
         </div>

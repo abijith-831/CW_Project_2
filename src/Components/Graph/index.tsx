@@ -31,6 +31,11 @@ interface LabelsAboveBarsProps {
   company: CompanyDataProps;
 }
 
+interface CustomBarLabelProps extends BarLabelProps {
+  colorMap?: Record<string, string>;
+}
+
+
 export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
   const {t} = useTranslation()
   
@@ -41,6 +46,12 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
   const axisColor = theme === 'dark' ? '#DEDEDE' : '#2E2E2E'
   
   const isListed = company.Listingstatus?.toLowerCase() === 'listed';
+
+  const labelColors = {
+  series1: "#FF0000", // red
+  series2: "#00A2FF", // blue
+};
+
   
   return (
     <div className='border border-border-primary   dark:border-border-dark-primary rounded-lg py-2 shadow-md'>
@@ -63,7 +74,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
         <h3 className={`border border-border-secondary md:pt-0.5 px-1 sm:px-2 md:px-4 text-[10px] md:text-xs  rounded-sm text-primary font-semibold ${company.CompanyStatus==='Active' ? 'bg-[#DDEFD0]' : company.CompanyStatus==='Strike Off'?'bg-[#EFCBC6]':'bg-blue-200'}`}>{company.CompanyStatus.length > 12    ? company.CompanyStatus.slice(0, 12) + "…"  : company.CompanyStatus}</h3>
       </div> 
       
-      <div className="w-full max-w-[550px] text-red-500 dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
+      <div className="w-full max-w-[550px]  tex dark:text-table-header  md:max-w-full px-2 sm:px-6 md:px-4 xl:px-10 ml-2 md:ml-10 py-2">
         <ChartContainer xAxis={[{ scaleType: 'band', data: [t("AuthorizedCapital"), t("PaidupCapital")] }]}
             series={[
               {
@@ -72,7 +83,7 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
                 data: [authorizedCapital, null],
                 color: '#3CB5B3',
                 stack: 'total',
-                barLabel: (item) => item.value?.toString() || '', 
+                barLabel: (item) => item.value?.toString() || '',         
               },
               {
                 type: 'bar',
@@ -87,10 +98,14 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
             yAxis={[{ width: 90 }]}
             margin={{ left: 0, right: 120 }}  >
             <BarPlot
-              slots={{ barLabel: BarLabel }} 
+              slots={{ barLabel: BarLabel }}
               slotProps={{
-                barLabel: { fill: axisColor }
-              }}  />
+                barLabel: ({ seriesId }) => ({
+                  fill: labelColors[seriesId] || axisColor, 
+                }),
+              }}   />
+
+
 
             <ChartsXAxis  sx={{ "& .MuiChartsAxis-tickLabel": { fill: axisColor }, "& .MuiChartsAxis-line": { stroke: axisColor } }} />
             <ChartsYAxis sx={{ "& .MuiChartsAxis-tickLabel": { fill: axisColor }, "& .MuiChartsAxis-line": { stroke: axisColor }  }}  />
@@ -130,25 +145,19 @@ const Text = styled('text')(({ theme }) => ({
   dominantBaseline: 'central',
   pointerEvents: 'none',
 }));
-
-function BarLabel(props: BarLabelProps) {
+function BarLabel(props: CustomBarLabelProps & { fill?: string }) {
   const {
-    seriesId,
-    dataIndex,
-    color,
-    isFaded,
-    isHighlighted,
-    classes,
-    xOrigin,
-    yOrigin,
+    fill,     
+    color,        
     x,
     y,
     width,
-    height,
-    layout,
+    yOrigin,
     skipAnimation,
     ...otherProps
   } = props;
+
+  const labelColor = fill || color;
 
   const animatedProps = useAnimate(
     { x: x + width / 2, y: y - 8 },
@@ -165,6 +174,6 @@ function BarLabel(props: BarLabelProps) {
   );
 
   return (
-    <Text {...otherProps} fill={color} textAnchor="middle" {...animatedProps} />
+    <Text {...otherProps} fill={labelColor} textAnchor="middle" {...animatedProps} />
   );
 }

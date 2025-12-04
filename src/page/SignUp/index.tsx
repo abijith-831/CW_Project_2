@@ -101,7 +101,7 @@ export default function SignUp() {
             <img  src="./logos/user.svg"  className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Welcome back</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">Welcome </h1>
             <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mt-1">Enter your credentials to sign up</p>
           </div>
         </div>
