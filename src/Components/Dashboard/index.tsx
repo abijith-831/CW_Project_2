@@ -7,7 +7,8 @@ import { updateCapitalView, updateItemsPerPage } from '../../redux/slices/authSl
 import { getCompanyData } from '../../api/companyData.api'
 import { updateCapitalViewInDB, updateItemsPerPageInDB , } from '../../api/userProfile.api'
 import { useTranslation } from 'react-i18next'
-import { updateSearchQuery } from '../../redux/slices/authSlice'
+import { updateSearchQuery , updateGraphPage , updateTablePage } from '../../redux/slices/authSlice'
+import TableSkeleton from '../SkeletonLoader/TableSkeleton'
 
 interface DashboardProps {
   goToDetails: () => void;
@@ -22,19 +23,19 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   const isArabic = i18n.language === "arb";
   
   const user = useSelector((state:any) => state.auth.currentUser);
-  
   const searchQuery = useSelector((state: any) => state.auth.currentUser?.search_query);
-
   const [companyData , setCompanyData] = useState<any[]>([])
   const [loading , setLoading] = useState(true)
 
-  const [currentPage , setCurrentPage ] = useState(1)
+  
   const savedItemsPerPage = useSelector((state:any)=>state.auth.currentUser?.items_per_page)
-  const graph_currentPage = useSelector((state:any)=>state.auth.currentUser?.graph_currentPage)
-  const table_currentPage = useSelector((state:any)=>state.auth.currentUser?.table_currentPage)
+  const capital_view = useSelector((state:any)=>state.auth.currentUser?.capital_view)
+  const graph_currentPage = useSelector((state:any)=>state.auth.currentUser?.graph_currentPage) 
+  const table_currentPage = useSelector((state:any)=>state.auth.currentUser?.table_currentPage) 
+  
   const [itemsPerPage , setItemsPerPage] = useState(user?.capital_view === 'table' ? savedItemsPerPage : 6)
   const [selectedState , setSelectedState] = useState('')
-
+  const currentPage = capital_view === 'graph' ? graph_currentPage : table_currentPage;
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
 
@@ -89,10 +90,12 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   useEffect(() => {
     const fetchData = async ()=>{
       try {
+
         setLoading(true)
         const result = await getCompanyData(selectedState)
         setCompanyData(result.records || [])
-        setCurrentPage(1)
+        // dispatch(updateGraphPage(1))
+        // dispatch(updateTablePage(1))
       } catch (error) {
         console.log(error);
       }finally{
@@ -109,10 +112,44 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
     if (user?.id) {
       await updateItemsPerPageInDB(user.id, value); 
     }
-
-    setCurrentPage(1); 
   };
 
+  const handlePageUp = () => {
+    if(currentPage < totalPages){
+      if(capital_view === 'graph'){
+        
+        dispatch(updateGraphPage(graph_currentPage + 1))
+      }else{
+        dispatch(updateTablePage(table_currentPage + 1))
+      }
+    }
+  };
+
+
+  const handlePageDown = () => {
+    if (currentPage > 1) {
+      if (capital_view === "graph") {
+        dispatch(updateGraphPage(graph_currentPage - 1));   
+      } else {
+        dispatch(updateTablePage(table_currentPage - 1)); 
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   if (searchQuery !== "") {
+
+  //     console.log('ssss',searchQuery);
+      
+  //     if (capital_view === "graph") {
+  //       console.log('eneteinff');
+        
+  //       dispatch(updateGraphPage(1));
+  //     } else {
+  //       dispatch(updateTablePage(1));
+  //     }
+  //   }
+  // }, [searchQuery]);
 
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
@@ -212,7 +249,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
            {/* pagination block */}
            <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 py-4">
                 {/* Prev Button */}
-                <button  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}  disabled={currentPage === 1} className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
+                <button  onClick={handlePageDown}  disabled={currentPage === 1} className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === 1
                         ? "bg-gray-200 text-gray-400 dark:bg-neutral-500 cursor-not-allowed"
                         : "bg-gray-300 text-secondary hover:transition-transform hover:scale-102 duration-300  cursor-pointer"
@@ -221,13 +258,20 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                 </button>
 
                 {/* Middle text */}
-                <span className="text-secondary font-medium text-sm md:text-base dark:text-table-header">
-                    {t("page")} {currentPage} {t("of")} {totalPages}
-                </span>
+                {loading ? (
+                  <div className='w-30 '>
+                    <TableSkeleton/>
+                  </div>
+                ) : (
+                    <span className="text-secondary font-medium text-sm md:text-md lg:text-base dark:text-table-header">
+                      {t("page")} {currentPage} {t("of")} {totalPages}
+                    </span>
+                )}
+               
 
                 {/* Next Button */}
                 <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    onClick={ handlePageUp}
                     disabled={currentPage === totalPages}
                     className={`px-6 md:px-10 lg:px-12 text-sm md:text-base shadow-sm py-1 rounded-lg ${
                     currentPage === totalPages

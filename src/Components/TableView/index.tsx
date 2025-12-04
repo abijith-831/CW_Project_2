@@ -50,9 +50,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
   const [columnVisibility, setColumnVisibility] = useState(selectedColumns)
 
   const selectedTagCount = Object.values(columnVisibility || {}).filter(v=>v).length
-  console.log('ss',selectedTagCount);
-  
-  
+
   const columns = [
     {
       accessorKey: 'CompanyName',
@@ -307,9 +305,6 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
                   ))
               }
           </div>
-
-
-          
         </div>
       </div>
     </div>

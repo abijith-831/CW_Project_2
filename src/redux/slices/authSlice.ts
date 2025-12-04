@@ -63,12 +63,12 @@ const authSlice = createSlice({
             nic_code: false,
           };
         }
-        if (state.currentUser.table_currentPage === undefined) {
-          state.currentUser.table_currentPage = 1;
-        }
-        if (state.currentUser.graph_currentPage === undefined) {
-          state.currentUser.graph_currentPage = 1;
-        }
+        // if (state.currentUser.table_currentPage === undefined) {
+        //   state.currentUser.table_currentPage = 1;
+        // }
+        // if (state.currentUser.graph_currentPage === undefined) {
+        //   state.currentUser.graph_currentPage = 1;
+        // }
       },
     logout(state) {
       state.currentUser = null;
@@ -106,6 +106,16 @@ const authSlice = createSlice({
         state.currentUser.language_preference = action.payload
       }
     },
+    updateGraphPage(state, action: PayloadAction<number>) {
+      if (state.currentUser) {
+        state.currentUser.graph_currentPage = action.payload;
+      }
+    },
+    updateTablePage(state, action: PayloadAction<number>) {
+      if (state.currentUser) {
+        state.currentUser.table_currentPage = action.payload;
+      }
+    },
     setUser: (state, action) => {
       state.currentUser = {
         ...state.currentUser,
@@ -127,6 +137,8 @@ export const { loginSuccess,
                updateThemePreference,
                updateLanguagePreference,
                updateItemsPerPage,
+               updateGraphPage,
+               updateTablePage,
                setUser
               } = authSlice.actions;
 export default authSlice.reducer;

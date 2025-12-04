@@ -48,8 +48,8 @@ export default function LabelsAboveBars({ company }: LabelsAboveBarsProps) {
   const isListed = company.Listingstatus?.toLowerCase() === 'listed';
 
   const labelColors = {
-  series1: "#FF0000", // red
-  series2: "#00A2FF", // blue
+  series1: "#FF0000", 
+  series2: "#00A2FF", 
 };
 
   
