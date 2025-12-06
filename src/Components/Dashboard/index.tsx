@@ -163,7 +163,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
         <div className="flex-1 flex flex-col overflow-hidden">
               <div className={`px-5 sm:px-10 md:px-14 lg:px-20 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${ isArabic ? "flex-col-reverse md:flex-row-reverse text-right" : "" }`}>
                 {/* Heading */}
-                <h1 className="text-md md:text-lg lg:text-xl font-medium text-primary dark:text-table-header w-full  whitespace-nowrap overflow-hidden ">
+                <h1 className="text-md md:text-lg playwrite-no lg:text-xl font-medium text-primary dark:text-table-header w-full  whitespace-nowrap overflow-hidden ">
                   {t("registrar_heading")} - {user?.capital_view === "graph" ? t("graph_view") : t("table_view")}
                 </h1>
 

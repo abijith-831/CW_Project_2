@@ -1,6 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NO:wght@100..400&display=swap');
 @import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('/fonts/Gabarito-VariableFont_wght.ttf') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+html, body {
+  font-family: 'PP Neue Montreal', sans-serif;
+}
 
 @theme {
   --color-primary: #2E2E2E;
