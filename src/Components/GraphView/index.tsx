@@ -13,6 +13,9 @@ const GraphView: React.FC<GraphViewProps & { onCompanyClick: (company: any) => v
   loading,
   onCompanyClick
 }) => {
+
+  console.log('ger',companyData);
+  
   return (
     <div className=" md:px-14 lg:px-20 py-4 bg-white dark:bg-neutral-800">
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 2xl:grid-cols-3  gap-x-12 gap-y-4">

@@ -63,12 +63,12 @@ const authSlice = createSlice({
             nic_code: false,
           };
         }
-        // if (state.currentUser.table_currentPage === undefined) {
-        //   state.currentUser.table_currentPage = 1;
-        // }
-        // if (state.currentUser.graph_currentPage === undefined) {
-        //   state.currentUser.graph_currentPage = 1;
-        // }
+        if (state.currentUser.table_currentPage === undefined) {
+          state.currentUser.table_currentPage = 1;
+        }
+        if (state.currentUser.graph_currentPage === undefined) {
+          state.currentUser.graph_currentPage = 1;
+        }
       },
     logout(state) {
       state.currentUser = null;

@@ -18,8 +18,8 @@ const TableSkeleton = () => {
           borderRadius: 1,
           bgcolor:
             themeMode === "dark"
-              ? "rgba(255, 255, 255, 0.30)"  // 🌙 White-ish dark mode color
-              : "rgba(200, 200, 200, 0.40)", // ☀️ Light mode color
+              ? "rgba(255, 255, 255, 0.30)" 
+              : "rgba(200, 200, 200, 0.40)", 
         }}
       />
     </Box>

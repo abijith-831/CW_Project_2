@@ -9,6 +9,8 @@ export const getCompanyData = async (selectedState?:string)=>{
         if (selectedState) {
         url += `&filters%5BCompanyStateCode%5D=${selectedState}`;
         }
+        
+        
 
         const response = await axios.get(url);
     return response.data;
