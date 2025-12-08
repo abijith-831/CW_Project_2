@@ -225,10 +225,10 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
           {/* Dropdowns container */}
           <div className="flex w-full lg:w-auto flex-row gap-4 justify-between mt-2 lg:mt-0 ">
             {/* Items per page */}
-            <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 dark:border-border-dark-primary shadow w-1/2 md:w-auto px-4 md:px-2 pt-1 space-x-4">
+            <div className="relative inline-block border rounded-lg border-slate-300 dark:bg-neutral-600 dark:border-border-dark-primary shadow w-1/3  md:w-auto px-4 md:px-2 pt-1 space-x-4">
               <select value={itemsPerPage}  onChange={(e) =>
                   onItemsPerPageChange?.(Number(e.target.value) as 10 | 15 | 20)  }
-                className="cursor-pointer md:py-1.5 pl-2 pr-10 md:pr-14 text-secondary dark:text-table-header text-sm w-full bg-transparent appearance-none focus:outline-none" >
+                className="cursor-pointer md:py-1.5 pl-2 pr-10 md:pr-14 text-secondary dark:text-table-header text-xs md:text-sm w-full bg-transparent appearance-none focus:outline-none" >
                 <option value={10}>10 Items</option>
                 <option value={15}>15 Items</option>
                 <option value={20}>20 Items</option>
@@ -241,7 +241,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
             </div>
 
             {/* Column Visibility Dropdown */}
-            <div className=" relative ">
+            <div className="  relative ">
               <TagMultiSelectPage columns={columns} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility}/>
             </div>
           </div>

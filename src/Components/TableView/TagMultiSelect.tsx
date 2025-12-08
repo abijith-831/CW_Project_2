@@ -90,10 +90,11 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+    
   const limit = window.innerWidth < 640 ? 1 : window.innerWidth < 1200 ? 2 :  3;
 
   return (
-      <div className="w-full max-w-2xl" ref={wrapperRef}>
+      <div className="w-full max-w-full" ref={wrapperRef}>
         <div className="relative">
            <div className="flex flex-wrap items-center gap-2 p-2 min-h-6 md:min-h-10 text-sm border border-slate-300 dark:border-border-dark-primary bg-white dark:bg-neutral-600 rounded-md cursor-text shadow-sm focus-within:ring-2" onClick={() => { setIsOpen(true); inputRef.current?.focus(); }}  >
               {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,limit).map((tag)=>( 
@@ -117,10 +118,11 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                 </span>
               )}
 
-              {selectedTagCount <= limit && (
+              {selectedTagCount < limit && (
               <input
                 ref={inputRef}
                 type="text"
+                placeholder='Select fields'
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 onFocus={() => setIsOpen(true)}
