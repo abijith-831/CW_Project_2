@@ -14,7 +14,7 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 const SettingsPage = () => {
   const [userInfo, setUserInfo] = useState<any>(null)
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState<boolean>(false)
   const { enqueueSnackbar } = useSnackbar()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)

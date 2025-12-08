@@ -29,7 +29,7 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
 
   
   const savedItemsPerPage = useSelector((state:any)=>state.auth.currentUser?.items_per_page)
-  const capital_view = useSelector((state:any)=>state.auth.currentUser?.capital_view)
+  const capital_view = useSelector((state:any)=>state.auth.currentUser?.capital_view) 
   const graph_currentPage = useSelector((state:any)=>state.auth.currentUser?.graph_currentPage) || 1
   const table_currentPage = useSelector((state:any)=>state.auth.currentUser?.table_currentPage) || 1
   
@@ -88,26 +88,26 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
    ];
 
   useEffect(() => {
-    const fetchData = async ()=>{
-      try {
-        console.log('ffffff');
-        
-        setLoading(true)
-        const result = await getCompanyData(selectedState)
-        console.log('ress',result);
-        
-        setCompanyData(result.records)
-        
-        // dispatch(updateGraphPage(1))
-        // dispatch(updateTablePage(1))
-      } catch (error) {
-        console.log(error);
-      }finally{
-        setLoading(false);
+      const fetchData = async ()=>{
+        try {
+          console.log('ffffff');
+          
+          setLoading(true)
+          const result = await getCompanyData(selectedState)
+          console.log('ress',result);
+          
+          setCompanyData(result.records)
+          
+          // dispatch(updateGraphPage(1))
+          // dispatch(updateTablePage(1))
+        } catch (error) {
+          console.log(error);
+        }finally{
+          setLoading(false);
+        }
       }
-    }
-    fetchData();
-}, [selectedState])
+      fetchData();
+    }, [selectedState])
 
 
   const handleItemsPerPageChange = async (value: 10 | 15 | 20) => {
@@ -232,9 +232,9 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
                         No results found
                       </h2>
                       <div className="flex gap-8 mt-2">
-                        <button onClick={() => window.location.reload()} className="px-6 py-1.5 bg-bg-primary text-white rounded-lg shadow hover:opacity-90 transition" >
+                        {/* <button onClick={() => window.location.reload()} className="px-6 py-1.5 bg-bg-primary text-white rounded-lg shadow hover:opacity-90 transition" >
                           Refresh Page
-                        </button>
+                        </button> */}
                         <button onClick={() => dispatch(updateSearchQuery(""))} className="px-6 py-1.5 bg-gray-300 dark:bg-neutral-600 text-secondary dark:text-table-header rounded-lg shadow hover:opacity-80 transition"  >
                           Clear Search
                         </button>

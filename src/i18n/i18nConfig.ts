@@ -10,6 +10,7 @@ import profile_arb from "../i18n/locales/arb/profile.json";
 
 import details_eng from "../i18n/locales/eng/details.json"
 import details_arb from "../i18n/locales/arb/details.json"
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)

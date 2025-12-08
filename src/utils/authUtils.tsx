@@ -1,50 +1,50 @@
-import { createContext, useContext, useState, ReactNode} from "react";
+// import { createContext, useContext, useState, ReactNode} from "react";
 
-export interface User {
-    email : string;
-    password : string;
-}
+// export interface User {
+//     email : string;
+//     password : string;
+// }
 
-interface AuthContextType {
-    user : User | null
-    login : (user:User) => void;
-    logout : ()=> void
-}
+// interface AuthContextType {
+//     user : User | null
+//     login : (user:User) => void;
+//     logout : ()=> void
+// }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
+// const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 
-export const AuthProvider = ({children}:AuthProviderProps)=>{
-    const [ user , setUser ] = useState<User | null>(null)
+// interface AuthProviderProps {
+//   children: ReactNode;
+// }
 
-    const login = (userData: User)=>{
-        setUser(userData)
-    }
 
-    const logout = ()=>{
-        setUser(null)
-    }
+// export const AuthProvider = ({children}:AuthProviderProps)=>{
+//     const [ user , setUser ] = useState<User | null>(null)
 
-    return (
-        <AuthContext.Provider value={{user , login , logout}}>
-            {children}
-        </AuthContext.Provider>
-    )
+//     const login = (userData: User)=>{
+//         setUser(userData)
+//     }
 
-}
+//     const logout = ()=>{
+//         setUser(null)
+//     }
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
+//     return (
+//         <AuthContext.Provider value={{user , login , logout}}>
+//             {children}
+//         </AuthContext.Provider>
+//     )
 
-  if (!context) {
-    throw new Error("useAuth must be used inside <AuthProvider>");
-  }
+// }
 
-  return context;
-};
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+
+//   if (!context) {
+//     throw new Error("useAuth must be used inside <AuthProvider>");
+//   }
+
+//   return context;
+// };
 

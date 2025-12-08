@@ -51,6 +51,9 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
   const selectedTagCount = Object.values(columnVisibility || {}).filter(v=>v).length
 
+  // console.log('vvv',columnVisibility);
+  
+
   const columns = [
     {
       accessorKey: 'CompanyName',
@@ -208,7 +211,7 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
     meta: { isLoading: loading } as MyTableMeta
   })
 
-
+  // console.log('tabb',table);
 
   return (
 
@@ -233,12 +236,12 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
 
              
               {/* Dropdown Icons */}
-              <img  src="/logos/down.svg"   alt=""   className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
+              <img  src="/logos/down.svg"   alt=""   className="absolute right-1 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none dark:hidden" />
               <img src="/logos/dark_down.svg" alt="" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none hidden dark:block" />
             </div>
 
             {/* Column Visibility Dropdown */}
-            <div className="w-1/2 lg:w-auto relative max-w-[350px] sm:max-w-lg md:max-w-xl lg:max-w-2xl">
+            <div className=" relative ">
               <TagMultiSelectPage columns={columns} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility}/>
             </div>
           </div>
@@ -301,12 +304,16 @@ const TableView: React.FC<TableViewProps> = ({ companyData, loading, onCompanyCl
                   </div>
                 ))
                 : table.getRowModel().rows.map(row => (
+                  
                     <div onClick={() => onCompanyClick?.(row.original)} className="table-row hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer" key={row.id}>
-                      {row.getVisibleCells().map(cell => (
+                      {row.getVisibleCells().map(cell => {
+                        // console.log('cell',cell);
+                        
+                        return (
                         <div key={cell.id} className="table-cell text-xs md:text-md lg:text-[13px] dark:text-neutral-400 px-2 md:px-4 py-1 md:py-2.5 border-r border-border-primary dark:border-neutral-600 last:border-r-0 border-b  relative overflow-visible">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </div>
-                      ))}
+                        </div> 
+                      )})}
                     </div>
                   ))
               }

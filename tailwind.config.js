@@ -51,7 +51,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Playwrite NO"', 'sans-serif'],  // make it the default font
+        sans: ['"Playwrite NO"', 'sans-serif'], 
       },
     },
   },

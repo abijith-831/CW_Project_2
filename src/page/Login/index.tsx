@@ -25,8 +25,6 @@ export default function Login() {
 
   const { register , handleSubmit , watch , setValue , formState:{errors}} = useForm<LoginFormValues>()
 
-  const password = watch('password')
-
   useEffect(() => {
     const handleOAuthCallback = async () => {
       try {
@@ -190,6 +188,9 @@ export default function Login() {
         return
       }
 
+      // console.log('log',loginData);
+      
+
       await processUserLogin(loginData.session)
     } catch (error) {
       console.error(error);
@@ -211,8 +212,6 @@ export default function Login() {
       setIsLoading(true);
 
       const { error } = await googleLoginRequest();
-      
-
 
       if (error) {
         enqueueSnackbar(error.message, { variant: "error" });

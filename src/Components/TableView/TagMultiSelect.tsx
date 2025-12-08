@@ -27,11 +27,17 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar();
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
   
   const [isOpen , setIsOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  console.log('columns',columns);
+  console.log('columns vis',columnVisibility);
+  
 
   const selectedTagCount = Object.values(columnVisibility || {}).filter(v => v).length
   
@@ -78,6 +84,12 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
   });
   }
 
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const limit = window.innerWidth < 640 ? 1 : window.innerWidth < 1200 ? 2 :  3;
 
   return (
@@ -87,7 +99,6 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
               {Object.keys(columnVisibility).filter((key) => columnVisibility[key] === true).slice(0,limit).map((tag)=>( 
                 <div key={tag} className="relative group flex items-center gap-1.5 bg-[#97bdbd] dark:bg-bg-primary cursor-pointer font-medium px-2 py-1 rounded-full text-[9px] md:text-[12px] lg:text-xs">
                  
-     
                   <TagIcon />{headerMap[tag]}
                   
                   <button type="button"  
@@ -95,7 +106,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                       e.stopPropagation();
                         removeTag(tag); 
                     }}  
-                    className={`cursor-pointer hover:bg-green-700 rounded-full ${  selectedTagCount <= 1 ? "opacity-40 cursor-not-allowed" : "" }`} >
+                    className={`cursor-pointer hover:bg-green-700 rounded-full ${ selectedTagCount <= 1 ? "opacity-40 cursor-not-allowed" : "" }`} >
                     <XIcon />
                   </button>
                 </div>
@@ -123,10 +134,9 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                 {Object.keys(columnVisibility || {}).map((tag)=>{
                   const checked = columnVisibility?.[tag]
                   return (
-                    <li key={tag} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-600">
-                        <input checked={checked} onChange={()=> handleToggle(tag,checked)}
-                         type="checkbox"  className="cursor-pointer bg-bg-dark-primary"/>   
-                        <label onClick={()=> handleToggle(tag,checked)}  className="flex-1 cursor-pointer dark:text-neutral-300">{headerMap[tag]}</label>  
+                    <li key={tag} onClick={()=> handleToggle(tag,checked)} className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-600">
+                        <input checked={checked}  type="checkbox"  className="cursor-pointer bg-bg-dark-primary"/>   
+                        <label   className="flex-1 cursor-pointer dark:text-neutral-300">{headerMap[tag]}</label>  
                     </li>
                   )
                 })}

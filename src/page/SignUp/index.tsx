@@ -25,10 +25,9 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const {register,handleSubmit , watch , setValue , formState:{errors}} = useForm<SignUpFormValues>()
+  const {register,handleSubmit,watch,setValue,formState:{errors}} = useForm<SignUpFormValues>()
 
   const password = watch('password')
-
 
   const handleSignUp = async (formData: SignUpFormValues) => {
   const {email , password} = formData
