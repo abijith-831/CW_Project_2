@@ -118,7 +118,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                 </span>
               )}
 
-              {selectedTagCount < limit && (
+              {/* {selectedTagCount < limit && (
               <input
                 ref={inputRef}
                 type="text"
@@ -127,7 +127,7 @@ const TagMultiSelect: React.FC<TagMultiSelectProps> = ({ columns , columnVisibil
                 onChange={e => setSearchTerm(e.target.value)}
                 onFocus={() => setIsOpen(true)}
                 className="flex-1 bg-transparent outline-none text-sm min-w-[60px]"  />
-              )}
+              )} */}
            </div>
 
            {isOpen && (

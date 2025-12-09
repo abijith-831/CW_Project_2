@@ -156,6 +156,17 @@ const Dashboard: React.FC<DashboardProps> = ({ goToDetails, onSelectCompany }) =
   //   }
   // }, [searchQuery]);
 
+  useEffect(() => {
+    if (searchQuery !== "") {
+      if (capital_view === "graph") {
+        dispatch(updateGraphPage(1));
+      } else {
+        dispatch(updateTablePage(1));
+      }
+    }
+  }, [searchQuery]);
+
+
   return (
     <div className=' flex flex-col min-h-screen overflow-hidden dark:bg-neutral-800 dark:text-table-header'>
         <Navbar/>   

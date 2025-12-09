@@ -118,16 +118,18 @@ export default function Login() {
           selected_columns: defaultColumns
         };
 
+        enqueueSnackbar("Failed to process login!", { variant: "success" });
+
         dispatch(
           loginSuccess({
             user: newUser,
             accessToken: session?.access_token,
             refreshToken: session?.refresh_token,
           })
-        );
-
+        )
 
         if (redirectToDashboard) navigate("/", { replace: true });
+        // enqueueSnackbar("Failed to process login!", { variant: "success" });
 
         return;
       }
@@ -165,7 +167,9 @@ export default function Login() {
       );
 
       
+      // enqueueSnackbar("Login successful...!!!", { variant: "success" });
       if (redirectToDashboard) navigate("/", { replace: true });
+      // enqueueSnackbar("Failed to process login!", { variant: "success" });
 
     } catch (error) {
       console.error("Process login error:", error);
@@ -201,12 +205,6 @@ export default function Login() {
     }
   }
 
-//   useEffect(() => {
-//   console.log("REDIRECT_TO:", `${window.location.origin}/login`);
-// }, []);
-
-
-  
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
@@ -294,9 +292,9 @@ export default function Login() {
             Don&apos;t have an account?{" "}
             <a href="/signup" className="font-bold text-zinc-900  underline underline-offset-4 hover:text-zinc-700  transition-colors">  Sign up</a>
           </p>
-          <a href="#"  className="text-sm font-medium text-secondary  underline underline-offset-4 hover:text-zinc-700  transition-colors">
+          {/* <a href="#"  className="text-sm font-medium text-secondary  underline underline-offset-4 hover:text-zinc-700  transition-colors">
             Forgot your password?
-          </a>
+          </a> */}
         </div>
       </div>
     </div>

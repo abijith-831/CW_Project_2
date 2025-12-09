@@ -230,8 +230,8 @@ const SettingsPage = () => {
 
 
           {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 md:space-y-10 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
               <div>
                 <label className="block text-sm mb-1 text-fourth dark:text-neutral-400">{t("full_name")}</label>
                 <input
