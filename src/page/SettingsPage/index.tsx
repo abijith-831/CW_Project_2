@@ -137,6 +137,16 @@ const SettingsPage = () => {
     setSelectedFile(file)
   }
 
+  useEffect(() => {
+    if (selectedFile) {
+      setImageLoading(true);  
+    } else if (userInfo?.profile_picture) {
+      setImageLoading(false); 
+    } else {
+      setImageLoading(false); 
+    }
+  }, [selectedFile, userInfo]);
+
 
   return (
     <div className='min-h-screen flex flex-col dark:bg-dark-primary'>
@@ -177,33 +187,52 @@ const SettingsPage = () => {
             {/* Content */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
               <div className="relative w-20 h-20">
-                <img
-                  src={
-                    selectedFile
-                      ? URL.createObjectURL(selectedFile)
-                      : userInfo?.profile_picture ||
-                        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                  }
-                  alt="profile"
-                  className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
-                    imageLoading ? "opacity-0" : "opacity-100" }`}
-                  onLoad={() => setImageLoading(false)} />
 
-                {imageLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
-                    <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                  </div>
-                )}
+                    {/* Case 1: Show image if selectedFile OR user profile picture exists */}
+                    {(selectedFile || userInfo?.profile_picture) ? (
+                      <>
+                        <img
+                          src={
+                            selectedFile
+                              ? URL.createObjectURL(selectedFile)
+                              : userInfo?.profile_picture
+                          }
+                          alt="profile"
+                          className={`w-20 h-20 rounded-full object-cover border transition-opacity duration-300 ${
+                            imageLoading ? "opacity-0" : "opacity-100"
+                          }`}
+                          onLoad={() => setImageLoading(false)}
+                        />
 
-                {isEdit && !imageLoading && (
-                  <div
-                    className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer" onClick={() => fileInputRef.current?.click()} >
-                    <input type="file" className="hidden" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
-                    <h1>Upload</h1>
-                    <p className="text-[10px] text-table-header">2 MB maximum</p>
+                        {imageLoading && (
+                          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/20 dark:bg-neutral-700/20 backdrop-blur-sm">
+                            <div className="w-6 h-6 border-4 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      // Case 2: No image → show first letter of email
+                      <div className="w-20 h-20 rounded-full border flex items-center justify-center bg-gray-200 dark:bg-neutral-700 text-2xl font-bold text-gray-700 dark:text-white">
+                        {userInfo?.email?.charAt(0)?.toUpperCase()}
+                      </div>
+                    )}
+
+                    {/* Edit Overlay */}
+                    {isEdit && !imageLoading && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/40 backdrop-blur-[2px] text-white text-sm cursor-pointer" onClick={() => fileInputRef.current?.click()}  >
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
+                        />
+                        <h1>Upload</h1>
+                        <p className="text-[10px] text-table-header">2 MB maximum</p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+
 
               <div className="text-center sm:text-left flex-1 pt-4">
                 <h2 className="text-xl font-semibold text-primary dark:text-table-header">

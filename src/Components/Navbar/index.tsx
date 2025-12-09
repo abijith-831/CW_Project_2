@@ -78,29 +78,33 @@ const Navbar = () => {
 
         {/* Profile Icon */}
         <div className="relative">
-          <img src={user?.profile_picture || "./logos/user.svg"} alt="profile"
-            className="h-10 w-10 p-0.5 bg-white rounded-full cursor-pointer"
-            onClick={() => setDropdownOpen(!dropdownOpen)} />
+            {/* Avatar */}
+            {user?.profile_picture ? (
+              <img src={user.profile_picture} alt="profile" className="h-10 w-10 p-0.5 bg-white rounded-full cursor-pointer object-cover" onClick={() => setDropdownOpen(!dropdownOpen)}  />
+            ) : (
+              <div className="h-10 w-10 bg-table-header text-gray-800 rounded-full flex items-center justify-center cursor-pointer uppercase" onClick={() => setDropdownOpen(!dropdownOpen)} >
+                {user?.email?.[0] || "U"}
+              </div>
+            )}
 
-          {/* Dropdown */}
-         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white dark:bg-neutral-800 border border-border-third dark:border-neutral-500 rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
-            <button className="flex text-primary dark:text-table-header cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md"
-              onClick={() => {
-                navigate("/settings");
-                setDropdownOpen(false); }}>
-              <img src="./logos/settings.svg" alt="settings" className="w-4 h-4" />
-              {t("settings_btn")}
-            </button>
+            {/* Dropdown */}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-34 md:w-40 lg:w-44 bg-white dark:bg-neutral-800 border border-border-third dark:border-neutral-500 rounded-lg p-1 md:p-2 space-y-1 md:space-y-2 shadow-lg z-50">    
+                <button className="flex text-primary dark:text-table-header cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md"
+                  onClick={() => {  navigate("/settings");  setDropdownOpen(false);  }} >
+                  <img src="./logos/settings.svg" className="w-4 h-4" />
+                  {t("settings_btn")}
+                </button>
 
-            <button className="flex text-primary dark:text-table-header  cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md" onClick={handleLogout}>
-              <img src="./logos/logout.svg" alt="logout" className="w-4 h-4 " />
-              {t("logout_btn")}
-            </button>
+                <button className="flex text-primary dark:text-table-header cursor-pointer items-center gap-3 md:gap-6 w-full text-left border border-border-third dark:border-neutral-500 px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-500 shadow-md" onClick={handleLogout}  >
+                  <img src="./logos/logout.svg" className="w-4 h-4" />
+                  {t("logout_btn")}
+                </button>
+              </div>
+            )}
+
           </div>
-        )}
 
-        </div>
       </div>
     </nav>
   );
